@@ -1,0 +1,18 @@
+module Build exposing ( main )
+
+import Bytes exposing ( Bytes )
+import Bytes.Decode
+import Bytes.Encode
+import Shikensu
+import Shikensu.Contrib as Shikensu
+import Shikensu.Definition as Shikensu
+import Shikensu.Focus as Shikensu exposing ( Focus(..) )
+import Shikensu.Focus
+import Shikensu.Path as Path
+import Task
+
+
+main : Shikensu.Program
+main =
+    -- 🚀
+    Shikensu.program sequence source

@@ -1,0 +1,5 @@
+build:
+  rm -rf dist
+  mkdir -p dist
+  cp -R src/static/ ./dist/
+  tea npx tailwindcss -- --input=./src/css/main.css --output=./dist/stylesheet.css --minify

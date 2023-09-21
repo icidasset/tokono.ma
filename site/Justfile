@@ -11,4 +11,5 @@ publish: build
   #!/usr/bin/env bash
   cid=$(tea npx w3 -- up ./dist/ | tail -n 1 | sed "s/⁂ https:\/\/w3s.link\/ipfs\///")
   # https://dns-lexicon.readthedocs.io/
+  echo "Publishing $cid"
   lexicon dnsimple --auth-token $DNS_AUTH_TOKEN --content $cid update _dnslink.tokono.ma TXT

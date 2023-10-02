@@ -1,0 +1,27 @@
+module Common.VirtualDom exposing ( fromHtml )
+
+import Common.Html.Interior exposing (..)
+import VirtualDom
+
+
+fromHtml : Html msg -> VirtualDom.Node msg
+fromHtml html =
+    case html of
+        Node tagName attributes children ->
+            VirtualDom.node
+                tagName
+                (Array.map
+                    (\attr ->
+                        case attr of
+                            Attribute key value ->
+                                VirtualDom.attribute key value
+                    )
+                    attributes
+                )
+                (case children of
+                    Regular nodes ->
+                        Array.map fromHtml nodes
+                )
+
+        TextNode text ->
+            VirtualDom.text text

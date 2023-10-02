@@ -1,0 +1,153 @@
+module Common.Html.Internal.String exposing ( toString )
+
+import Common.Html.Interior exposing (..)
+
+
+toString :
+    { indent : Int
+    }
+    -> Html msg
+    -> String
+toString options html =
+    toString_
+        { indent = options.indent
+        , level = 0
+        }
+        [ html
+        ]
+
+
+toString_ :
+    { indent : Int
+    , level : Int
+    }
+    -> Array (Html msg)
+    -> String
+toString_ options =
+    Array.foldl
+        (\node acc ->
+            let
+                string =
+                    case node of
+                        Node tagName attributes children ->
+                            case children of
+                                Regular [] ->
+                                    tag
+                                        tagName
+                                        attributes
+                                        { isClosed = False
+                                        }
+
+                                Regular nodes ->
+                                    tag
+                                        tagName
+                                        attributes
+                                        { isClosed = True
+                                        }
+                                        ++ toString_ { options | level = options.level + 1 } nodes
+                                        ++ closingTag tagName
+
+                        TextNode text ->
+                            escapeText text
+            in
+            acc ++ string
+        )
+        ""
+
+
+
+-- UTILS
+
+
+attributesToString : Array (Attribute msg) -> Array String
+attributesToString attrs =
+    attrs
+        |> Array.foldl
+                (\attr acc ->
+                    case attr of
+                        Attribute "class" value ->
+                            { classes =
+                                acc.classes
+                                    ++ [ value
+                                        ]
+                            , rest = acc.rest
+                            }
+
+                        Attribute key value ->
+                            { classes = acc.classes
+                            , rest =
+                                acc.rest
+                                    ++ [ buildProp key value
+                                        ]
+                            }
+                )
+                { classes = []
+                , rest = []
+                }
+        |> (\acc ->
+                Array.pushFirst
+                    (buildProp "class"
+                        <| String.join " " acc.classes
+                    )
+                    acc.rest
+            )
+
+
+buildProp : String -> String -> String
+buildProp key value =
+    hyphenate key ++ "=\"" ++ escapeAttributePart value ++ "\""
+
+
+closingTag : String -> String
+closingTag tagName =
+    "</" ++ tagName ++ ">"
+
+
+escapeAttributePart : String -> String
+escapeAttributePart =
+    String.foldl
+        (\char acc ->
+            if char == '\"' then
+                acc ++ "\\\""
+            else
+                acc ++ String.fromChar char
+        )
+        ""
+
+
+escapeText : String -> String
+escapeText =
+    String.replace "&" "&amp;" >> String.replace "<" "&lt;" >> String.replace ">" "&gt;"
+
+
+hyphenate : String -> String
+hyphenate =
+    String.foldl
+        (\char acc ->
+            if Char.isUpper char then
+                acc ++ "-" ++ String.fromChar (Char.toLower char)
+            else
+                acc ++ String.fromChar char
+        )
+        ""
+
+
+tag :
+    String
+    -> Array (Attribute msg)
+    -> { isClosed : Bool
+       }
+    -> String
+tag tagName attributes { isClosed } =
+    "<"
+        ++ String.join
+                " "
+                ([ tagName
+                 ]
+                    ++ attributesToString attributes
+                )
+        ++ (if isClosed then
+                " />"
+             else
+                ">"
+            )

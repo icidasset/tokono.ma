@@ -1,0 +1,15 @@
+module Pages.Index exposing ( main )
+
+import Common.Html as Html
+import Common.VirtualDom as VirtualDom
+import Layouts.Main
+
+
+page =
+    Layouts.Main.layout
+        [ Html.text "Hello, world!"
+        ]
+
+
+main =
+    VirtualDom.fromHtml page

@@ -1,18 +1,86 @@
 module Build exposing ( main )
 
-import Bytes exposing ( Bytes )
-import Bytes.Decode
-import Bytes.Encode
+import Common.Html
+import Pages.Index
 import Shikensu
+import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
 import Shikensu.Definition as Shikensu
 import Shikensu.Focus as Shikensu exposing ( Focus(..) )
-import Shikensu.Focus
 import Shikensu.Path as Path
 import Task
 
 
+pages =
+    Dict.fromArray
+        [ { key = "Index"
+          , value = Pages.Index.html
+          }
+        ]
+
+
 main : Shikensu.Program
 main =
-    -- 🚀
-    Shikensu.program sequence source
+    [ ".."
+    , "Pages"
+    ]
+        |> Path.directory
+        |> Relative
+        |> Shikensu.program sequence
+
+
+sequence : Shikensu.Task -> Shikensu.Task
+sequence task =
+    task
+        |> Task.map (Shikensu.withExtension "gren")
+        |> Task.map
+                (\bundle ->
+                    bundle
+                        |> Shikensu.renderContent
+                                (\def ->
+                                    pages
+                                        |> Dict.get def.basename
+                                        |> Maybe.map Common.Html.toString
+                                )
+                        |> Shikensu.mapCompendium
+                                (Array.map
+                                    (\def ->
+                                        { def
+                                            | baseName = String.toLower (String.left 1 def.basename) ++ hyphenate (String.dropLeft 1 def.basename)
+                                            , extensionName = Just "html"
+                                        }
+                                    )
+                                )
+                        |> Shikensu.permalink "index"
+                )
+        |> Task.andThen (Shikensu.write destination)
+
+
+destination : Shikensu.Focus
+destination =
+    Relative
+        (Path.directory
+            [ "build"
+            ]
+        )
+
+
+renderMarkdown : Shikensu.Definition -> Maybe Bytes
+renderMarkdown def =
+    Maybe.map renderMarkdownBytes def.content
+
+
+
+-- 🛠️
+
+
+hyphenate : String -> String
+hyphenate =
+    String.foldl
+        (\char acc ->
+            if Char.isUpper char then
+                acc ++ "-" ++ String.fromChar (Char.toLower char)
+            else
+                acc ++ String.fromChar char
+        )
+        ""

@@ -1,0 +1,52 @@
+module Common.Html.Interior exposing ( Html(..), Attribute(..), Children(..), EventDecoder(..) )
+
+import Json.Decode exposing ( Decoder, Value )
+
+
+
+-- ROOT
+
+
+type Html msg
+    = Node String (Array (Attribute msg)) (Children msg)
+    | TextNode String
+
+
+
+-- PARTS
+
+
+type Attribute msg
+    = Attribute String String
+        -- | BoolProperty String Bool
+        -- | Event String (EventDecoder msg)
+        -- | StringProperty String String
+        -- | Style String String
+        -- | ValueProperty String Value
+
+
+type Children msg
+    = Regular (Array (Html msg)) -- | Keyed (List ( String, Html msg ))
+
+
+type EventDecoder msg
+    = Normal (Decoder msg)
+    | MayStopPropagation
+        (Decoder
+            { message : msg
+            , stopPropagation : Bool
+            }
+        )
+    | MayPreventDefault
+        (Decoder
+            { message : msg
+            , preventDefault : Bool
+            }
+        )
+    | Custom
+        (Decoder
+            { message : msg
+            , stopPropagation : Bool
+            , preventDefault : Bool
+            }
+        )

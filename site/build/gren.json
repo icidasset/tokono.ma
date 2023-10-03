@@ -3,14 +3,14 @@
   "platform": "node",
   "source-directories": [
     "./",
-    "../lib",
-    "../web"
+    "../lib"
   ],
   "gren-version": "0.3.0",
   "dependencies": {
     "direct": {
       "gren-lang/core": "4.0.1",
-      "gren-lang/node": "3.0.1"
+      "gren-lang/node": "3.0.1",
+      "icidasset/shikensu-gren": "4.0.0"
     },
     "indirect": {
       "gren-lang/url": "3.0.0"

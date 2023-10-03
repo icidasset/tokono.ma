@@ -35,14 +35,14 @@ toString_ options =
                                     tag
                                         tagName
                                         attributes
-                                        { isClosed = False
+                                        { isClosed = True
                                         }
 
                                 Regular nodes ->
                                     tag
                                         tagName
                                         attributes
-                                        { isClosed = True
+                                        { isClosed = False
                                         }
                                         ++ toString_ { options | level = options.level + 1 } nodes
                                         ++ closingTag tagName
@@ -85,11 +85,14 @@ attributesToString attrs =
                 , rest = []
                 }
         |> (\acc ->
-                Array.pushFirst
-                    (buildProp "class"
-                        <| String.join " " acc.classes
-                    )
+                if Array.isEmpty acc.classes then
                     acc.rest
+                else
+                    Array.pushFirst
+                        (buildProp "class"
+                            <| String.join " " acc.classes
+                        )
+                        acc.rest
             )
 
 

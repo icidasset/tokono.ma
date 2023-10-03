@@ -2,7 +2,7 @@
 .env
 .gren
 app
-build
 node_modules
 dist
 tmp
+/site/web/index.html

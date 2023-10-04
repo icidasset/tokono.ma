@@ -13,6 +13,3 @@ publish: build
   # https://dns-lexicon.readthedocs.io/
   echo "Publishing $cid"
   lexicon dnsimple --auth-token $DNS_AUTH_TOKEN --content $cid update _dnslink.tokono.ma TXT
-
-render-page:
-  cd src/pages && npx gren make Index.gren --output=../../dist/index.html

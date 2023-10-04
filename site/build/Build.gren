@@ -50,8 +50,15 @@ writePagesToDisk : FileSystem.Permission -> Task Error (Array {})
 writePagesToDisk fsPermission =
     fsPermission
         |> Shikensu.currentWorkingDirectory
-        -- Destination directory: `./dist/`
-        |> Task.map (Path.map (Array.pushLast "dist"))
+        -- Destination directory: `../dist/`
+        |> Task.map
+                (\path ->
+                    [ ".."
+                    , "dist"
+                    ]
+                        |> Path.directory
+                        |> Path.combine path
+                )
         -- Write each page to disk
         |> Task.andThen
                 (\destinationDir ->

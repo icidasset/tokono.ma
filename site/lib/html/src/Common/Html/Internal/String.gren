@@ -1,6 +1,7 @@
 module Common.Html.Internal.String exposing ( toString )
 
 import Common.Html.Interior exposing (..)
+import Json.Encode
 
 
 toString :
@@ -66,33 +67,51 @@ attributesToString attrs =
                 (\attr acc ->
                     case attr of
                         Attribute "class" value ->
-                            { classes =
-                                acc.classes
-                                    ++ [ value
-                                        ]
-                            , rest = acc.rest
-                            }
+                            { acc | classes = Array.pushLast value acc.classes }
 
                         Attribute key value ->
-                            { classes = acc.classes
-                            , rest =
-                                acc.rest
-                                    ++ [ buildProp key value
-                                        ]
-                            }
+                            { acc | rest = Array.pushLast (buildProp key value) acc.rest }
+
+                        BoolProperty string isEnabled ->
+                            if isEnabled then
+                                { acc | rest = Array.pushLast (hyphenate (propName string)) acc.rest }
+                            else
+                                acc
+
+                        StringProperty key value ->
+                            { acc | rest = Array.pushLast (buildProp (propName key) value) acc.rest }
+
+                        Style key value ->
+                            { acc | styles = Array.pushLast (escapeAttributePart key ++ ": " ++ escapeAttributePart value) acc.styles }
+
+                        ValueProperty key value ->
+                            { acc | rest = Array.pushLast (buildProp (propName key) (Json.Encode.encode 0 value)) acc.rest }
                 )
                 { classes = []
                 , rest = []
+                , styles = []
                 }
         |> (\acc ->
                 if Array.isEmpty acc.classes then
+                    { styles = acc.styles
+                    , rest = acc.rest
+                    }
+                else
+                    acc.classes
+                        |> String.join " "
+                        |> (\val ->
+                                { styles = acc.styles
+                                , rest = Array.pushFirst (buildProp "class" val) acc.rest
+                                }
+                            )
+            )
+        |> (\acc ->
+                if Array.isEmpty acc.styles then
                     acc.rest
                 else
-                    Array.pushFirst
-                        (buildProp "class"
-                            <| String.join " " acc.classes
-                        )
-                        acc.rest
+                    acc.styles
+                        |> String.join "; "
+                        |> (\val -> Array.pushFirst (buildProp "style" val) acc.rest)
             )
 
 
@@ -133,6 +152,22 @@ hyphenate =
                 acc ++ String.fromChar char
         )
         ""
+
+
+propName : String -> String
+propName prop =
+    case prop of
+        "className" ->
+            "class"
+
+        "defaultValue" ->
+            "value"
+
+        "htmlFor" ->
+            "for"
+
+        _ ->
+            prop
 
 
 tag :

@@ -1,10 +1,10 @@
 module Pages.Index exposing ( html )
 
 import Common.Html as Html
-import Layouts.Main
+import Layouts.Page
 
 
 html =
-    Layouts.Main.layout
+    Layouts.Page.layout
         [ Html.text "Hello, world!"
         ]

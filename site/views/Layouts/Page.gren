@@ -1,4 +1,4 @@
-module Layouts.Main exposing ( layout )
+module Layouts.Page exposing ( layout )
 
 import Common.Html as Html
 

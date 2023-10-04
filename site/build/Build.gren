@@ -4,17 +4,18 @@ import Bytes exposing ( Bytes )
 import Bytes.Encode
 import Common.Html exposing ( Html )
 import Dict
+import FileSystem
+import Layouts.Base
 import Pages.Index
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
 import Shikensu.Definition as Shikensu
-import Shikensu.Error exposing(Error)
+import Shikensu.Error exposing ( Error )
 import Shikensu.Focus as Shikensu exposing ( Focus(..) )
 import Shikensu.Path as Path
 import Stream
-import Task exposing(Task)
-import FileSystem
+import Task exposing ( Task )
 
 
 
@@ -22,21 +23,9 @@ import FileSystem
 
 
 pages =
-    [ page [] Pages.Index.html
-    , page
-        [ "work"
-        ]
-        Pages.Index.html
+    [ page "tokono.ma" "/" Pages.Index.html
+    , page "Work | tokono.ma" "/work/" Pages.Index.html
     ]
-
-
-destination : Shikensu.Focus
-destination =
-    Relative
-        (Path.directory
-            [ "build"
-            ]
-        )
 
 
 
@@ -81,10 +70,10 @@ htmlBytes =
     Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
-page directoryPath html =
+page title directoryPath html =
     { baseName = "index"
-    , content = Just (htmlBytes html)
-    , directoryPath = Path.directory directoryPath
+    , content = Just (htmlBytes (Layouts.Base.layout title html))
+    , directoryPath = Path.directory (Path.unwrap (Path.fromPosix directoryPath))
     , extensionName = Just "html"
     , metadata = Dict.empty
     }

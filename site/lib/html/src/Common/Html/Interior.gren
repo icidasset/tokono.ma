@@ -18,11 +18,10 @@ type Html msg
 
 type Attribute msg
     = Attribute String String
-        -- | BoolProperty String Bool
-        -- | Event String (EventDecoder msg)
-        -- | StringProperty String String
-        -- | Style String String
-        -- | ValueProperty String Value
+    | BoolProperty String Bool -- | Event String (EventDecoder msg)
+    | StringProperty String String
+    | Style String String
+    | ValueProperty String Value
 
 
 type Children msg

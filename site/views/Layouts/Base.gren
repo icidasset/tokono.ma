@@ -1,0 +1,27 @@
+module Layouts.Base exposing ( layout )
+
+import Common.Html as Html
+import Common.Html.Attributes as A
+
+
+layout title contents =
+    Html.html
+        []
+        [ Html.head
+            []
+            [ Html.title
+                [ Html.text title
+                ]
+            , Html.meta
+                [ A.charset "utf-8"
+                ]
+            , Html.meta
+                [ A.name "viewport"
+                , A.content "width=device-width, initial-scale=1"
+                ]
+            ]
+        , Html.body
+            []
+            [ contents
+            ]
+        ]

@@ -1,8 +1,13 @@
 @font-face {
   font-family: "Assistant";
   src:
-    local("Assistant"),
     url("./fonts/assistant-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Gabarito";
+  src:
+    url("./fonts/gabarito-variable_wght.woff2") format("woff2");
 }
 
 @font-face {
@@ -17,4 +22,18 @@
   src:
     local("Noto Color Emoji"),
     url("./fonts/noto-emoji-color.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair";
+  font-style: normal;
+  src:
+    url("./fonts/playfair-variable-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair";
+  font-style: italic;
+  src:
+    url("./fonts/playfair-variable-italic.woff2") format("woff2");
 }

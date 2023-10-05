@@ -177,15 +177,19 @@ tag :
        }
     -> String
 tag tagName attributes { isClosed } =
-    "<"
-        ++ String.join
-                " "
-                ([ tagName
-                 ]
-                    ++ attributesToString attributes
+    String.append
+        (case String.toLower tagName of
+            "html" ->
+                "<!DOCTYPE html>"
+
+            _ ->
+                ""
+        )
+        ("<"
+            ++ String.join " " (Array.pushFirst tagName (attributesToString attributes))
+            ++ (if isClosed then
+                    " />"
+                 else
+                    ">"
                 )
-        ++ (if isClosed then
-                " />"
-             else
-                ">"
-            )
+        )

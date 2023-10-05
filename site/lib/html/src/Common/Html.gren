@@ -132,6 +132,12 @@ text =
 -- TRANSFORMATIONS
 
 
+{-| Encode the HTML as a string.
+
+The DOCTYPE is inserted automatically when using the `<html>` element.
+No indentation or special line breaks.
+
+-}
 toString : Html msg -> String
 toString =
     Common.Html.Internal.String.toString
@@ -139,6 +145,11 @@ toString =
         }
 
 
+{-| Encode the HTML as a string.
+
+The DOCTYPE is inserted automatically when using the `<html>` element.
+
+-}
 toStringWithIndent : Int -> Html msg -> String
 toStringWithIndent indent =
     Common.Html.Internal.String.toString

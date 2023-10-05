@@ -1,10 +1,27 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "src/static/**/*.html"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        babaGanoush: "#f2b98c",
+        bellini: "#f0c8ae",
+        burrito: "#edd3c3",
+        chewingGum: "#ecadaa",
+        dreamyCandyForest: "#b28de2",
+        girlPower: "#d9a3d7",
+        iridescent: "#3a6255",
+        larbGai: "#dcc6a6",
+        lichen: "#9cc5a9",
+        medlar: "#d6dac0",
+        morningSnow: "#f3f4ec",
+        neonViolet: "#64517d",
+        paradiseIsland: "#63b199",
+        trailDust: "#cec6aa",
+      }
+    },
   },
   plugins: [],
 }

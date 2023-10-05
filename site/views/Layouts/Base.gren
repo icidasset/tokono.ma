@@ -19,6 +19,10 @@ layout title contents =
                 [ A.name "viewport"
                 , A.content "width=device-width, initial-scale=1"
                 ]
+            , Html.link
+                [ A.href "stylesheet.css"
+                , A.rel "stylesheet"
+                ]
             ]
         , Html.body
             []

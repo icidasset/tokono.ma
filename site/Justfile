@@ -4,8 +4,11 @@ set dotenv-load
 build:
   rm -rf dist
   mkdir -p dist
-  cp -R src/static/ ./dist/
-  tea npx tailwindcss -- --input=./src/css/main.css --output=./dist/stylesheet.css --minify
+  cp -R ./static/ ./dist/
+  tea npx tailwindcss -- --input=./css/main.css --output=./dist/stylesheet.css --minify
+  cd build && gren make Build.gren
+  cd build && tea node app
+  rm build/app
 
 publish: build
   #!/usr/bin/env bash

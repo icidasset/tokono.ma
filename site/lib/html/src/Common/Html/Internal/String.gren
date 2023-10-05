@@ -177,8 +177,12 @@ tag :
        }
     -> String
 tag tagName attributes { isClosed } =
+    let
+        lowercaseTagName =
+            String.toLower tagName
+    in
     String.append
-        (case String.toLower tagName of
+        (case lowercaseTagName of
             "html" ->
                 "<!DOCTYPE html>"
 
@@ -188,7 +192,12 @@ tag tagName attributes { isClosed } =
         ("<"
             ++ String.join " " (Array.pushFirst tagName (attributesToString attributes))
             ++ (if isClosed then
-                    " />"
+                    case lowercaseTagName of
+                        "script" ->
+                            "></script>"
+
+                        _ ->
+                            " />"
                  else
                     ">"
                 )

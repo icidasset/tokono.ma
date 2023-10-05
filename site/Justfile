@@ -9,6 +9,7 @@ build:
   cd build && gren make Build.gren
   cd build && tea node app
   rm build/app
+  cd dynamic && gren make Main.gren --output=../dist/site.js --optimize
 
 publish: build
   #!/usr/bin/env bash

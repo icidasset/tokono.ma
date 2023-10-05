@@ -1,0 +1,22 @@
+module Pages.About exposing ( html, page )
+
+import Common.Html as Html
+import Layouts.Default
+import Views.Common exposing ( Page )
+
+
+page : Page msg
+page =
+    { title = Views.Common.titleWithSuffix "About"
+    , route =
+        [ "about"
+        ]
+    , html = html
+    }
+
+
+html =
+    [ Layouts.Default.layout
+        [ Html.text "About"
+        ]
+    ]

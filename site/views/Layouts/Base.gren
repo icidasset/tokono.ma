@@ -4,13 +4,13 @@ import Common.Html as Html
 import Common.Html.Attributes as A
 
 
-layout title contents =
+layout page =
     Html.html
         []
         [ Html.head
             []
             [ Html.title
-                [ Html.text title
+                [ Html.text page.title
                 ]
             , Html.meta
                 [ A.charset "utf-8"
@@ -26,6 +26,17 @@ layout title contents =
             ]
         , Html.body
             []
-            [ contents
-            ]
+            (Array.prefix
+                page.html
+                [ Html.node
+                    "script"
+                    [ page.route
+                        |> Array.map (\_ -> "..")
+                        |> Array.pushLast "site.js"
+                        |> String.join "/"
+                        |> A.src
+                    ]
+                    []
+                ]
+            )
         ]

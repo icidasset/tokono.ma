@@ -1,0 +1,7 @@
+module Layouts.Default exposing ( layout )
+
+import Common.Html as Html
+
+
+layout contents =
+    Html.main_ [] contents

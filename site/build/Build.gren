@@ -6,6 +6,7 @@ import Common.Html exposing ( Html )
 import Dict
 import FileSystem
 import Layouts.Base
+import Pages.About
 import Pages.Index
 import Shikensu
 import Shikensu.Bundle as Shikensu
@@ -23,8 +24,8 @@ import Task exposing ( Task )
 
 
 pages =
-    [ page "tokono.ma" "/" Pages.Index.html
-    , page "Work | tokono.ma" "/work/" Pages.Index.html
+    [ page Pages.Index.page
+    , page Pages.About.page
     ]
 
 
@@ -77,10 +78,10 @@ htmlBytes =
     Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
-page title directoryPath html =
+page mod =
     { baseName = "index"
-    , content = Just (htmlBytes (Layouts.Base.layout title html))
-    , directoryPath = Path.directory (Path.unwrap (Path.fromPosix directoryPath))
+    , content = Just (htmlBytes (Layouts.Base.layout mod))
+    , directoryPath = Path.directory mod.route
     , extensionName = Just "html"
     , metadata = Dict.empty
     }

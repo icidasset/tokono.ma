@@ -1,0 +1,18 @@
+module Views.Common exposing (..)
+
+import Common.Html exposing ( Html )
+
+
+type alias Page msg =
+    { title : String
+    , route : Array String
+    , html : Array (Html msg)
+    }
+
+
+title =
+    "tokono.ma"
+
+
+titleWithSuffix t =
+    t ++ " | " ++ title

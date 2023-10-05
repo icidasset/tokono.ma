@@ -1,6 +1,7 @@
 module Common.VirtualDom exposing ( fromHtml )
 
 import Common.Html.Interior exposing (..)
+import Json.Encode
 import VirtualDom
 
 
@@ -15,6 +16,18 @@ fromHtml html =
                         case attr of
                             Attribute key value ->
                                 VirtualDom.attribute key value
+
+                            BoolProperty key value ->
+                                VirtualDom.property key (Json.Encode.bool value)
+
+                            StringProperty key value ->
+                                VirtualDom.property key (Json.Encode.string value)
+
+                            Style key value ->
+                                VirtualDom.style key value
+
+                            ValueProperty key value ->
+                                VirtualDom.property key value
                     )
                     attributes
                 )

@@ -3,11 +3,35 @@ module Views.Common exposing (..)
 import Common.Html exposing ( Html )
 
 
+
+-- 🌳
+
+
 type alias Page msg =
     { title : String
-    , route : Array String
+    , route : Route
     , html : Array (Html msg)
     }
+
+
+type alias Route =
+    Array String
+
+
+
+-- 🛠️
+
+
+pathFromRoot :
+    { root : Route
+    }
+    -> Route
+    -> String
+pathFromRoot { root } route =
+    root
+        |> Array.map (\_ -> "..")
+        |> Array.postfix route
+        |> String.join "/"
 
 
 title =

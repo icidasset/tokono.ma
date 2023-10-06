@@ -1,7 +1,67 @@
 module Layouts.Default exposing ( layout )
 
 import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Views.Common
 
 
-layout contents =
-    Html.main_ [] contents
+layout route contents =
+    [ Html.section
+        [ class "flex px-8 py-12"
+        ]
+        [ -- -------------------------------------
+          -- HEADER
+          -- -------------------------------------
+          Html.header
+            [ class "flex-none flex mr-32"
+            ]
+            [ Html.div
+                [ class "mr-32"
+                ]
+                [ Html.img
+                    [ A.src
+                        (Views.Common.pathFromRoot
+                            { root = route
+                            }
+                            [ "images"
+                            , "noun-ikebana-3818216.svg"
+                            ]
+                        )
+                    , A.width 130
+                    ]
+                    []
+                ]
+
+            , -- NAV
+              let
+                link title =
+                    Html.div
+                        [ class "mb-4"
+                        ]
+                        [ Html.a
+                            [ A.href ""
+                            ]
+                            [ Html.text title
+                            ]
+                        ]
+              in
+              Html.nav
+                [ class "font-thin font-serif text-2xl text-right"
+                ]
+                [ link "About"
+                , link "Work"
+                , link "Writings"
+                , link "Code"
+                , link "Links"
+                ]
+            ]
+
+        , -- -------------------------------------
+          -- MAIN
+          -- -------------------------------------
+          Html.main_
+            [ class "flex-1"
+            ]
+            contents
+        ]
+    ]

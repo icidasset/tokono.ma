@@ -1,7 +1,10 @@
+import defaultTheme from "tailwindcss/defaultTheme"
+
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "src/static/**/*.html"
+    "./views/**/*.gren"
   ],
   theme: {
     extend: {
@@ -20,6 +23,16 @@ export default {
         neonViolet: "#64517d",
         paradiseIsland: "#63b199",
         trailDust: "#cec6aa",
+      },
+      fontFamily: {
+        sans: ["Gabarito", ...defaultTheme.fontFamily.sans],
+        serif: [
+          ["Playfair", ...defaultTheme.fontFamily.serif],
+          {
+            fontVariationSettings: '"opsz" 42, "wdth" 88',
+            letterSpacing: "-0.025em"
+          }
+        ]
       }
     },
   },

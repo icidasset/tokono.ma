@@ -9,23 +9,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        babaGanoush: "#f2b98c",
-        bellini: "#f0c8ae",
-        burrito: "#edd3c3",
-        chewingGum: "#ecadaa",
-        dreamyCandyForest: "#b28de2",
-        girlPower: "#d9a3d7",
-        iridescent: "#3a6255",
-        larbGai: "#dcc6a6",
-        lichen: "#9cc5a9",
-        medlar: "#d6dac0",
-        morningSnow: "#f3f4ec",
-        neonViolet: "#64517d",
-        paradiseIsland: "#63b199",
-        trailDust: "#cec6aa",
+        "baba-ganoush": "#f2b98c",
+        "bellini": "#f0c8ae",
+        "burrito": "#edd3c3",
+        "chewing-gum": "#ecadaa",
+        "dreamy-candy-forest": "#b28de2",
+        "girl-power": "#d9a3d7",
+        "iridescent": "#3a6255",
+        "larb-gai": "#dcc6a6",
+        "lichen": "#9cc5a9",
+        "medlar": "#d6dac0",
+        "morning-snow": "#f3f4ec",
+        "neon-violet": "#64517d",
+        "paradise-island": "#63b199",
+        "trail-dust": "#cec6aa",
       },
       fontFamily: {
-        sans: ["Gabarito", ...defaultTheme.fontFamily.sans],
+        sans: ["Assistant", ...defaultTheme.fontFamily.sans],
         serif: [
           ["Playfair", ...defaultTheme.fontFamily.serif],
           {

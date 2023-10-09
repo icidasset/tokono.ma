@@ -2,7 +2,7 @@ module Layouts.Default exposing ( layout )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
-import Views.Common
+import Views.Common as Common
 
 
 layout route contents =
@@ -13,23 +13,25 @@ layout route contents =
           -- HEADER
           -- -------------------------------------
           Html.header
-            [ class "flex-none flex mr-32"
+            [ class "flex-none flex ml-12 mr-36"
             ]
             [ Html.div
-                [ class "mr-32"
+                [ class "flex flex-col items-end mr-36"
                 ]
                 [ Html.img
                     [ A.src
-                        (Views.Common.pathFromRoot
+                        (Common.pathFromRoot
                             { root = route
                             }
                             [ "images"
                             , "noun-ikebana-3818216.svg"
                             ]
                         )
-                    , A.width 130
+                    , A.width 98
+                    , A.class "block mb-8"
                     ]
                     []
+                , Common.tokonoma
                 ]
 
             , -- NAV
@@ -46,7 +48,7 @@ layout route contents =
                         ]
               in
               Html.nav
-                [ class "font-thin font-serif text-2xl text-right"
+                [ class "font-serif font-light text-2xl text-right"
                 ]
                 [ link "About"
                 , link "Work"
@@ -60,7 +62,7 @@ layout route contents =
           -- MAIN
           -- -------------------------------------
           Html.main_
-            [ class "flex-1"
+            [ class "flex-1 max-w-xl"
             ]
             contents
         ]

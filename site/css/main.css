@@ -7,10 +7,22 @@
 @tailwind utilities;
 
 body {
-  @apply bg-morningSnow font-sans text-iridescent;
+  @apply bg-morning-snow font-sans text-iridescent;
   text-rendering: geometricPrecision;
 }
 
+
+/**
+ * Basics
+ */
+main h2 {
+  @apply font-bold font-serif mb-6 text-3xl;
+}
+
+p {
+  @apply leading-relaxed mb-5 text-lg;
+}
+
 .font-serif {
-  letter-spacing: -0.025em;
+  @apply tracking-tight;
 }

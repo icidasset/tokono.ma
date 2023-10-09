@@ -1,6 +1,7 @@
 module Pages.About exposing ( html, page )
 
 import Common.Html as Html
+import Common.Html.Attributes as A exposing (class)
 import Layouts.Default
 import Views.Common exposing ( Page, Route )
 
@@ -22,5 +23,22 @@ route =
 html =
     Layouts.Default.layout
         route
-        [ Html.text "About"
+        [ Html.h1
+          [ class "font-thin font-serif italic leading-none mb-10 mt-[-0.125em] text-7xl text-iridescent text-opacity-70 !tracking-tighter" ]
+          [ Html.text "I am a web engineer with a passion for decentralised tech." ]
+
+        , Html.h2
+          []
+          [ Html.text "History" ]
+
+        , Html.p
+          []
+          [ Html.text "I started out as a full-stack web developer at a company called Mr. Henry where I implemented various unique and special web designs, ranging from eccentric artistic websites to generating typefaces in a HTML canvas. I also worked with ‘Ruby’ here, which was my first backend programming language, but also ‘Go’ and some ‘PHP’."
+          ]
+        , Html.p
+            []
+            [ Html.text "After that I worked full-time remotely for MetaLab, based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages, such as Elixir, Elm, Haskell, etc." ]
+        , Html.p
+          []
+          [Html.text"Before these two jobs I started a little side project, inspired by someone who reached out to me. To this day I’m still working on that side project. This would eventually get me into my third job where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and all the various protocols that make up the web."]
         ]

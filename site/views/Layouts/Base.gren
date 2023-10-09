@@ -2,7 +2,8 @@ module Layouts.Base exposing ( layout )
 
 import Common.Html as Html exposing ( Html )
 import Common.Html.Attributes as A
-import Views.Common exposing ( Page, Route )
+import Pages exposing ( Page )
+import Views.Common exposing ( Route )
 
 
 layout : Page -> Array (Html msg) -> Html msg

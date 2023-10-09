@@ -8,6 +8,7 @@
 
 body {
   @apply bg-morning-snow font-sans text-iridescent;
+  @apply dark:bg-iridescent dark:text-morning-snow;
   text-rendering: geometricPrecision;
 }
 

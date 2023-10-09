@@ -1,7 +1,6 @@
-module Views.Index exposing ( view )
+module Views.Pages.Index exposing ( view )
 
 import Common.Html as Html
-import Views.Common exposing ( Page )
 
 
 view =

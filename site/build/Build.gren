@@ -6,8 +6,7 @@ import Common.Html exposing ( Html )
 import Dict
 import FileSystem
 import Layouts.Base
-import Pages.About
-import Pages.Index
+import Pages
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
@@ -17,8 +16,7 @@ import Shikensu.Focus as Shikensu exposing ( Focus(..) )
 import Shikensu.Path as Path
 import Stream
 import Task exposing ( Task )
-import Views.About
-import Views.Index
+import Views.Pages
 
 
 
@@ -26,9 +24,7 @@ import Views.Index
 
 
 pages =
-    [ page Pages.Index.page Views.Index.view
-    , page Pages.About.page Views.About.view
-    ]
+    Array.pushFirst (page Pages.index (Views.Pages.view Pages.index)) (Array.map (\p -> page p (Views.Pages.view p)) Pages.pages)
 
 
 

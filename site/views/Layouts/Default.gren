@@ -2,8 +2,7 @@ module Layouts.Default exposing ( layout )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
-import Pages.About
-import Pages.Index
+import Pages
 import Views.Common as Common
 
 
@@ -30,7 +29,20 @@ layout page contents =
                             ]
                         )
                     , A.width 98
-                    , A.class "block mb-8"
+                    , A.class "block mb-8 dark:hidden"
+                    ]
+                    []
+                , Html.img
+                    [ A.src
+                        (Common.pathFromRoot
+                            { root = page.route
+                            }
+                            [ "images"
+                            , "noun-ikebana-3818216-light.svg"
+                            ]
+                        )
+                    , A.width 98
+                    , A.class "hidden mb-8 dark:block"
                     ]
                     []
                 , Common.tokonoma
@@ -52,9 +64,9 @@ layout page contents =
                         [ Html.a
                             [ A.href
                                 (Common.pathFromRoot
-                                  { root = page.route
-                                  }
-                                  linkPage.route
+                                    { root = page.route
+                                    }
+                                    linkPage.route
                                 )
                             , A.class
                                 (if isActive then
@@ -70,9 +82,7 @@ layout page contents =
               Html.nav
                 [ class "font-serif font-light text-2xl text-right"
                 ]
-                [ link Pages.Index.page
-                , link Pages.About.page
-                ]
+                (Array.map link Pages.pages)
             ]
 
         , -- -------------------------------------

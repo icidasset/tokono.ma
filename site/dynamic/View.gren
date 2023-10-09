@@ -2,14 +2,14 @@ module View exposing (..)
 
 import Browser exposing ( Document )
 import Common.VirtualDom
-import Pages.Index
+import Pages
 import Types exposing ( Model, Msg )
-import Views.Index
+import Views.Pages.Index
 
 
 view : Model -> Document Msg
 view model =
     -- TODO
-    { title = Pages.Index.page.title
-    , body = Array.map Common.VirtualDom.fromHtml Views.Index.view
+    { title = Pages.index.title
+    , body = Array.map Common.VirtualDom.fromHtml Views.Pages.Index.view
     }

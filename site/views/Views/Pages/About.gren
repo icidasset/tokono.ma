@@ -1,29 +1,31 @@
-module Views.About exposing ( view )
+module Views.Pages.About exposing ( view )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
 import Layouts.Default
-import Pages.About
-import Views.Common exposing ( Page, Route )
+import Pages
 
 
 view =
     Layouts.Default.layout
-        Pages.About.page
+        Pages.about
         [ Html.h1
-            [ class "font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-iridescent text-opacity-70 uppercase"
+            [ class "font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-iridescent text-opacity-70 uppercase dark:text-morning-snow dark:text-opacity-70"
             ]
             [ Html.text "A web "
             , Html.strong
-                [ class ""
+                [ class "font-inherit text-dreamy-candy-forest"
                 ]
                 [ Html.text "engineer"
                 ]
-            , Html.text " with a passion for local-first tech."
-            ]
-        , Html.h2
-            []
-            [ Html.text "History"
+            , Html.text " with a passion for "
+            , Html.a
+                [ A.href "https://www.inkandswitch.com/local-first/"
+                , A.class "text-lichen"
+                ]
+                [ Html.text "local-first"
+                ]
+            , Html.text " tech."
             ]
         , Html.p
             []

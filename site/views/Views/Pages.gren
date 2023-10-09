@@ -1,0 +1,23 @@
+module Views.Pages exposing ( view )
+
+import Common.Html exposing ( Html )
+import Layouts.Default
+import Pages exposing ( Page, PageId(..) )
+import Views.Pages.About
+import Views.Pages.Index
+
+
+view : Page -> Array (Html msg)
+view page =
+    case page.id of
+        About ->
+            Views.Pages.About.view
+
+        Index ->
+            Views.Pages.Index.view
+
+        Writings ->
+            Layouts.Default.layout page []
+
+        Work ->
+            Layouts.Default.layout page []

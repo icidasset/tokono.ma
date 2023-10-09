@@ -1,6 +1,10 @@
 set dotenv-load
 
 
+default: build
+  just serve & just watch
+
+
 build:
   rm -rf dist
   mkdir -p dist
@@ -11,9 +15,23 @@ build:
   rm build/app
   cd dynamic && gren make Main.gren --output=../dist/site.js --optimize
 
+
+format-gren:
+  cd build && gren format ../ --yes
+
+
 publish: build
   #!/usr/bin/env bash
   cid=$(pkgx npx w3 -- up ./dist/ | tail -n 1 | sed "s/⁂ https:\/\/w3s.link\/ipfs\///")
   # https://dns-lexicon.readthedocs.io/
   echo "Publishing $cid"
   lexicon dnsimple --auth-token $DNS_AUTH_TOKEN --content $cid update _dnslink.tokono.ma TXT
+
+
+@serve:
+  echo "Serving static files on http://localhost:5001"
+  dufs --port 5001 --render-index ./dist/
+
+
+watch:
+  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css -- just build

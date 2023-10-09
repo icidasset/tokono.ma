@@ -1,0 +1,89 @@
+module Pages exposing (..)
+
+import Views.Common exposing ( Route )
+
+
+
+-- 🌳
+
+
+type alias Page =
+    { id : PageId
+    , name : String
+    , title : String
+    , route : Route
+    , accent : String
+    }
+
+
+type PageId
+    = About
+    | Index
+    | Work
+    | Writings
+
+
+
+-- 🏔️
+
+
+pages : Array Page
+pages =
+    [ about
+    , writings
+    , work
+    ]
+
+
+
+-- 📃  /  INDEX
+
+
+index : Page
+index =
+    { id = Index
+    , name = "Index"
+    , title = Views.Common.title
+    , route = []
+    , accent = ""
+    }
+
+
+
+-- 📃
+
+
+about : Page
+about =
+    { id = About
+    , name = "About"
+    , title = Views.Common.titleWithSuffix "About"
+    , route =
+        [ "about"
+        ]
+    , accent = "dreamy-candy-forest"
+    }
+
+
+writings : Page
+writings =
+    { id = Writings
+    , name = "Writings"
+    , title = Views.Common.titleWithSuffix "Writings"
+    , route =
+        [ "writings"
+        ]
+    , accent = "girl-power"
+    }
+
+
+work : Page
+work =
+    { id = Work
+    , name = "Work"
+    , title = Views.Common.titleWithSuffix "Work"
+    , route =
+        [ "work"
+        ]
+    , accent = "chewing-gum"
+    }

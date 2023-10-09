@@ -25,6 +25,7 @@ export default {
         "trail-dust": "#cec6aa",
       },
       fontFamily: {
+        display: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
         sans: ["Assistant", ...defaultTheme.fontFamily.sans],
         serif: [
           ["Playfair", ...defaultTheme.fontFamily.serif],

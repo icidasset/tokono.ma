@@ -2,10 +2,12 @@ module Layouts.Default exposing ( layout )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
+import Pages.About
+import Pages.Index
 import Views.Common as Common
 
 
-layout route contents =
+layout page contents =
     [ Html.section
         [ class "flex px-8 py-12"
         ]
@@ -21,7 +23,7 @@ layout route contents =
                 [ Html.img
                     [ A.src
                         (Common.pathFromRoot
-                            { root = route
+                            { root = page.route
                             }
                             [ "images"
                             , "noun-ikebana-3818216.svg"
@@ -36,25 +38,40 @@ layout route contents =
 
             , -- NAV
               let
-                link title =
+                link linkPage =
+                    let
+                        isActive =
+                            page.id == linkPage.id
+
+                        baseClass =
+                            page.accent ++ " inline-block lh-crop relative "
+                    in
                     Html.div
                         [ class "mb-4"
                         ]
                         [ Html.a
-                            [ A.href ""
+                            [ A.href
+                                (Common.pathFromRoot
+                                  { root = page.route
+                                  }
+                                  linkPage.route
+                                )
+                            , A.class
+                                (if isActive then
+                                    baseClass ++ " mark"
+                                 else
+                                    baseClass
+                                )
                             ]
-                            [ Html.text title
+                            [ Html.text linkPage.name
                             ]
                         ]
               in
               Html.nav
                 [ class "font-serif font-light text-2xl text-right"
                 ]
-                [ link "About"
-                , link "Work"
-                , link "Writings"
-                , link "Code"
-                , link "Links"
+                [ link Pages.Index.page
+                , link Pages.About.page
                 ]
             ]
 

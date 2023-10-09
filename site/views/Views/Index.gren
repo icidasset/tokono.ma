@@ -1,0 +1,12 @@
+module Views.Index exposing ( view )
+
+import Common.Html as Html
+import Views.Common exposing ( Page )
+
+
+view =
+    [ Html.main_
+        []
+        [ Html.text "Index"
+        ]
+    ]

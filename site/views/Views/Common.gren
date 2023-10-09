@@ -1,16 +1,19 @@
 module Views.Common exposing (..)
 
 import Common.Html as Html exposing ( Html )
-import Common.Html.Attributes exposing (class)
+import Common.Html.Attributes exposing ( class )
+
 
 
 -- 🌳
 
 
-type alias Page msg =
-    { title : String
+type alias Page =
+    { id : String
+    , name : String
+    , title : String
     , route : Route
-    , html : Array (Html msg)
+    , accent : String
     }
 
 
@@ -42,19 +45,26 @@ titleWithSuffix t =
     t ++ " | " ++ title
 
 
+
 -- 🖼️
 
 
 tokonoma =
-  Html.div
-    [ class "flex flex-col items-center"]
-    [ Html.h1
-      [ class "bg-iridescent bg-opacity-20 font-serif italic px-4 rounded-full text-morning-snow text-2xl w-fit"]
-      [Html.span
-        [ class "inline-block mt-px"]
-        [ Html.text "tokono.ma" ]
-      ]
-    , Html.span
-      [class "font-semibold mt-1 text-iridescent text-opacity-[22.5%] text-xs"]
-      [Html.text "by Steven Vandevelde"]
-    ]
+    Html.div
+        [ class "flex flex-col items-center"
+        ]
+        [ Html.h1
+            [ class "bg-iridescent bg-opacity-20 font-serif italic px-4 rounded-full text-morning-snow text-2xl w-fit"
+            ]
+            [ Html.span
+                [ class "inline-block mt-px"
+                ]
+                [ Html.text "tokono.ma"
+                ]
+            ]
+        , Html.span
+            [ class "font-semibold mt-1 text-iridescent text-opacity-[22.5%] text-xs"
+            ]
+            [ Html.text "by Steven Vandevelde"
+            ]
+        ]

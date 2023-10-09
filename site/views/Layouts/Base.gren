@@ -5,8 +5,8 @@ import Common.Html.Attributes as A
 import Views.Common exposing ( Page, Route )
 
 
-layout : Page msg -> Html msg
-layout page =
+layout : Page -> Array (Html msg) -> Html msg
+layout page pageHtml =
     Html.html
         []
         [ -- -------------------------------------
@@ -49,6 +49,6 @@ layout page =
                 ]
                 []
           ]
-            |> Array.prefix page.html
+            |> Array.prefix pageHtml
             |> Html.body []
         ]

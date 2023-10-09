@@ -1,20 +1,13 @@
-module Pages.Index exposing ( html, page )
+module Pages.Index exposing ( page )
 
-import Common.Html as Html
 import Views.Common exposing ( Page )
 
 
-page : Page msg
+page : Page
 page =
-    { title = Views.Common.title
+    { id = "index"
+    , name = "Index"
+    , title = Views.Common.title
     , route = []
-    , html = html
+    , accent = ""
     }
-
-
-html =
-    [ Html.main_
-        []
-        [ Html.text "Index"
-        ]
-    ]

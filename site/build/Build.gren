@@ -17,6 +17,8 @@ import Shikensu.Focus as Shikensu exposing ( Focus(..) )
 import Shikensu.Path as Path
 import Stream
 import Task exposing ( Task )
+import Views.About
+import Views.Index
 
 
 
@@ -24,8 +26,8 @@ import Task exposing ( Task )
 
 
 pages =
-    [ page Pages.Index.page
-    , page Pages.About.page
+    [ page Pages.Index.page Views.Index.view
+    , page Pages.About.page Views.About.view
     ]
 
 
@@ -78,9 +80,9 @@ htmlBytes =
     Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
-page mod =
+page mod html =
     { baseName = "index"
-    , content = Just (htmlBytes (Layouts.Base.layout mod))
+    , content = Just (htmlBytes (Layouts.Base.layout mod html))
     , directoryPath = Path.directory mod.route
     , extensionName = Just "html"
     , metadata = Dict.empty

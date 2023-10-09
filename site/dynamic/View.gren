@@ -4,11 +4,12 @@ import Browser exposing ( Document )
 import Common.VirtualDom
 import Pages.Index
 import Types exposing ( Model, Msg )
+import Views.Index
 
 
 view : Model -> Document Msg
 view model =
     -- TODO
     { title = Pages.Index.page.title
-    , body = Array.map Common.VirtualDom.fromHtml Pages.Index.page.html
+    , body = Array.map Common.VirtualDom.fromHtml Views.Index.view
     }

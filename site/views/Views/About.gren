@@ -1,0 +1,82 @@
+module Views.About exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages.About
+import Views.Common exposing ( Page, Route )
+
+
+view =
+    Layouts.Default.layout
+        Pages.About.page
+        [ Html.h1
+            [ class "font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-iridescent text-opacity-70 uppercase"
+            ]
+            [ Html.text "A web "
+            , Html.strong
+                [ class ""
+                ]
+                [ Html.text "engineer"
+                ]
+            , Html.text " with a passion for local-first tech."
+            ]
+        , Html.h2
+            []
+            [ Html.text "History"
+            ]
+        , Html.p
+            []
+            [ Html.text "I started out as a full-stack web dev at a company called "
+            , Html.a
+                [ A.href "https://mrhenry.be"
+                ]
+                [ Html.text "Mr. Henry"
+                ]
+            , Html.text " where I implemented various unique and special web designs, ranging from eccentric artistic websites to generating typefaces in a HTML canvas. I also worked with "
+            , Html.a
+                [ A.href "https://www.ruby-lang.org"
+                ]
+                [ Html.text "Ruby"
+                ]
+            , Html.text " here, which was one of the first programming languages that I really liked. Also did some Go and PHP, and a bunch of JS of course."
+            ]
+        , Html.p
+            []
+            [ Html.text "After that I worked full-time remotely for "
+            , Html.a
+                [ A.href "https://metalab.co"
+                ]
+                [ Html.text "MetaLab"
+                ]
+            , Html.text ", based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages, such as "
+            , Html.a
+                [ A.href "https://elixir-lang.org"
+                ]
+                [ Html.text "Elixir"
+                ]
+            , Html.text ", "
+            , Html.a
+                [ A.href "https://elm-lang.org"
+                ]
+                [ Html.text "Elm"
+                ]
+            , Html.text ", "
+            , Html.a
+                [ A.href "https://www.haskell.org"
+                ]
+                [ Html.text "Haskell"
+                ]
+            , Html.text ", etc."
+            ]
+        , Html.p
+            []
+            [ Html.text "During this time I worked on a side project which would eventually get me into "
+            , Html.a
+                [ A.href "https://fission.codes"
+                ]
+                [ Html.text "Fission"
+                ]
+            , Html.text ", my third job, where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
+            ]
+        ]

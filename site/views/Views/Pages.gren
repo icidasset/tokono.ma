@@ -5,6 +5,8 @@ import Layouts.Default
 import Pages exposing ( Page, PageId(..) )
 import Views.Pages.About
 import Views.Pages.Index
+import Views.Pages.Writings
+import Views.Pages.Work
 
 
 view : Page -> Array (Html msg)
@@ -17,7 +19,7 @@ view page =
             Views.Pages.Index.view
 
         Writings ->
-            Layouts.Default.layout page []
+            Views.Pages.Writings.view
 
         Work ->
-            Layouts.Default.layout page []
+            Views.Pages.Work.view

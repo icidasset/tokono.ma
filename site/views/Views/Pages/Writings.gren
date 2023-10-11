@@ -1,0 +1,53 @@
+module Views.Pages.Writings exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+
+
+view =
+    Layouts.Default.layout
+        Pages.writings
+        [ Html.h1
+            []
+            [ Html.text "Writings"
+            ]
+        , Html.ul
+            []
+            [ link "Building Blocks"
+            , link "Functional Programming & Elixir – Pt. 1, The Basics"
+            , link "Minimize Flaws Using Functional Programming"
+            , link "Notes on Health & Fitness"
+            ]
+        , Html.p
+            [ class "italic max-w-md mt-6 text-sm"
+            ]
+            [ Html.text "Ordered by name."
+            ]
+        , Html.h3
+            []
+            [ Html.text "Archive"
+            ]
+        , Html.p
+            [ class "italic max-w-md text-sm"
+            ]
+            [ Html.text "Most of this code doesn\'t work anymore or the information is outdated. Keeping it here in case it is still relevant to someone."
+            ]
+        , Html.ul
+            []
+            [ link "Webnative & Elm"
+            , link "Why I wrote static-base"
+            ]
+        ]
+
+
+link text =
+    Html.li
+        []
+        [ Html.a
+            [ A.href "#"
+            ]
+            [ Html.text text
+            ]
+        ]

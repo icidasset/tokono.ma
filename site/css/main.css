@@ -16,16 +16,34 @@ body {
 /**
  * Basics
  */
-main h2 {
-  @apply font-bold font-serif mb-6 text-3xl;
+main h1 {
+  @apply font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-iridescent text-opacity-70 uppercase;
+  @apply dark:text-morning-snow dark:text-opacity-70;
 }
 
-p {
+main h2 {
+  @apply font-bold font-display mb-6 mt-10 text-3xl;
+}
+
+main h3 {
+  @apply font-semibold font-display mb-5 mt-8 opacity-90 text-2xl;
+}
+
+p,
+ul,
+ol {
   @apply leading-relaxed mb-5 text-lg;
 }
 
-p a {
+p a,
+ul a,
+ol a {
   @apply decoration-2 decoration-lichen underline underline-offset-4;
+}
+
+ul li,
+ol li {
+  @apply mb-3;
 }
 
 .font-serif {

@@ -1,0 +1,16 @@
+module Views.Pages.Work exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+
+
+view =
+    Layouts.Default.layout
+        Pages.work
+        [ Html.h1
+            []
+            [ Html.text "Work"
+            ]
+        ]

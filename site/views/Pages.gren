@@ -61,7 +61,7 @@ about =
     , route =
         [ "about"
         ]
-    , accent = "dreamy-candy-forest"
+    , accent = "bg-young-apricot"
     }
 
 
@@ -73,7 +73,7 @@ writings =
     , route =
         [ "writings"
         ]
-    , accent = "girl-power"
+    , accent = "bg-chewing-gum"
     }
 
 
@@ -85,5 +85,5 @@ work =
     , route =
         [ "work"
         ]
-    , accent = "chewing-gum"
+    , accent = "bg-lichen"
     }

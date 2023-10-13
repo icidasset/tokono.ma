@@ -7,8 +7,8 @@
 @tailwind utilities;
 
 body {
-  @apply bg-morning-snow font-sans text-iridescent;
-  @apply dark:bg-iridescent dark:text-morning-snow;
+  @apply bg-silver-bird font-sans text-empress;
+  @apply dark:bg-empress dark:text-silver-bird;
   text-rendering: geometricPrecision;
 }
 
@@ -17,28 +17,34 @@ body {
  * Basics
  */
 main h1 {
-  @apply font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-iridescent text-opacity-70 uppercase;
-  @apply dark:text-morning-snow dark:text-opacity-70;
+  @apply font-black font-display leading-none mb-10 mt-[-0.125em] text-[5.25rem] text-empress text-opacity-70 uppercase;
+  @apply dark:text-silver-bird dark:text-opacity-70;
 }
 
 main h2 {
-  @apply font-bold font-display mb-6 mt-10 text-3xl;
+  @apply font-bold font-serif mb-6 mt-12 opacity-90 text-4xl;
 }
 
 main h3 {
-  @apply font-semibold font-display mb-5 mt-8 opacity-90 text-2xl;
+  @apply font-semibold font-serif mb-5 mt-8 opacity-90 text-2xl;
 }
 
+blockquote {
+  @apply border-l-4 border-empress border-opacity-30 pl-3;
+  @apply dark:border-silver-bird dark:border-opacity-30;
+}
+
+blockquote,
 p,
 ul,
 ol {
-  @apply leading-relaxed mb-5 text-lg;
+  @apply leading-relaxed max-w-xl mb-5 text-lg;
 }
 
 p a,
 ul a,
 ol a {
-  @apply decoration-2 decoration-lichen underline underline-offset-4;
+  @apply decoration-2 underline underline-offset-4;
 }
 
 ul li,
@@ -58,7 +64,7 @@ ol li {
   margin-top: -0.75em;
 }
 
-.mark::after {
+.mark {
   bottom: 0.225em;
   content: "";
   display: block;
@@ -67,24 +73,4 @@ ol li {
   position: absolute;
   right: 0;
   z-index: -1;
-}
-
-.mark.dreamy-candy-forest::after {
-  @apply bg-dreamy-candy-forest;
-}
-
-.mark.girl-power::after {
-  @apply bg-girl-power;
-}
-
-.mark.chewing-gum::after {
-  @apply bg-chewing-gum;
-}
-
-.mark.baba-ganoush::after {
-  @apply bg-baba-ganoush;
-}
-
-.mark.larb-gai::after {
-  @apply bg-larb-gai;
 }

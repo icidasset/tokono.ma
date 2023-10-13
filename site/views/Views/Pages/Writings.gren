@@ -9,9 +9,16 @@ import Pages
 view =
     Layouts.Default.layout
         Pages.writings
+        []
         [ Html.h1
             []
-            [ Html.text "Writings"
+            [ Html.text "Occasional "
+            , Html.span
+                [ class "text-chewing-gum"
+                ]
+                [ Html.text "thoughts"
+                ]
+            , Html.text " & notes"
             ]
         , Html.ul
             []
@@ -47,6 +54,7 @@ link text =
         []
         [ Html.a
             [ A.href "#"
+            , A.class "decoration-chewing-gum"
             ]
             [ Html.text text
             ]

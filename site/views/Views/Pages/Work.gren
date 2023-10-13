@@ -9,8 +9,156 @@ import Pages
 view =
     Layouts.Default.layout
         Pages.work
+        []
         [ Html.h1
             []
-            [ Html.text "Work"
+            [ Html.text "Things I\'ve "
+            , Html.span
+                [ class "text-lichen"
+                ]
+                [ Html.text "work"
+                ]
+            , Html.text "ed on"
+            ]
+            -- 
+        , diffuse
+        , oddsdk
+        ]
+
+
+
+-- 🛠️
+
+
+paragraph =
+    Html.p
+        [ class "decoration-lichen"
+        ]
+
+
+quote =
+    Html.blockquote
+        [ class "decoration-lichen"
+        ]
+
+
+li =
+    Html.li
+        [ class "decoration-lichen"
+        ]
+
+
+
+-- 🖼️
+
+
+linksTable links =
+    links
+        |> Array.map
+                (\link ->
+                    [ Html.span
+                        [ class "inline-block text-sm w-32"
+                        ]
+                        [ Html.text link.name
+                        , Html.text ":"
+                        ]
+                    , Html.a
+                        [ A.href link.url
+                        ]
+                        [ Html.text link.text
+                        ]
+                    , Html.br [] []
+                    ]
+                )
+        |> Array.flatten
+        |> paragraph
+
+
+item title links nodes =
+    nodes
+        |> Array.prefix
+                [ Html.h2
+                    []
+                    [ Html.text title
+                    ]
+                ]
+        |> Array.postfix
+                [ linksTable links
+                ]
+        |> Html.article []
+
+
+
+-- WORK
+
+
+diffuse =
+    item
+        "Diffuse"
+        [ { name = "Application"
+          , text = "diffuse.sh"
+          , url = "https://diffuse.sh"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/diffuse"
+          , url = "https://github.com/icidasset/diffuse"
+          }
+        ]
+        [ paragraph
+            [ Html.text "I\'ve been working on this personal project on and off for 12+ years. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+            ]
+        ]
+
+
+oddsdk =
+    item
+        "ODD SDK"
+        [ { name = "Website"
+          , text = "odd.dev"
+          , url = "https://odd.dev/"
+          }
+        , { name = "Code (fork)"
+          , text = "github.com/icidasset/ts-odd"
+          , url = "https://github.com/icidasset/ts-odd"
+          }
+        , { name = "Quotes (app)"
+          , text = "github.com/icidasset/quotes"
+          , url = "https://github.com/icidasset/quotes"
+          }
+        , { name = "Herknen (app)"
+          , text = "github.com/icidasset/herknen"
+          , url = "https://github.com/icidasset/herknen"
+          }
+        , { name = "Drive (app)"
+          , text = "github.com/fission-codes/drive"
+          , url = "https://github.com/fission-codes/drive"
+          }
+        ]
+        [ quote
+            [ Html.text "The ODD SDK is a local-first toolkit that helps developers build systems that store data in a secure, reliable, and decentralised way. The focus is on the user, providing them with sufficient authority while still being convenient."
+            ]
+        , quote
+            [ Html.text "ODD stands for Open Distributed Data. We want our data accessible from anywhere and distributed, meaning it can live partially or fully in multiple places. Ideally, as much of this data as possible lives on user owned devices and communication of this data will be done in a decentralised, peer-to-peer fashion."
+            ]
+        , paragraph
+            [ Html.text "This is the main project I worked on during my time at "
+            , Html.a
+                [ A.href "https://fission.codes"
+                ]
+                [ Html.text "Fission"
+                ]
+            , Html.text ". Still an avid user of this system and the protocols consisting of it ("
+            , Html.a
+                [ A.href "https://ucan.xyz"
+                ]
+                [ Html.text "UCAN"
+                ]
+            , Html.text ", "
+            , Html.a
+                [ A.href "https://github.com/wnfs-wg"
+                ]
+                [ Html.text "WNFS"
+                ]
+            , Html.text ", etc)."
             ]
         ]

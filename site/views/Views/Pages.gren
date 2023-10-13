@@ -5,8 +5,8 @@ import Layouts.Default
 import Pages exposing ( Page, PageId(..) )
 import Views.Pages.About
 import Views.Pages.Index
-import Views.Pages.Writings
 import Views.Pages.Work
+import Views.Pages.Writings
 
 
 view : Page -> Array (Html msg)

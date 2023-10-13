@@ -9,25 +9,25 @@ import Pages
 view =
     Layouts.Default.layout
         Pages.about
+        []
         [ Html.h1
             []
             [ Html.text "A web "
             , Html.strong
-                [ class "font-inherit text-dreamy-candy-forest"
+                [ class "font-inherit text-young-apricot"
                 ]
                 [ Html.text "engineer"
                 ]
             , Html.text " with a passion for "
             , Html.a
                 [ A.href "https://www.inkandswitch.com/local-first/"
-                , A.class "text-lichen"
+                , A.class "text-empress text-opacity-50 dark:text-silver-bird dark:text-opacity-100"
                 ]
                 [ Html.text "local-first"
                 ]
-            , Html.text " tech."
+            , Html.text " tech"
             ]
-        , Html.p
-            []
+        , paragraph
             [ Html.text "I started out as a full-stack web dev at a company called "
             , Html.a
                 [ A.href "https://mrhenry.be"
@@ -42,8 +42,7 @@ view =
                 ]
             , Html.text " here, which was one of the first programming languages that I really liked. Also did some Go and PHP, and a bunch of JS of course."
             ]
-        , Html.p
-            []
+        , paragraph
             [ Html.text "After that I worked full-time remotely for "
             , Html.a
                 [ A.href "https://metalab.co"
@@ -70,8 +69,7 @@ view =
                 ]
             , Html.text ", etc."
             ]
-        , Html.p
-            []
+        , paragraph
             [ Html.text "During this time I worked on a side project which would eventually get me into "
             , Html.a
                 [ A.href "https://fission.codes"
@@ -80,4 +78,10 @@ view =
                 ]
             , Html.text ", my third job, where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
             ]
+        ]
+
+
+paragraph =
+    Html.p
+        [ class "decoration-young-apricot"
         ]

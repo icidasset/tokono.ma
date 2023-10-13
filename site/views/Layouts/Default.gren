@@ -6,7 +6,7 @@ import Pages
 import Views.Common as Common
 
 
-layout page contents =
+layout page attributes contents =
     [ Html.section
         [ class "flex px-8 py-12"
         ]
@@ -30,6 +30,7 @@ layout page contents =
                         )
                     , A.width 98
                     , A.class "block mb-8 dark:hidden"
+                    , A.alt "Ikebana"
                     ]
                     []
                 , Html.img
@@ -54,28 +55,27 @@ layout page contents =
                     let
                         isActive =
                             page.id == linkPage.id
-
-                        baseClass =
-                            page.accent ++ " inline-block lh-crop relative "
                     in
                     Html.div
                         [ class "mb-4"
                         ]
                         [ Html.a
-                            [ A.href
+                            [ A.class "inline-block lh-crop relative"
+                            , A.href
                                 (Common.pathFromRoot
                                     { root = page.route
                                     }
                                     linkPage.route
                                 )
-                            , A.class
-                                (if isActive then
-                                    baseClass ++ " mark"
-                                 else
-                                    baseClass
-                                )
                             ]
                             [ Html.text linkPage.name
+                            , if isActive then
+                                Html.span
+                                    [ class ("mark " ++ page.accent)
+                                    ]
+                                    []
+                              else
+                                Html.text ""
                             ]
                         ]
               in
@@ -89,8 +89,11 @@ layout page contents =
           -- MAIN
           -- -------------------------------------
           Html.main_
-            [ class "flex-1 max-w-xl"
-            ]
+            (Array.prefix
+                [ class "flex-1 max-w-xl"
+                ]
+                attributes
+            )
             contents
         ]
     ]

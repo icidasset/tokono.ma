@@ -62,31 +62,33 @@ toString_ options =
 
 attributesToString : Array (Attribute msg) -> Array String
 attributesToString attrs =
+    let
+        collect attr acc =
+            case attr of
+                Attribute "class" value ->
+                    { acc | classes = Array.pushLast value acc.classes }
+
+                Attribute key value ->
+                    { acc | rest = Array.pushLast (buildProp key value) acc.rest }
+
+                BoolProperty string isEnabled ->
+                    if isEnabled then
+                        { acc | rest = Array.pushLast (hyphenate (propName string)) acc.rest }
+                    else
+                        acc
+
+                StringProperty key value ->
+                    collect (Attribute (propName key) value) acc
+
+                Style key value ->
+                    { acc | styles = Array.pushLast (escapeAttributePart key ++ ": " ++ escapeAttributePart value) acc.styles }
+
+                ValueProperty key value ->
+                    { acc | rest = Array.pushLast (buildProp (propName key) (Json.Encode.encode 0 value)) acc.rest }
+    in
     attrs
         |> Array.foldl
-                (\attr acc ->
-                    case attr of
-                        Attribute "class" value ->
-                            { acc | classes = Array.pushLast value acc.classes }
-
-                        Attribute key value ->
-                            { acc | rest = Array.pushLast (buildProp key value) acc.rest }
-
-                        BoolProperty string isEnabled ->
-                            if isEnabled then
-                                { acc | rest = Array.pushLast (hyphenate (propName string)) acc.rest }
-                            else
-                                acc
-
-                        StringProperty key value ->
-                            { acc | rest = Array.pushLast (buildProp (propName key) value) acc.rest }
-
-                        Style key value ->
-                            { acc | styles = Array.pushLast (escapeAttributePart key ++ ": " ++ escapeAttributePart value) acc.styles }
-
-                        ValueProperty key value ->
-                            { acc | rest = Array.pushLast (buildProp (propName key) (Json.Encode.encode 0 value)) acc.rest }
-                )
+                collect
                 { classes = []
                 , rest = []
                 , styles = []

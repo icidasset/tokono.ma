@@ -45,7 +45,7 @@ tokonoma =
         [ class "flex flex-col items-center"
         ]
         [ Html.h1
-            [ class "bg-empress bg-opacity-60 font-serif italic px-4 rounded-full text-silver-bird text-2xl w-fit dark:bg-silver-bird dark:bg-opacity-60 dark:text-empress"
+            [ class "bg-empress bg-opacity-60 font-serif italic px-4 rounded-full text-silver-bird text-2xl w-fit contrast-more:bg-stone-900 contrast-more:text-stone-50 dark:bg-silver-bird dark:bg-opacity-60 dark:text-empress"
             ]
             [ Html.span
                 [ class "inline-block mt-px"
@@ -54,7 +54,7 @@ tokonoma =
                 ]
             ]
         , Html.span
-            [ class "font-semibold mt-1 pt-px text-empress text-opacity-40 text-xs dark:text-silver-bird dark:text-opacity-40"
+            [ class "font-semibold mt-1 pt-px opacity-40 text-xs"
             ]
             [ Html.text "by Steven Vandevelde"
             ]

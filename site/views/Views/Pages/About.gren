@@ -10,22 +10,30 @@ view =
     Layouts.Default.layout
         Pages.about
         []
-        [ Html.h1
+        [ let
+            fadedText text =
+                Html.span
+                    [ class "opacity-70"
+                    ]
+                    [ Html.text text
+                    ]
+          in
+          Html.h1
             []
-            [ Html.text "A web "
+            [ fadedText "A web "
             , Html.strong
-                [ class "font-inherit text-young-apricot"
+                [ class "font-inherit text-accent-about"
                 ]
                 [ Html.text "engineer"
                 ]
-            , Html.text " with a passion for "
+            , fadedText " with a passion for "
             , Html.a
                 [ A.href "https://www.inkandswitch.com/local-first/"
-                , A.class "text-empress text-opacity-50 dark:text-silver-bird dark:text-opacity-100"
+                , A.class "opacity-50 dark:opacity-100"
                 ]
                 [ Html.text "local-first"
                 ]
-            , Html.text " tech"
+            , fadedText " tech"
             ]
         , paragraph
             [ Html.text "I started out as a full-stack web dev at a company called "
@@ -83,5 +91,5 @@ view =
 
 paragraph =
     Html.p
-        [ class "decoration-young-apricot"
+        [ class "decoration-accent-about"
         ]

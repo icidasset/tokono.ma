@@ -71,7 +71,7 @@ layout page attributes contents =
                             [ Html.text linkPage.name
                             , if isActive then
                                 Html.span
-                                    [ class ("mark " ++ page.accent)
+                                    [ class ("mark bg-accent-" ++ String.join "-" page.route)
                                     ]
                                     []
                               else

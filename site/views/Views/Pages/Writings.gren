@@ -14,7 +14,7 @@ view =
             []
             [ Html.text "Occasional "
             , Html.span
-                [ class "text-chewing-gum"
+                [ class "text-accent-writings"
                 ]
                 [ Html.text "thoughts"
                 ]
@@ -54,7 +54,7 @@ link text =
         []
         [ Html.a
             [ A.href "#"
-            , A.class "decoration-chewing-gum"
+            , A.class "decoration-accent-writings"
             ]
             [ Html.text text
             ]

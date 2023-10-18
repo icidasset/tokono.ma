@@ -1,0 +1,47 @@
+/**
+ * About
+ */
+
+.bg-accent-about {
+  @apply bg-wondrous-wisteria contrast-more:bg-perrywinkle;
+}
+
+.decoration-accent-about {
+  @apply decoration-wondrous-wisteria contrast-more:decoration-perrywinkle;
+}
+
+.text-accent-about {
+  @apply text-wondrous-wisteria contrast-more:text-perrywinkle;
+}
+
+
+/**
+ * Work
+ */
+.bg-accent-work {
+  @apply bg-chewing-gum;
+}
+
+.decoration-accent-work {
+  @apply decoration-chewing-gum;
+}
+
+.text-accent-work {
+  @apply text-chewing-gum;
+}
+
+
+/**
+ * Writings
+ */
+.bg-accent-writings {
+  @apply bg-lichen;
+}
+
+.decoration-accent-writings {
+  @apply decoration-lichen;
+}
+
+.text-accent-writings {
+  @apply text-lichen;
+}

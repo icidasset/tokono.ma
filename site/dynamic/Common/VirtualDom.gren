@@ -9,6 +9,8 @@ fromHtml : Html msg -> VirtualDom.Node msg
 fromHtml html =
     case html of
         Node tagName attributes children ->
+            -- TODO: if the `xmlns` attribute is given,
+            --       a namespaced node must be created with `VirtualNode.nodeNS`
             VirtualDom.node
                 tagName
                 (Array.map

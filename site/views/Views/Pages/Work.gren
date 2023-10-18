@@ -14,15 +14,34 @@ view =
             []
             [ Html.text "Things I\'ve "
             , Html.span
-                [ class "text-lichen"
+                [ class "text-accent-work"
                 ]
                 [ Html.text "work"
                 ]
             , Html.text "ed on"
             ]
+        , tableOfContents
             -- 
         , diffuse
         , oddsdk
+        ]
+
+
+tableOfContents =
+    let
+        toc id title =
+            li
+                [ Html.a
+                    [ A.href ("#" ++ id)
+                    ]
+                    [ Html.text title
+                    ]
+                ]
+    in
+    Html.ul
+        []
+        [ toc "diffuse" "Diffuse"
+        , toc "oddsdk" "ODD SDK"
         ]
 
 
@@ -32,19 +51,19 @@ view =
 
 paragraph =
     Html.p
-        [ class "decoration-lichen"
+        [ class "decoration-accent-work"
         ]
 
 
 quote =
     Html.blockquote
-        [ class "decoration-lichen"
+        [ class "decoration-accent-work"
         ]
 
 
 li =
     Html.li
-        [ class "decoration-lichen"
+        [ class "decoration-accent-work"
         ]
 
 
@@ -74,7 +93,7 @@ linksTable links =
         |> paragraph
 
 
-item title links nodes =
+item id title links nodes =
     nodes
         |> Array.prefix
                 [ Html.h2
@@ -85,7 +104,9 @@ item title links nodes =
         |> Array.postfix
                 [ linksTable links
                 ]
-        |> Html.article []
+        |> Html.article
+                [ A.id id
+                ]
 
 
 
@@ -94,6 +115,7 @@ item title links nodes =
 
 diffuse =
     item
+        "diffuse"
         "Diffuse"
         [ { name = "Application"
           , text = "diffuse.sh"
@@ -112,6 +134,7 @@ diffuse =
 
 oddsdk =
     item
+        "oddsdk"
         "ODD SDK"
         [ { name = "Website"
           , text = "odd.dev"

@@ -31,22 +31,7 @@ toString_ options =
                 string =
                     case node of
                         Node tagName attributes children ->
-                            case children of
-                                Regular [] ->
-                                    tag
-                                        tagName
-                                        attributes
-                                        { isClosed = True
-                                        }
-
-                                Regular nodes ->
-                                    tag
-                                        tagName
-                                        attributes
-                                        { isClosed = False
-                                        }
-                                        ++ toString_ { options | level = options.level + 1 } nodes
-                                        ++ closingTag tagName
+                            nodeToString options tagName attributes children
 
                         TextNode text ->
                             escapeText text
@@ -54,6 +39,26 @@ toString_ options =
             acc ++ string
         )
         ""
+
+
+nodeToString options tagName attributes children =
+  case children of
+      Regular [] ->
+          tag
+              tagName
+              attributes
+              { isClosed = True
+              }
+
+      Regular nodes ->
+          tag
+              tagName
+              attributes
+              { isClosed = False
+              }
+              ++ toString_ { options | level = options.level + 1 } nodes
+              ++ closingTag tagName
+
 
 
 

@@ -12,7 +12,6 @@ type alias Page =
     , name : String
     , title : String
     , route : Route
-    , accent : String
     }
 
 
@@ -45,7 +44,6 @@ index =
     , name = "Index"
     , title = Views.Common.title
     , route = []
-    , accent = ""
     }
 
 
@@ -61,7 +59,6 @@ about =
     , route =
         [ "about"
         ]
-    , accent = "bg-young-apricot"
     }
 
 
@@ -73,7 +70,6 @@ writings =
     , route =
         [ "writings"
         ]
-    , accent = "bg-chewing-gum"
     }
 
 
@@ -85,5 +81,4 @@ work =
     , route =
         [ "work"
         ]
-    , accent = "bg-lichen"
     }

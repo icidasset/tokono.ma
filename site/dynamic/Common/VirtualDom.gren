@@ -6,37 +6,37 @@ import VirtualDom
 
 
 fromHtml : Html msg -> VirtualDom.Node msg
-fromHtml html =
-    case html of
-        Node tagName attributes children ->
-            -- TODO: if the `xmlns` attribute is given,
-            --       a namespaced node must be created with `VirtualNode.nodeNS`
-            VirtualDom.node
-                tagName
-                (Array.map
-                    (\attr ->
-                        case attr of
-                            Attribute key value ->
-                                VirtualDom.attribute key value
+fromHtml =
+    transform
+        { node =
+            \tagName attributes { namespace } ->
+                (case namespace of
+                    Just ns ->
+                        VirtualDom.nodeNS ns
 
-                            BoolProperty key value ->
-                                VirtualDom.property key (Json.Encode.bool value)
-
-                            StringProperty key value ->
-                                VirtualDom.property key (Json.Encode.string value)
-
-                            Style key value ->
-                                VirtualDom.style key value
-
-                            ValueProperty key value ->
-                                VirtualDom.property key value
-                    )
-                    attributes
+                    Nothing ->
+                        VirtualDom.node
                 )
-                (case children of
-                    Regular nodes ->
-                        Array.map fromHtml nodes
-                )
+                    tagName
+                    (Array.map handleAttribute attributes)
+        , injectDescendants = \parentNodeResult childNodeResults -> parentNodeResult childNodeResults
+        , text = VirtualDom.text
+        }
 
-        TextNode text ->
-            VirtualDom.text text
+
+handleAttribute attr =
+    case attr of
+        Attribute key value ->
+            VirtualDom.attribute key value
+
+        BoolProperty key value ->
+            VirtualDom.property key (Json.Encode.bool value)
+
+        StringProperty key value ->
+            VirtualDom.property key (Json.Encode.string value)
+
+        Style key value ->
+            VirtualDom.style key value
+
+        ValueProperty key value ->
+            VirtualDom.property key value

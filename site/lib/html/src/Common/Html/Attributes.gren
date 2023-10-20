@@ -1,4 +1,4 @@
-module Common.Html.Attributes exposing ( style, property, attribute, class, classList, id, title, hidden, type_, value, checked, placeholder, selected, accept, acceptCharset, action, autocomplete, autofocus, disabled, enctype, list, maxlength, minlength, method, multiple, name, novalidate, pattern, readonly, required, size, for, form, max, min, step, cols, rows, wrap, href, target, download, hreflang, media, ping, rel, ismap, usemap, shape, coords, src, height, width, alt, autoplay, controls, loop, preload, poster, default, kind, srclang, sandbox, srcdoc, reversed, start, align, colspan, rowspan, headers, scope, accesskey, contenteditable, contextmenu, dir, draggable, dropzone, itemprop, lang, spellcheck, tabindex, cite, datetime, pubdate, manifest, content, charset, httpEquiv )
+module Common.Html.Attributes exposing ( style, property, attribute, class, classList, id, title, hidden, type_, value, checked, placeholder, selected, accept, acceptCharset, action, autocomplete, autofocus, disabled, enctype, list, maxlength, minlength, method, multiple, name, novalidate, pattern, readonly, required, size, for, form, max, min, step, cols, rows, wrap, href, target, download, hreflang, media, ping, rel, ismap, usemap, shape, coords, src, height, width, alt, autoplay, controls, loop, preload, poster, default, kind, srclang, sandbox, srcdoc, reversed, start, align, colspan, rowspan, headers, scope, accesskey, contenteditable, contextmenu, dir, draggable, dropzone, itemprop, lang, spellcheck, tabindex, cite, datetime, pubdate, manifest, content, charset, httpEquiv, xmlns )
 
 {-| Helper functions for HTML attributes. They are organized roughly by
 category. Each attribute is labeled with the HTML tags it can be used with, so
@@ -56,7 +56,7 @@ Attributes that can be attached to any HTML tag but are less commonly used.
       itemprop, lang, spellcheck, tabindex
 
 # Miscellaneous
-@docs cite, datetime, pubdate, manifest
+@docs cite, datetime, pubdate, manifest, xmlns
 
 -}
 
@@ -910,3 +910,14 @@ charset =
 httpEquiv : String -> Attribute msg
 httpEquiv =
     attribute "http-equiv"
+
+
+
+-- MISC
+
+
+{-| Use a different XML dialect.
+-}
+xmlns : String -> Attribute msg
+xmlns =
+    attribute "xmlns"

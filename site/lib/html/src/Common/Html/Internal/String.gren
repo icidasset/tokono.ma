@@ -14,51 +14,38 @@ toString options html =
         { indent = options.indent
         , level = 0
         }
-        [ html
-        ]
+        html
 
 
 toString_ :
     { indent : Int
     , level : Int
     }
-    -> Array (Html msg)
+    -> Html msg
     -> String
 toString_ options =
-    Array.foldl
-        (\node acc ->
-            let
-                string =
-                    case node of
-                        Node tagName attributes children ->
-                            nodeToString options tagName attributes children
+    transform
+        { node =
+            \tagName attributes _ ->
+                { tag = tag tagName attributes
+                , tagName = tagName
+                }
+        , injectDescendants =
+            \parent descendants ->
+                case descendants of
+                    [] ->
+                        parent.tag
+                            { isClosed = True
+                            }
 
-                        TextNode text ->
-                            escapeText text
-            in
-            acc ++ string
-        )
-        ""
-
-
-nodeToString options tagName attributes children =
-  case children of
-      Regular [] ->
-          tag
-              tagName
-              attributes
-              { isClosed = True
-              }
-
-      Regular nodes ->
-          tag
-              tagName
-              attributes
-              { isClosed = False
-              }
-              ++ toString_ { options | level = options.level + 1 } nodes
-              ++ closingTag tagName
-
+                    _ ->
+                        parent.tag
+                            { isClosed = False
+                            }
+                            ++ String.join "" descendants
+                            ++ closingTag parent.tagName
+        , text = escapeText
+        }
 
 
 

@@ -45,11 +45,7 @@ titleWithSuffix t =
 ikebana =
     Svg.svg
         [ A.fill "none"
-        , A.height "auto"
-        , A.attribute "max-height" "100%"
-        , A.attribute "max-width" "100%"
         , A.viewBox "0 0 201 233"
-        , A.width "auto"
         ]
         [ Svg.path
             [ A.fill "currentColor"

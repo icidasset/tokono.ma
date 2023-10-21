@@ -1,4 +1,4 @@
-module Svg exposing ( Svg, Attribute, text, node, map, svg, foreignObject, circle, ellipse, image, line, path, polygon, polyline, rect, use, animate, animateColor, animateMotion, animateTransform, mpath, set, desc, metadata, title, a, defs, g, marker, mask, pattern, switch, symbol, altGlyph, altGlyphDef, altGlyphItem, glyph, glyphRef, textPath, text_, tref, tspan, font, linearGradient, radialGradient, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, feSpecularLighting, feTile, feTurbulence, feDistantLight, fePointLight, feSpotLight, clipPath, colorProfile, cursor, filter, style, view )
+module Common.Svg exposing ( Svg, Attribute, text, node, map, svg, foreignObject, circle, ellipse, image, line, path, polygon, polyline, rect, use, animate, animateColor, animateMotion, animateTransform, mpath, set, desc, metadata, title, a, defs, g, marker, mask, pattern, switch, symbol, altGlyph, altGlyphDef, altGlyphItem, glyph, glyphRef, textPath, text_, tref, tspan, font, linearGradient, radialGradient, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, feSpecularLighting, feTile, feTurbulence, feDistantLight, fePointLight, feSpotLight, clipPath, colorProfile, cursor, filter, style, view )
 
 {-|
 
@@ -43,8 +43,8 @@ module Svg exposing ( Svg, Attribute, text, node, map, svg, foreignObject, circl
 @docs clipPath, colorProfile, cursor, filter, style, view
 -}
 
-import Html
-import VirtualDom
+import Common.Html as Html exposing ( Html )
+import Common.Html.Attributes exposing ( attribute, xmlns )
 
 
 
@@ -87,6 +87,13 @@ text =
     Html.text
 
 
+{-| Transform the messages produced by some `Svg`.
+-}
+map : (a -> msg) -> Svg a -> Svg msg
+map =
+    Html.map
+
+
 
 -- TAGS
 
@@ -101,10 +108,23 @@ containing a rounded rectangle:
         svg
           [ width "120", height "120", viewBox "0 0 120 120" ]
           [ rect [ x "10", y "10", width "100", height "100", rx "15", ry "15" ] [] ]
+
+This automatically adds the SVG `xmlns` attribute to the HTML node.
+Along with some other namespaces for which there are SVG attributes (eg. `xlink:href`).
+In the case where you want to nest `svg` elements, causing the `xmlns` attribute
+to become unnecessary, you can use `node "svg"` instead.
 -}
 svg : Array (Html.Attribute msg) -> Array (Svg msg) -> Html.Html msg
 svg attributes =
-    node "svg" (Array.pushFirst (Html.Attributes.xmlns "http://www.w3.org/2000/svg") attributes)
+    node
+        "svg"
+        (Array.prefix
+            [ xmlns "http://www.w3.org/2000/svg"
+            , attribute "xmlns:xlink" "http://www.w3.org/1999/xlink"
+            , attribute "xmlns:xml" "http://www.w3.org/XML/1998/namespace"
+            ]
+            attributes
+        )
 
 
 {-|-}

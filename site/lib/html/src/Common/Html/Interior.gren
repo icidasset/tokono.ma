@@ -1,4 +1,4 @@
-module Common.Html.Interior exposing ( Html(..), Attribute(..), Descendants(..), EventDecoder(..), transform )
+module Common.Html.Interior exposing ( Html(..), Attribute(..), Descendants(..), EventDecoder(..), map, transform )
 
 import Json.Decode exposing ( Decoder, Value )
 
@@ -53,6 +53,45 @@ type EventDecoder msg
 
 
 -- 🛠️
+
+
+map : (a -> b) -> Html a -> Html b
+map f node =
+    case node of
+        Node tagName attrs descendants ->
+            Node tagName (Array.map (mapAttribute f) attrs) (mapDescendants f descendants)
+
+        TextNode content ->
+            TextNode content
+
+
+mapAttribute : (a -> b) -> Attribute a -> Attribute b
+mapAttribute fn attribute =
+    case attribute of
+        Attribute key value ->
+            Attribute key value
+
+        -- Event name eventDecoder ->
+        --  Event name (mapEventDecoder f eventDecoder)
+        -- 
+        BoolProperty key value ->
+            BoolProperty key value
+
+        StringProperty key value ->
+            StringProperty key value
+
+        Style key value ->
+            Style key value
+
+        ValueProperty key value ->
+            ValueProperty key value
+
+
+mapDescendants : (a -> b) -> Descendants a -> Descendants b
+mapDescendants fn descendants =
+    case descendants of
+        Regular nodes ->
+            Regular (Array.map (map fn) nodes)
 
 
 transform =

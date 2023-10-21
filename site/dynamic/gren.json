@@ -1,10 +1,7 @@
 {
   "type": "application",
   "platform": "browser",
-  "source-directories": [
-    ".",
-    "../views"
-  ],
+  "source-directories": [".", "../views", "../lib/svg/src"],
   "gren-version": "0.3.0",
   "dependencies": {
     "direct": {

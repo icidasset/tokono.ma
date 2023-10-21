@@ -1,10 +1,10 @@
-module Common.Html exposing ( Html, Attribute, text, node, toString, toStringWithIndent, h1, h2, h3, h4, h5, h6, div, p, hr, pre, blockquote, span, a, code, em, strong, i, b, u, sub, sup, br, ol, ul, li, dl, dt, dd, img, iframe, canvas, math, form, input, textarea, button, select, option, section, nav, article, aside, header, footer, address, main_, figure, figcaption, table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th, fieldset, legend, label, datalist, optgroup, output, progress, meter, audio, video, source, track, embed, object, param, ins, del, small, cite, dfn, abbr, time, var, samp, kbd, s, q, mark, ruby, rt, rp, bdi, bdo, wbr, details, summary, menuitem, menu, html, head, body, title, meta, link )
+module Common.Html exposing ( Html, Attribute, text, node, map, toString, toStringWithIndent, h1, h2, h3, h4, h5, h6, div, p, hr, pre, blockquote, span, a, code, em, strong, i, b, u, sub, sup, br, ol, ul, li, dl, dt, dd, img, iframe, canvas, math, form, input, textarea, button, select, option, section, nav, article, aside, header, footer, address, main_, figure, figcaption, table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th, fieldset, legend, label, datalist, optgroup, output, progress, meter, audio, video, source, track, embed, object, param, ins, del, small, cite, dfn, abbr, time, var, samp, kbd, s, q, mark, ruby, rt, rp, bdi, bdo, wbr, details, summary, menuitem, menu, html, head, body, title, meta, link )
 
 {-| This file is organized roughly in order of popularity. The tags which you'd
 expect to use frequently will be closer to the top.
 
 # Primitives
-@docs Html, Attribute, text, node
+@docs Html, Attribute, text, node, map
 
 # Transformations
 @docs toString, toStringWithIndent
@@ -127,6 +127,43 @@ exactly as you specify.
 text : String -> Html msg
 text =
     Interior.TextNode
+
+
+
+-- NESTING VIEWS
+
+
+{-| Transform the messages produced by some `Html`. In the following example,
+we have `viewButton` that produces `()` messages, and we transform those values
+into `Msg` values in `view`.
+
+    type Msg = Left | Right
+
+    view : model -> Html Msg
+    view model =
+      div []
+        [ map (\_ -> Left) (viewButton "Left")
+        , map (\_ -> Right) (viewButton "Right")
+        ]
+
+    viewButton : String -> Html ()
+    viewButton name =
+      button [ onClick () ] [ text name ]
+
+If you are growing your project as recommended in [the official
+guide](https://guide.elm-lang.org/), this should not come in handy in most
+projects. Usually it is easier to just pass things in as arguments.
+
+**Note:** Some folks have tried to use this to make “components” in their
+projects, but they run into the fact that components are objects. Both are
+local mutable state with methods. Gren is not an object-oriented language, so
+you run into all sorts of friction if you try to use it like one. I definitely
+recommend against going down that path! Instead, make the simplest function
+possible and repeat.
+-}
+map : (a -> msg) -> Html a -> Html msg
+map =
+    Interior.map
 
 
 

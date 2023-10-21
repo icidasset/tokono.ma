@@ -65,7 +65,7 @@ attributesToString attrs =
 
                 BoolProperty string isEnabled ->
                     if isEnabled then
-                        { acc | rest = Array.pushLast (hyphenate (propName string)) acc.rest }
+                        { acc | rest = Array.pushLast (propName string) acc.rest }
                     else
                         acc
 
@@ -111,7 +111,7 @@ attributesToString attrs =
 
 buildProp : String -> String -> String
 buildProp key value =
-    hyphenate key ++ "=\"" ++ escapeAttributePart value ++ "\""
+    key ++ "=\"" ++ escapeAttributePart value ++ "\""
 
 
 closingTag : String -> String

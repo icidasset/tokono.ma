@@ -12,16 +12,15 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "Things I\'ve "
-            , Html.span
-                [ class "text-accent-work"
+            [ Html.span
+                [ class "text-accent-work text-opacity-80"
                 ]
-                [ Html.text "work"
+                [ Html.text "Projects"
                 ]
-            , Html.text "ed on"
+            , Html.text " & solved problems"
             ]
         , tableOfContents
-            -- 
+            --
         , diffuse
         , oddsdk
         ]
@@ -76,7 +75,7 @@ linksTable links =
         |> Array.map
                 (\link ->
                     [ Html.span
-                        [ class "inline-block text-sm w-32"
+                        [ class "inline-block text-base w-32"
                         ]
                         [ Html.text link.name
                         , Html.text ":"

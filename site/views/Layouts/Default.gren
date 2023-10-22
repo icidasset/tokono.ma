@@ -14,10 +14,10 @@ layout page attributes contents =
           -- HEADER
           -- -------------------------------------
           Html.header
-            [ class "flex-none flex ml-12 mr-36"
+            [ class "flex-none ml-12 mr-36"
             ]
             [ Html.div
-                [ class "flex flex-col items-end mr-36"
+                [ class "flex flex-col items-end"
                 ]
                 [ Html.a
                     [ A.class "block mb-8 w-[98px]"
@@ -33,7 +33,9 @@ layout page attributes contents =
                 , Common.tokonoma
                 ]
 
-            , -- NAV
+            , ------
+            -- NAV
+              ------
               let
                 link linkPage =
                     let
@@ -64,7 +66,7 @@ layout page attributes contents =
                         ]
               in
               Html.nav
-                [ class "font-serif font-light text-2xl text-right"
+                [ class "font-serif font-light mt-12 text-2xl text-right"
                 ]
                 (Array.map link Pages.pages)
             ]
@@ -74,7 +76,7 @@ layout page attributes contents =
           -- -------------------------------------
           Html.main_
             (Array.prefix
-                [ class "flex-1 max-w-xl"
+                [ class "flex-1 max-w-2xl"
                 ]
                 attributes
             )

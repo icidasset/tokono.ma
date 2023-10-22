@@ -12,12 +12,12 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "Occasional "
-            , Html.span
-                [ class "text-accent-writings"
+            [ Html.span
+                [ class "text-accent-writings text-opacity-80"
                 ]
-                [ Html.text "thoughts"
+                [ Html.text "Essays"
                 ]
+            , Html.br [] []
             , Html.text " & notes"
             ]
         , Html.ul

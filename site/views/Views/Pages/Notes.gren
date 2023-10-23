@@ -1,0 +1,43 @@
+module Views.Pages.Notes exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+
+
+view =
+    Layouts.Default.layout
+        Pages.notes
+        []
+        [ Html.h1
+            []
+            [ Html.span
+                [ class "text-accent-notes text-opacity-80"
+                ]
+                [ Html.text "Notes"
+                ]
+            , Html.text " about things that interest me."
+            ]
+        , Html.ul
+            []
+            [ link "Health & fitness"
+            ]
+        , Html.p
+            [ class "italic max-w-md mt-6 text-sm"
+            ]
+            [ Html.text "Ordered by name."
+            ]
+        ]
+
+
+link text =
+    Html.li
+        []
+        [ Html.a
+            [ A.href "#"
+            , A.class "decoration-accent-notes"
+            ]
+            [ Html.text text
+            ]
+        ]

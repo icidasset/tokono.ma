@@ -17,9 +17,10 @@ type alias Page =
 
 type PageId
     = About
+    | Essays
     | Index
+    | Notes
     | Work
-    | Writings
 
 
 
@@ -29,8 +30,9 @@ type PageId
 pages : Array Page
 pages =
     [ about
-    , writings
     , work
+    , essays
+    , notes
     ]
 
 
@@ -62,13 +64,24 @@ about =
     }
 
 
-writings : Page
-writings =
-    { id = Writings
-    , name = "Writings"
-    , title = Views.Common.titleWithSuffix "Writings"
+essays : Page
+essays =
+    { id = Essays
+    , name = "Essays"
+    , title = Views.Common.titleWithSuffix "Essays"
     , route =
-        [ "writings"
+        [ "essays"
+        ]
+    }
+
+
+notes : Page
+notes =
+    { id = Notes
+    , name = "Notes"
+    , title = Views.Common.titleWithSuffix "Notes"
+    , route =
+        [ "notes"
         ]
     }
 

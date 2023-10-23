@@ -8,8 +8,8 @@
 @tailwind utilities;
 
 body {
-  @apply bg-french-porcelain text-tuxedo font-sans;
-  @apply dark:bg-tuxedo dark:text-french-porcelain;
+  @apply bg-french-porcelain text-carbon-fiber font-sans;
+  @apply dark:bg-carbon-fiber dark:text-french-porcelain;
   text-rendering: geometricPrecision;
 }
 
@@ -17,7 +17,7 @@ body {
  * Basics
  */
 main h1 {
-  @apply font-display text-tuxedo mb-10 mt-[-0.125em] text-[5.5rem] font-extrabold uppercase leading-none text-opacity-70;
+  @apply text-carbon-fiber font-display mb-10 mt-[-0.125em] text-7xl font-black leading-none text-opacity-70;
   @apply dark:text-silver-bird dark:text-opacity-70;
   background-image: url("images/crossline-dots.webp");
   background-repeat: repeat;
@@ -27,7 +27,7 @@ main h1 {
 }
 
 main h1 a {
-  @apply text-tuxedo text-opacity-40;
+  @apply text-carbon-fiber text-opacity-40;
   @apply dark:text-silver-bird dark:text-opacity-90;
 }
 
@@ -36,7 +36,7 @@ main h1 strong {
 }
 
 main h2 {
-  @apply mb-6 mt-12 font-serif text-4xl font-bold opacity-90;
+  @apply mb-8 mt-20 font-serif text-4xl font-bold opacity-90;
 }
 
 main h3 {

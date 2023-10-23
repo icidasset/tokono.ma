@@ -60,7 +60,7 @@ tokonoma =
         [ class "flex flex-col items-center"
         ]
         [ Html.h1
-            [ class "bg-tuxedo bg-opacity-30 font-serif italic px-4 rounded-full text-french-porcelain text-2xl w-fit dark:bg-french-porcelain dark:bg-opacity-30 dark:text-tuxedo"
+            [ class "bg-carbon-fiber bg-opacity-30 font-serif italic px-4 rounded-full text-french-porcelain text-2xl w-fit dark:bg-french-porcelain dark:bg-opacity-30 dark:text-carbon-fiber"
             ]
             [ Html.span
                 [ class "inline-block mt-px"

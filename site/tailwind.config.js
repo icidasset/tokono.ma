@@ -11,6 +11,7 @@ export default {
         bisque: "#fde5c6",
         burrito: "#edd3c3",
         buttercream: "#f2decd",
+        "carbon-fiber": "#2e2e2e",
         "chewing-gum": "#ecadaa",
         "cold-lips": "#3959af4",
         "dreamy-candy-forest": "#b28de2",

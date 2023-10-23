@@ -1,4 +1,4 @@
-module Views.Pages.Writings exposing ( view )
+module Views.Pages.Essays exposing ( view )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
@@ -8,24 +8,23 @@ import Pages
 
 view =
     Layouts.Default.layout
-        Pages.writings
+        Pages.essays
         []
         [ Html.h1
             []
-            [ Html.span
-                [ class "text-accent-writings text-opacity-80"
+            [ Html.text "A few "
+            , Html.span
+                [ class "text-accent-essays text-opacity-80"
                 ]
-                [ Html.text "Essays"
+                [ Html.text "articles"
                 ]
-            , Html.br [] []
-            , Html.text " & notes"
+            , Html.text " I\'ve written over the years, mostly code related."
             ]
         , Html.ul
             []
             [ link "Building Blocks"
             , link "Functional Programming & Elixir – Pt. 1, The Basics"
             , link "Minimize Flaws Using Functional Programming"
-            , link "Notes on Health & Fitness"
             ]
         , Html.p
             [ class "italic max-w-md mt-6 text-sm"
@@ -54,7 +53,7 @@ link text =
         []
         [ Html.a
             [ A.href "#"
-            , A.class "decoration-accent-writings"
+            , A.class "decoration-accent-essays"
             ]
             [ Html.text text
             ]

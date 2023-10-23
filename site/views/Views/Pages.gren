@@ -4,9 +4,10 @@ import Common.Html exposing ( Html )
 import Layouts.Default
 import Pages exposing ( Page, PageId(..) )
 import Views.Pages.About
+import Views.Pages.Essays
 import Views.Pages.Index
+import Views.Pages.Notes
 import Views.Pages.Work
-import Views.Pages.Writings
 
 
 view : Page -> Array (Html msg)
@@ -15,11 +16,14 @@ view page =
         About ->
             Views.Pages.About.view
 
+        Essays ->
+            Views.Pages.Essays.view
+
         Index ->
             Views.Pages.Index.view
 
-        Writings ->
-            Views.Pages.Writings.view
+        Notes ->
+            Views.Pages.Notes.view
 
         Work ->
             Views.Pages.Work.view

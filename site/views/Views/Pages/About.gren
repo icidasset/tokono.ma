@@ -24,7 +24,7 @@ view =
                 ]
                 [ Html.text "local-first"
                 ]
-            , Html.text " tech"
+            , Html.text " tech."
             ]
         , paragraph
             [ Html.text "I started out as a full-stack web dev at a company called "

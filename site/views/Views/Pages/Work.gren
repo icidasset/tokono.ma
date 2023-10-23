@@ -12,12 +12,13 @@ view =
         []
         [ Html.h1
             []
-            [ Html.span
+            [ Html.text "Side projects and open-source "
+            , Html.span
                 [ class "text-accent-work text-opacity-80"
                 ]
-                [ Html.text "Projects"
+                [ Html.text "work"
                 ]
-            , Html.text " & solved problems"
+            , Html.text "."
             ]
         , tableOfContents
             --
@@ -40,7 +41,7 @@ tableOfContents =
     Html.ul
         []
         [ toc "diffuse" "Diffuse"
-        , toc "oddsdk" "ODD SDK"
+        , toc "oddsdk" "Open Distributed Data SDK"
         ]
 
 
@@ -134,7 +135,7 @@ diffuse =
 oddsdk =
     item
         "oddsdk"
-        "ODD SDK"
+        "Open Distributed Data SDK"
         [ { name = "Website"
           , text = "odd.dev"
           , url = "https://odd.dev/"
@@ -160,7 +161,7 @@ oddsdk =
             [ Html.text "The ODD SDK is a local-first toolkit that helps developers build systems that store data in a secure, reliable, and decentralised way. The focus is on the user, providing them with sufficient authority while still being convenient."
             ]
         , quote
-            [ Html.text "ODD stands for Open Distributed Data. We want our data accessible from anywhere and distributed, meaning it can live partially or fully in multiple places. Ideally, as much of this data as possible lives on user owned devices and communication of this data will be done in a decentralised, peer-to-peer fashion."
+            [ Html.text "We want our data accessible from anywhere and distributed, meaning it can live partially or fully in multiple places. Ideally, as much of this data as possible lives on user owned devices and communication of this data will be done in a decentralised, peer-to-peer fashion."
             ]
         , paragraph
             [ Html.text "This is the main project I worked on during my time at "

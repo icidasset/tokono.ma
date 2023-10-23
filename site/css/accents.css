@@ -14,10 +14,42 @@
   @apply text-wondrous-wisteria contrast-more:text-perrywinkle;
 }
 
+/**
+ * Essays
+ */
+
+.bg-accent-essays {
+  @apply bg-lichen;
+}
+
+.decoration-accent-essays {
+  @apply decoration-lichen;
+}
+
+.text-accent-essays {
+  @apply text-lichen;
+}
+
+/**
+ * Notes
+ */
+
+.bg-accent-notes {
+  @apply bg-dreamy-candy-forest;
+}
+
+.decoration-accent-notes {
+  @apply decoration-dreamy-candy-forest;
+}
+
+.text-accent-notes {
+  @apply text-dreamy-candy-forest;
+}
 
 /**
  * Work
  */
+
 .bg-accent-work {
   @apply bg-chewing-gum;
 }
@@ -28,20 +60,4 @@
 
 .text-accent-work {
   @apply text-chewing-gum;
-}
-
-
-/**
- * Writings
- */
-.bg-accent-writings {
-  @apply bg-lichen;
-}
-
-.decoration-accent-writings {
-  @apply decoration-lichen;
-}
-
-.text-accent-writings {
-  @apply text-lichen;
 }

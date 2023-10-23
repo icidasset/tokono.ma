@@ -33,9 +33,9 @@ layout page attributes contents =
                 , Common.tokonoma
                 ]
 
-            , ------
-            -- NAV
-              ------
+            , -- ----
+              -- NAV
+              -- ----
               let
                 link linkPage =
                     let

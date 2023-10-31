@@ -17,8 +17,9 @@ body {
  * Basics
  */
 main h1 {
-  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-7xl font-black leading-none text-opacity-70;
+  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-8xl font-black text-opacity-70;
   @apply dark:text-silver-bird dark:text-opacity-70;
+  line-height: 0.95;
 }
 
 main h1 a {

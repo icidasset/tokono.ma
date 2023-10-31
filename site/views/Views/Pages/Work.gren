@@ -4,7 +4,7 @@ import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
-
+import Views.Common as Common
 
 view =
     Layouts.Default.layout
@@ -12,18 +12,21 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "Projects & open-source "
-            , Html.span
+            [ Html.span
                 [ class "text-accent-work"
                 ]
-                [ Html.text "work"
+                [ Html.text "Work"
                 ]
-            , Html.text "."
+            , Html.text
+                " done on mostly code things and some electrical engineering."
             ]
-        , tableOfContents
             --
         , diffuse
         , oddsdk
+
+        --
+        , Common.closingEmoji "🛠️️"
+
         ]
 
 

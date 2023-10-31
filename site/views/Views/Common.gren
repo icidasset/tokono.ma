@@ -42,6 +42,12 @@ titleWithSuffix t =
 -- 🖼️
 
 
+closingEmoji emoji =
+    Html.div
+        [ class "font-emoji mt-16 opacity-50 text-2xl" ]
+        [ Html.text emoji ]
+
+
 ikebana =
     Svg.svg
         [ A.fill "none"

@@ -76,7 +76,7 @@ layout page attributes contents =
           -- -------------------------------------
           Html.main_
             (Array.prefix
-                [ class "flex-1 max-w-3xl"
+                [ class "flex-1 max-w-2xl"
                 ]
                 attributes
             )

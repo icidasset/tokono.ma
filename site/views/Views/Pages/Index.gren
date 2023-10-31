@@ -1,11 +1,36 @@
 module Views.Pages.Index exposing ( view )
 
 import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Views.Common as Common
 
+import Pages
 
 view =
     [ Html.main_
-        []
-        [ Html.text "Index"
+        [ class "flex flex-col items-center justify-center min-h-screen text-center" ]
+        [ Html.div
+          [class "mb-16"]
+          [ Common.tokonoma]
+        , Html.div
+          [class "mb-16 w-40"]
+          [Common.ikebana]
+        , Html.nav
+          [ class "flex font-display items-center space-x-24 text-2xl" ]
+          (
+            Array.map
+              (\page ->
+                Html.a
+                  [ class "inline-block relative"
+                  , A.href (String.join "/" page.route)
+                  ]
+                  [ Html.text page.name
+                  , Html.span
+                    [ class ("mark opacity-50 bg-accent-" ++ String.join "-" page.route) ]
+                    []
+                  ]
+              )
+              Pages.pages
+          )
         ]
     ]

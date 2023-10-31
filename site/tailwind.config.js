@@ -39,6 +39,7 @@ export default {
       },
       fontFamily: {
         display: ["Caveat", "Assistant", ...defaultTheme.fontFamily.sans],
+        emoji: ["Noto Emoji"],
         headings: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
         sans: ["Assistant", ...defaultTheme.fontFamily.sans],
       },

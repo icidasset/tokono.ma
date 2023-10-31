@@ -6,6 +6,7 @@ import Layouts.Default
 import Pages
 import Views.Common as Common
 
+
 view =
     Layouts.Default.layout
         Pages.essays
@@ -45,8 +46,7 @@ view =
             [ link "Webnative & Elm"
             , link "Why I wrote static-base"
             ]
-
-        --
+            -- 
         , Common.closingEmoji "✍️"
         ]
 

@@ -6,6 +6,7 @@ import Layouts.Default
 import Pages
 import Views.Common as Common
 
+
 view =
     Layouts.Default.layout
         Pages.work
@@ -17,16 +18,13 @@ view =
                 ]
                 [ Html.text "Work"
                 ]
-            , Html.text
-                " done on mostly code things and some electrical engineering."
+            , Html.text " done on mostly code things and some electrical engineering."
             ]
-            --
+            -- 
         , diffuse
         , oddsdk
-
-        --
+            -- 
         , Common.closingEmoji "🛠️️"
-
         ]
 
 

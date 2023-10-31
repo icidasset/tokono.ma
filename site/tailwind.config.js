@@ -20,6 +20,7 @@ export default {
         empress: "#7e7173",
         "french-porcelain": "#f9f6f4",
         "girl-power": "#d9a3d7",
+        "honey-bee": "#fcdda2",
         iridescent: "#3a6255",
         "larb-gai": "#dcc6a6",
         lichen: "#9cc5a9",

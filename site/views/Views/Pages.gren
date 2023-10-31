@@ -6,6 +6,7 @@ import Pages exposing ( Page, PageId(..) )
 import Views.Pages.About
 import Views.Pages.Essays
 import Views.Pages.Index
+import Views.Pages.Links
 import Views.Pages.Notes
 import Views.Pages.Work
 
@@ -21,6 +22,9 @@ view page =
 
         Index ->
             Views.Pages.Index.view
+
+        Links ->
+            Views.Pages.Links.view
 
         Notes ->
             Views.Pages.Notes.view

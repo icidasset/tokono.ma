@@ -19,6 +19,7 @@ type PageId
     = About
     | Essays
     | Index
+    | Links
     | Notes
     | Work
 
@@ -30,6 +31,7 @@ type PageId
 pages : Array Page
 pages =
     [ work
+    , links
     , essays
     , notes
     , about
@@ -71,6 +73,17 @@ essays =
     , title = Views.Common.titleWithSuffix "Essays"
     , route =
         [ "essays"
+        ]
+    }
+
+
+links : Page
+links =
+    { id = Links
+    , name = "Links"
+    , title = Views.Common.titleWithSuffix "Links"
+    , route =
+        [ "links"
         ]
     }
 

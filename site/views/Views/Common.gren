@@ -44,8 +44,10 @@ titleWithSuffix t =
 
 closingEmoji emoji =
     Html.div
-        [ class "font-emoji mt-16 opacity-50 text-2xl" ]
-        [ Html.text emoji ]
+        [ class "font-emoji mt-16 opacity-50 text-2xl"
+        ]
+        [ Html.text emoji
+        ]
 
 
 ikebana =
@@ -63,7 +65,7 @@ ikebana =
 
 tokonoma =
     Html.div
-            [ class "font-bold font-headings mt-1 pt-px opacity-40 text-sm uppercase tracking-widest"
-            ]
-            [ Html.text "tokono.ma"
-            ]
+        [ class "font-bold font-headings mt-1 pt-px opacity-40 text-sm uppercase tracking-widest"
+        ]
+        [ Html.text "tokono.ma"
+        ]

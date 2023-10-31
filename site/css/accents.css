@@ -31,6 +31,22 @@
 }
 
 /**
+ * Links
+ */
+
+.bg-accent-links {
+  @apply bg-honey-bee;
+}
+
+.decoration-accent-links {
+  @apply decoration-honey-bee;
+}
+
+.text-accent-links {
+  @apply text-honey-bee;
+}
+
+/**
  * Notes
  */
 

@@ -1,0 +1,38 @@
+module Views.Pages.Links exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.links
+        []
+        [ Html.h1
+            []
+            [ Html.strong
+                [ class "text-accent-links"
+                ]
+                [ Html.text "Links"
+                ]
+            , Html.text " to some things related to myself, but also a bunch of other stuff." ]
+
+        , Html.text ""
+            --
+        , Common.closingEmoji "🔗"
+        ]
+
+
+link text =
+    Html.li
+        []
+        [ Html.a
+            [ A.href "#"
+            , A.class "decoration-accent-notes"
+            ]
+            [ Html.text text
+            ]
+        ]

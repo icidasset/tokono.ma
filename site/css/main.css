@@ -8,25 +8,25 @@
 @tailwind utilities;
 
 body {
-  @apply bg-french-porcelain text-carbon-fiber font-sans;
+  @apply bg-french-porcelain text-carbon-fiber font-sans antialiased;
   @apply dark:bg-carbon-fiber dark:text-french-porcelain;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
 }
 
 /**
  * Basics
  */
 main h1 {
-  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-5xl font-bold text-opacity-70;
-  @apply dark:text-silver-bird dark:text-opacity-70;
+  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-5xl font-bold;
+  @apply dark:text-silver-bird;
   @apply sm:text-6xl;
   @apply md:text-7xl;
   line-height: 0.95;
 }
 
 main h1 a {
-  @apply text-carbon-fiber text-opacity-40;
-  @apply dark:text-silver-bird dark:text-opacity-90;
+  @apply text-carbon-fiber opacity-40;
+  @apply dark:text-silver-bird dark:opacity-90;
 }
 
 main h1 strong {

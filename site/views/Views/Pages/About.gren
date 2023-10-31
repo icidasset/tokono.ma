@@ -13,19 +13,19 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "A web "
+            [ Common.fadedHeaderText "A web "
             , Html.strong
                 [ class "text-accent-about"
                 ]
                 [ Html.text "engineer"
                 ]
-            , Html.text " with a passion for "
+            , Common.fadedHeaderText " with a passion for "
             , Html.a
                 [ A.href "https://www.inkandswitch.com/local-first/"
                 ]
                 [ Html.text "local-first"
                 ]
-            , Html.text " tech."
+            , Common.fadedHeaderText " tech."
             ]
         , paragraph
             [ Html.text "I started out as a full-stack web dev at a company called "

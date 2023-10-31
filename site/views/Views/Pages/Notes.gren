@@ -18,7 +18,7 @@ view =
                 ]
                 [ Html.text "Notes"
                 ]
-            , Html.text " about things that interest me."
+            , Common.fadedHeaderText " about things that interest me."
             ]
         , Html.ul
             []

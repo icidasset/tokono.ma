@@ -13,13 +13,13 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "A few "
+            [ Common.fadedHeaderText "A few "
             , Html.span
                 [ class "text-accent-essays"
                 ]
                 [ Html.text "articles"
                 ]
-            , Html.text " I\'ve written over the years, mostly code related."
+            , Common.fadedHeaderText " I\'ve written over the years, mostly code related."
             ]
         , Html.ul
             []

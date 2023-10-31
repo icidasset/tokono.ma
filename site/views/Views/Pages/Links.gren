@@ -18,7 +18,7 @@ view =
                 ]
                 [ Html.text "Links"
                 ]
-            , Html.text " to some things related to myself, but also a bunch of other stuff."
+            , Common.fadedHeaderText " to some things related to myself, but also a bunch of other stuff."
             ]
         , Html.text ""
             -- 

@@ -50,6 +50,14 @@ closingEmoji emoji =
         ]
 
 
+fadedHeaderText text =
+    Html.span
+        [ class "opacity-70"
+        ]
+        [ Html.text text
+        ]
+
+
 ikebana =
     Svg.svg
         [ A.fill "none"

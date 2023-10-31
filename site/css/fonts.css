@@ -1,16 +1,18 @@
 @font-face {
   font-family: "Assistant";
+  font-weight: 1 999;
   src: url("./fonts/assistant-variable_wght.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Caveat";
-  font-style: normal;
+  font-weight: 1 999;
   src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Gabarito";
+  font-weight: 1 999;
   src: url("./fonts/gabarito-variable_wght.woff2") format("woff2");
 }
 

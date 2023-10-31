@@ -18,7 +18,7 @@ view =
                 ]
                 [ Html.text "Work"
                 ]
-            , Html.text " done on mostly code things and some electrical engineering."
+            , Common.fadedHeaderText " done on mostly code things and some electrical engineering."
             ]
             -- 
         , diffuse

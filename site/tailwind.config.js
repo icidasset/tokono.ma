@@ -13,8 +13,10 @@ export default {
         buttercream: "#f2decd",
         "carbon-fiber": "#2e2e2e",
         "chewing-gum": "#ecadaa",
+        "chai-latte": "#fec69d",
         "cold-lips": "#3959af4",
         "dreamy-candy-forest": "#b28de2",
+        "enchanted-lavender": "#c5aae9",
         empress: "#7e7173",
         "french-porcelain": "#f9f6f4",
         "girl-power": "#d9a3d7",
@@ -36,15 +38,9 @@ export default {
         "young-apricot": "#fed2b2",
       },
       fontFamily: {
-        display: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
+        display: ["Caveat", "Assistant", ...defaultTheme.fontFamily.sans],
+        headings: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
         sans: ["Assistant", ...defaultTheme.fontFamily.sans],
-        serif: [
-          ["Playfair", ...defaultTheme.fontFamily.serif],
-          {
-            fontVariationSettings: '"opsz" 42, "wdth" 88',
-            letterSpacing: "-0.025em",
-          },
-        ],
       },
     },
   },

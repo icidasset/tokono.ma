@@ -17,13 +17,8 @@ body {
  * Basics
  */
 main h1 {
-  @apply text-carbon-fiber font-display mb-10 mt-[-0.125em] text-7xl font-black leading-none text-opacity-70;
+  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-7xl font-black leading-none text-opacity-70;
   @apply dark:text-silver-bird dark:text-opacity-70;
-  background-image: url("images/crossline-dots.webp");
-  background-repeat: repeat;
-  background-clip: text;
-  -webkit-background-clip: text;
-  /* -webkit-text-fill-color: #000; */
 }
 
 main h1 a {
@@ -36,11 +31,11 @@ main h1 strong {
 }
 
 main h2 {
-  @apply mb-8 mt-20 font-serif text-4xl font-bold opacity-90;
+  @apply font-headings mb-8 mt-20 text-4xl font-extrabold opacity-90;
 }
 
 main h3 {
-  @apply mb-5 mt-8 font-serif text-2xl font-semibold opacity-90;
+  @apply font-headings mb-5 mt-8 text-2xl font-bold opacity-90;
 }
 
 blockquote {

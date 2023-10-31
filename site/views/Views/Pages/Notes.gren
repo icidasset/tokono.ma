@@ -13,7 +13,7 @@ view =
         [ Html.h1
             []
             [ Html.span
-                [ class "text-accent-notes text-opacity-80"
+                [ class "text-accent-notes"
                 ]
                 [ Html.text "Notes"
                 ]

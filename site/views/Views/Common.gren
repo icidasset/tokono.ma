@@ -57,20 +57,7 @@ ikebana =
 
 tokonoma =
     Html.div
-        [ class "flex flex-col items-center"
-        ]
-        [ Html.h1
-            [ class "bg-carbon-fiber bg-opacity-30 font-serif italic px-4 rounded-full text-french-porcelain text-2xl w-fit dark:bg-french-porcelain dark:bg-opacity-30 dark:text-carbon-fiber"
+            [ class "font-bold font-headings mt-1 pt-px opacity-40 text-sm uppercase tracking-widest"
             ]
-            [ Html.span
-                [ class "inline-block mt-px"
-                ]
-                [ Html.text "tokono.ma"
-                ]
+            [ Html.text "tokono.ma"
             ]
-        , Html.span
-            [ class "font-semibold mt-1 pt-px opacity-40 text-xs"
-            ]
-            [ Html.text "by Steven Vandevelde"
-            ]
-        ]

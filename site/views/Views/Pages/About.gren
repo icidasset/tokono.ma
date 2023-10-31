@@ -14,7 +14,7 @@ view =
             []
             [ Html.text "A web "
             , Html.strong
-                [ class "text-accent-about text-opacity-80"
+                [ class "text-accent-about"
                 ]
                 [ Html.text "engineer"
                 ]

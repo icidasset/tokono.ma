@@ -14,7 +14,7 @@ view =
             []
             [ Html.text "A few "
             , Html.span
-                [ class "text-accent-essays text-opacity-80"
+                [ class "text-accent-essays"
                 ]
                 [ Html.text "articles"
                 ]

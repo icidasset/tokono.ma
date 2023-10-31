@@ -29,10 +29,10 @@ type PageId
 
 pages : Array Page
 pages =
-    [ about
-    , work
+    [ work
     , essays
     , notes
+    , about
     ]
 
 

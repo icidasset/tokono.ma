@@ -12,9 +12,9 @@ view =
         []
         [ Html.h1
             []
-            [ Html.text "Side projects and open-source "
+            [ Html.text "Projects & open-source "
             , Html.span
-                [ class "text-accent-work text-opacity-80"
+                [ class "text-accent-work"
                 ]
                 [ Html.text "work"
                 ]

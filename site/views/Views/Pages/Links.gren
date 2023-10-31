@@ -18,10 +18,10 @@ view =
                 ]
                 [ Html.text "Links"
                 ]
-            , Html.text " to some things related to myself, but also a bunch of other stuff." ]
-
+            , Html.text " to some things related to myself, but also a bunch of other stuff."
+            ]
         , Html.text ""
-            --
+            -- 
         , Common.closingEmoji "🔗"
         ]
 

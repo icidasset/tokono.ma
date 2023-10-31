@@ -4,6 +4,12 @@
 }
 
 @font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Gabarito";
   src: url("./fonts/gabarito-variable_wght.woff2") format("woff2");
 }
@@ -20,10 +26,4 @@
   src:
     local("Noto Color Emoji"),
     url("./fonts/noto-emoji-color.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Caveat";
-  font-style: normal;
-  src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
 }

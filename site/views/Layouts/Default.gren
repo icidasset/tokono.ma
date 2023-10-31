@@ -43,25 +43,27 @@ layout page attributes contents =
                             page.id == linkPage.id
                     in
                     Html.div
-                      [ A.class "inline-block md:block md:mb-4"]
-                      [ Html.a
-                        [ A.class "inline-block lh-crop relative"
-                        , A.href
-                            (Common.pathFromRoot
-                                { root = page.route
-                                }
-                                linkPage.route
-                            )
+                        [ A.class "inline-block md:block md:mb-4"
                         ]
-                        [ Html.text linkPage.name
-                        , if isActive then
-                            Html.span
-                                [ class ("mark bg-accent-" ++ String.join "-" page.route)
-                                ]
-                                []
-                          else
-                            Html.text ""
-                        ]]
+                        [ Html.a
+                            [ A.class "inline-block lh-crop relative"
+                            , A.href
+                                (Common.pathFromRoot
+                                    { root = page.route
+                                    }
+                                    linkPage.route
+                                )
+                            ]
+                            [ Html.text linkPage.name
+                            , if isActive then
+                                Html.span
+                                    [ class ("mark bg-accent-" ++ String.join "-" page.route)
+                                    ]
+                                    []
+                              else
+                                Html.text ""
+                            ]
+                        ]
               in
               Html.nav
                 [ class "font-display font-light mt-12 space-x-4 text-xl text-right md:space-x-0 md:text-2xl"

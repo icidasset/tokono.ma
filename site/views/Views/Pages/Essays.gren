@@ -12,14 +12,9 @@ view =
         Pages.essays
         []
         [ Html.h1
-            []
-            [ Common.fadedHeaderText "A few "
-            , Html.span
-                [ class "text-accent-essays"
-                ]
-                [ Html.text "articles"
-                ]
-            , Common.fadedHeaderText " I\'ve written over the years, mostly code related."
+            [ class "text-accent-essays"
+            ]
+            [ Html.text "A few articles  I\'ve written over the years, mostly code related."
             ]
         , Html.ul
             []

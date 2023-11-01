@@ -25,8 +25,7 @@ main h1 {
 }
 
 main h1 a {
-  @apply text-carbon-fiber opacity-40;
-  @apply dark:text-cows-milk dark:opacity-90;
+  filter: hue-rotate(180deg);
 }
 
 main h1 strong {

@@ -12,13 +12,9 @@ view =
         Pages.work
         []
         [ Html.h1
-            []
-            [ Html.span
-                [ class "text-accent-work"
-                ]
-                [ Html.text "Work"
-                ]
-            , Common.fadedHeaderText " done on open-source code or personal projects."
+            [ class "text-accent-work"
+            ]
+            [ Html.text "Open-source work & personal projects."
             ]
         , paragraph
             [ Html.span
@@ -46,12 +42,22 @@ view =
                 ]
                 [ Html.text "Shikensu"
                 ]
-            , Html.text ", …"
+            , Html.text ", an electrical-wave analyser "
+            , Html.a
+                [ A.href "#waves"
+                ]
+                [ Html.text "Waves"
+                ]
+            , Html.text ", and more …"
             ]
             -- 
         , diffuse
         , oddsdk
         , shikensu
+        , waves
+        , circuits
+        , quotes
+        , checklists
             -- 
         , Common.closingEmoji "🛠️️"
         ]
@@ -153,6 +159,56 @@ item id title links nodes =
 -- WORK
 
 
+checklists =
+    item
+        "checklists"
+        "Checklists"
+        [ { name = "Application"
+          , text = "checklists.citric.id"
+          , url = "https://checklists.citric.id/"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/checklists"
+          , url = "https://github.com/icidasset/checklists/"
+          }
+        ]
+        [ paragraph
+            [ Html.text "A tiny app that makes checklists and embeds them in the URL itself so it can be easily shared."
+            ]
+        ]
+
+
+circuits =
+    item
+        "circuits"
+        "Circuits"
+        [ { name = "Website"
+          , text = "circuits.citric.id"
+          , url = "https://circuits.citric.id/"
+          }
+        ]
+        [ imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "circuits.webp"
+                        ]
+                    )
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "Electrical circuits explained."
+            ]
+        ]
+
+
 diffuse =
     item
         "diffuse"
@@ -175,7 +231,8 @@ diffuse =
                         { root = Pages.work.route
                         }
                         [ "images"
-                        , "diffuse-grey.svg"
+                        , "work"
+                        , "diffuse.svg"
                         ]
                     )
                 , A.width 150
@@ -230,6 +287,7 @@ oddsdk =
                         { root = Pages.work.route
                         }
                         [ "images"
+                        , "work"
                         , "passwordlessauth.webp"
                         ]
                     )
@@ -263,6 +321,25 @@ oddsdk =
                 [ Html.text "WNFS"
                 ]
             , Html.text ", etc)."
+            ]
+        ]
+
+
+quotes =
+    item
+        "quotes"
+        "Quotes"
+        [ { name = "Application"
+          , text = "quotes.fission.app"
+          , url = "https://quotes.fission.app/"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/quotes"
+          , url = "https://github.com/icidasset/quotes/"
+          }
+        ]
+        [ paragraph
+            [ Html.text "A tiny app that shows a random quote from a given collection. This app will be made local-first somewhere in the near future."
             ]
         ]
 
@@ -323,3 +400,34 @@ shikensuCode =
     destination =
         Relative (Path.directory [ "build" ])
     """
+
+
+waves =
+    item
+        "waves"
+        "Waves"
+        [ { name = "Application"
+          , text = "waves.citric.id"
+          , url = "https://waves.citric.id/"
+          }
+        ]
+        [ imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "waves.webp"
+                        ]
+                    )
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "Electrical-wave analyser."
+            ]
+        ]

@@ -12,13 +12,9 @@ view =
         Pages.notes
         []
         [ Html.h1
-            []
-            [ Html.span
-                [ class "text-accent-notes"
-                ]
-                [ Html.text "Notes"
-                ]
-            , Common.fadedHeaderText " about things that interest me."
+            [ class "text-accent-notes"
+            ]
+            [ Html.text "Notes about things that interest me."
             ]
         , Html.ul
             []

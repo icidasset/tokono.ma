@@ -9,7 +9,7 @@
 
 body {
   @apply bg-french-porcelain text-carbon-fiber font-sans;
-  @apply dark:bg-carbon-fiber dark:text-french-porcelain;
+  @apply dark:bg-carbon-fiber dark:text-cows-milk;
   text-rendering: geometricPrecision;
 }
 
@@ -18,7 +18,7 @@ body {
  */
 main h1 {
   @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-5xl font-bold;
-  @apply dark:text-silver-bird;
+  @apply dark:text-cows-milk;
   @apply sm:text-6xl;
   @apply md:text-7xl;
   line-height: 0.95;
@@ -26,7 +26,7 @@ main h1 {
 
 main h1 a {
   @apply text-carbon-fiber opacity-40;
-  @apply dark:text-silver-bird dark:opacity-90;
+  @apply dark:text-cows-milk dark:opacity-90;
 }
 
 main h1 strong {
@@ -47,7 +47,7 @@ main h3 {
 
 blockquote {
   @apply border-empress border-l-4 border-opacity-30 pl-3;
-  @apply dark:border-silver-bird dark:border-opacity-30;
+  @apply dark:border-cows-milk dark:border-opacity-30;
 }
 
 blockquote,
@@ -76,6 +76,7 @@ article pre {
 
 article pre code {
   @apply bg-cows-milk block overflow-auto rounded-md px-5 py-6 text-xs md:text-sm;
+  @apply dark:bg-black dark:bg-opacity-20;
 }
 
 .font-serif {

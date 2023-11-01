@@ -11,6 +11,12 @@
 }
 
 @font-face {
+  font-family: "Fira Code";
+  font-weight: 1 999;
+  src: url("./fonts/fira-code-variable.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Gabarito";
   font-weight: 1 999;
   src: url("./fonts/gabarito-variable_wght.woff2") format("woff2");

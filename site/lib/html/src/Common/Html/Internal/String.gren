@@ -187,11 +187,50 @@ tag tagName attributes { isClosed } =
             ++ String.join " " (Array.pushFirst tagName (attributesToString attributes))
             ++ (if isClosed then
                     case lowercaseTagName of
-                        "script" ->
-                            "></script>"
-
-                        _ ->
+                        "area" ->
                             " />"
+
+                        "base" ->
+                            " />"
+
+                        "br" ->
+                            " />"
+
+                        "col" ->
+                            " />"
+
+                        "embed" ->
+                            " />"
+
+                        "hr" ->
+                            " />"
+
+                        "img" ->
+                            " />"
+
+                        "input" ->
+                            " />"
+
+                        "link" ->
+                            " />"
+
+                        "meta" ->
+                            " />"
+
+                        "param" ->
+                            " />"
+
+                        "source" ->
+                            " />"
+
+                        "track" ->
+                            " />"
+
+                        "wbr" ->
+                            " />"
+
+                        t ->
+                            "></" ++ t ++ ">"
                  else
                     ">"
                 )

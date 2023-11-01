@@ -8,9 +8,9 @@
 @tailwind utilities;
 
 body {
-  @apply bg-french-porcelain text-carbon-fiber font-sans antialiased;
+  @apply bg-french-porcelain text-carbon-fiber font-sans;
   @apply dark:bg-carbon-fiber dark:text-french-porcelain;
-  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
 }
 
 /**
@@ -68,6 +68,14 @@ ol a {
 ul li,
 ol li {
   @apply mb-3;
+}
+
+article pre {
+  @apply mb-6;
+}
+
+article pre code {
+  @apply bg-cows-milk block overflow-auto rounded-md px-5 py-6 text-xs md:text-sm;
 }
 
 .font-serif {

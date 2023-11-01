@@ -18,11 +18,12 @@ view =
                 ]
                 [ Html.text "Work"
                 ]
-            , Common.fadedHeaderText " done on mostly code things and some electrical engineering."
+            , Common.fadedHeaderText " done on open-source code or personal projects."
             ]
             -- 
         , diffuse
         , oddsdk
+        , shikensu
             -- 
         , Common.closingEmoji "🛠️️"
         ]
@@ -48,6 +49,16 @@ tableOfContents =
 
 
 -- 🛠️
+
+
+imageHolder { padding } =
+    Html.div
+        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-5 mt-5 overflow-hidden rounded-md hover:grayscale-0 transition duration-500"
+        , if padding then
+            class "px-4 py-12"
+          else
+            class ""
+        ]
 
 
 paragraph =
@@ -127,8 +138,32 @@ diffuse =
           , url = "https://github.com/icidasset/diffuse"
           }
         ]
-        [ paragraph
-            [ Html.text "I\'ve been working on this personal project on and off for 12+ years. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+        [ imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+            ]
+        , imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "diffuse-grey.svg"
+                        ]
+                    )
+                , A.width 150
+                ]
+                []
             ]
         ]
 
@@ -158,7 +193,23 @@ oddsdk =
           , url = "https://github.com/fission-codes/drive"
           }
         ]
-        [ quote
+        [ imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "passwordlessauth.webp"
+                        ]
+                    )
+                , A.width 90
+                ]
+                []
+            ]
+        , quote
             [ Html.text "The ODD SDK is a local-first toolkit that helps developers build systems that store data in a secure, reliable, and decentralised way. The focus is on the user, providing them with sufficient authority while still being convenient."
             ]
         , quote
@@ -186,3 +237,61 @@ oddsdk =
             , Html.text ", etc)."
             ]
         ]
+
+
+shikensu =
+    item
+        "shikensu"
+        "Shikensu"
+        [ { name = "Gren edition"
+          , text = "github.com/icidasset/shikensu-gren"
+          , url = "https://github.com/icidasset/shikensu-gren"
+          }
+        , { name = "Haskell edition"
+          , text = "github.com/icidasset/shikensu-haskell"
+          , url = "https://github.com/icidasset/shikensu-haskell"
+          }
+        ]
+        [ paragraph
+            [ Html.text "I was tired of always keeping up with the latest static site generators, so instead I built a library that\'s one level down of a static-site generator. It\'s sort of a static-site generator in library format, you write code to generate your website. For example, say you have a folder of markdown articles and you want to generate HTML pages for each of them. You tell Shikensu, through code, to look at your folder that contains the markdown. Then Shikensu scans the entire folder structure and you end up with a data structure that can be manipulated and then optionally written back to disk to, for example, get your HTML pages. You would then instruct Shikensu in code to render the markdown, change the extensions, permalink the pages, etc."
+            ]
+        , paragraph
+            [ Html.text "Through the years I\'ve written various iterations of this, but the basic idea is still the same. The latest iteration is written in Gren (Elm fork/dialect). The one before that was written in Haskell."
+            ]
+        , Html.pre
+            []
+            [ Html.code
+                []
+                [ Html.text shikensuCode
+                ]
+            ]
+        ]
+
+
+shikensuCode =
+    """
+    main : Shikensu.Program
+    main =
+        -- 🚀
+        Shikensu.program sequence CurrentDirectory
+    
+    
+    sequence : Shikensu.Task -> Shikensu.Task
+    sequence task =
+        task
+            |> Task.map (Shikensu.withExtension "md")
+            |> Task.andThen Shikensu.read
+            |> Task.map
+                    (\\bundle ->
+                        bundle
+                            |> Shikensu.renameExtension "md" "html"
+                            |> Shikensu.permalink "index"
+                            |> Shikensu.renderContent renderMarkdown
+                    )
+            |> Task.andThen (Shikensu.write destination)
+    
+    
+    destination : Shikensu.Focus
+    destination =
+        Relative (Path.directory [ "build" ])
+    """

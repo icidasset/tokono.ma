@@ -25,6 +25,7 @@ export default {
         iridescent: "#3a6255",
         "larb-gai": "#dcc6a6",
         lichen: "#9cc5a9",
+        magnet: "#4f4f4f",
         medlar: "#d6dac0",
         "morning-snow": "#f3f4ec",
         "neon-violet": "#64517d",

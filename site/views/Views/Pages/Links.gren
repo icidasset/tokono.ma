@@ -68,20 +68,20 @@ view =
             , link "https://www.happyhues.co" "Happy Hues"
             , link "https://www.thedayscolor.com" "The Day\'s Color"
             ]
-            -- 
+            --
         , Common.closingEmoji "🔗"
         ]
 
 
 linkGroup =
     Html.div
-        [ class "border border-cows-milk font-semibold rounded-md"
+        [ class "border border-cows-milk font-semibold rounded-md dark:border-magnet"
         ]
 
 
 link href text =
     Html.a
-        [ class "inline-block border-cows-milk border-b border-r px-3 py-4 text-center w-1/2"
+        [ class "inline-block border-cows-milk border-b border-r px-3 py-5 text-center w-1/2 dark:border-magnet"
         , A.href href
         ]
         [ Html.text text
@@ -90,7 +90,7 @@ link href text =
 
 linkWithEmoji emoji href text =
     Html.a
-        [ class "inline-block border-cows-milk border-b border-r px-3 py-4 text-center w-1/2"
+        [ class "inline-block border-cows-milk border-b border-r px-3 py-4 text-center w-1/2 dark:border-magnet"
         , A.href href
         ]
         [ Html.span

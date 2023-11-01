@@ -50,7 +50,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            -- 
+            --
         , diffuse
         , oddsdk
         , shikensu
@@ -58,7 +58,7 @@ view =
         , circuits
         , quotes
         , checklists
-            -- 
+            --
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -87,7 +87,7 @@ tableOfContents =
 
 imageHolder { padding } =
     Html.div
-        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-6 mt-6 overflow-hidden rounded-md hover:grayscale-0 transition duration-500"
+        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-6 mt-6 overflow-hidden rounded-md hover:grayscale-0 transition duration-500 dark:bg-white dark:bg-opacity-5"
         , if padding then
             class "px-4 py-12"
           else
@@ -379,8 +379,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-    
-    
+
+
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -394,8 +394,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-    
-    
+
+
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

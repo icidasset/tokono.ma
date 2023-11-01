@@ -34,13 +34,13 @@ main h1 strong {
 }
 
 main h2 {
-  @apply font-headings mb-8 mt-20 text-2xl font-extrabold opacity-80;
+  @apply font-display mb-8 mt-20 text-2xl font-extrabold opacity-80;
   @apply sm:text-3xl;
   @apply md:text-4xl;
 }
 
 main h3 {
-  @apply font-headings mb-5 mt-8 text-lg font-bold opacity-80;
+  @apply font-display mb-5 mt-8 text-lg font-bold opacity-80;
   @apply sm:text-xl;
   @apply md:text-2xl;
 }
@@ -71,7 +71,7 @@ ol li {
 }
 
 article pre {
-  @apply mb-6;
+  @apply my-6;
 }
 
 article pre code {

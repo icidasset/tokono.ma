@@ -20,6 +20,34 @@ view =
                 ]
             , Common.fadedHeaderText " done on open-source code or personal projects."
             ]
+        , paragraph
+            [ Html.span
+                [ class "font-semibold"
+                ]
+                [ Html.text "Most of my work is done on web applications, but also some code libraries/packages and things related to electrical engineering."
+                ]
+            ]
+        , paragraph
+            [ Html.text "I\'ve written about some of my work here, in order of how I important I find the project or how much I worked on it. First one is a music player named "
+            , Html.a
+                [ A.href "#diffuse"
+                ]
+                [ Html.text "Diffuse"
+                ]
+            , Html.text ", and following are: a local-first toolkit "
+            , Html.a
+                [ A.href "#oddsdk"
+                ]
+                [ Html.text "ODD SDK"
+                ]
+            , Html.text ", a “static-site-generator” library "
+            , Html.a
+                [ A.href "#shikensu"
+                ]
+                [ Html.text "Shikensu"
+                ]
+            , Html.text ", …"
+            ]
             -- 
         , diffuse
         , oddsdk
@@ -53,7 +81,7 @@ tableOfContents =
 
 imageHolder { padding } =
     Html.div
-        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-5 mt-5 overflow-hidden rounded-md hover:grayscale-0 transition duration-500"
+        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-6 mt-6 overflow-hidden rounded-md hover:grayscale-0 transition duration-500"
         , if padding then
             class "px-4 py-12"
           else
@@ -139,17 +167,6 @@ diffuse =
           }
         ]
         [ imageHolder
-            { padding = False
-            }
-            [ Html.img
-                [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
-                ]
-                []
-            ]
-        , paragraph
-            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
-            ]
-        , imageHolder
             { padding = True
             }
             [ Html.img
@@ -162,6 +179,17 @@ diffuse =
                         ]
                     )
                 , A.width 150
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+            ]
+        , imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
                 ]
                 []
             ]

@@ -40,7 +40,7 @@ export default {
         "young-apricot": "#fed2b2",
       },
       fontFamily: {
-        display: ["Caveat", "Assistant", ...defaultTheme.fontFamily.sans],
+        display: ["Caveat", "cursive"],
         emoji: ["Noto Emoji"],
         headings: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", defaultTheme.fontFamily.mono],

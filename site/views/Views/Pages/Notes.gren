@@ -10,7 +10,8 @@ import Views.Common as Common
 view =
     Layouts.Default.layout
         Pages.notes
-        []
+        [ class "decoration-accent-notes"
+        ]
         [ Html.h1
             [ class "text-accent-notes"
             ]
@@ -35,7 +36,6 @@ link text =
         []
         [ Html.a
             [ A.href "#"
-            , A.class "decoration-accent-notes"
             ]
             [ Html.text text
             ]

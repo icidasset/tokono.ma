@@ -10,7 +10,8 @@ import Views.Common as Common
 view =
     Layouts.Default.layout
         Pages.essays
-        []
+        [ class "decoration-accent-essays"
+        ]
         [ Html.h1
             [ class "text-accent-essays"
             ]
@@ -51,7 +52,6 @@ link text =
         []
         [ Html.a
             [ A.href "#"
-            , A.class "decoration-accent-essays"
             ]
             [ Html.text text
             ]

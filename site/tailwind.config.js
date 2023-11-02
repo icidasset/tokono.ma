@@ -43,9 +43,9 @@ export default {
       fontFamily: {
         display: ["Caveat", "cursive"],
         emoji: ["Noto Emoji"],
-        headings: ["Gabarito", "Assistant", ...defaultTheme.fontFamily.sans],
+        headings: ["Gabarito", "Jost", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", defaultTheme.fontFamily.mono],
-        sans: ["Assistant", ...defaultTheme.fontFamily.sans],
+        sans: ["Jost", ...defaultTheme.fontFamily.sans],
       },
     },
   },

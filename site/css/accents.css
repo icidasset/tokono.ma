@@ -3,11 +3,18 @@
  */
 
 .bg-accent-about {
-  @apply bg-lichen contrast-more:bg-perrywinkle;
+  @apply bg-lichen;
 }
 
 .decoration-accent-about {
-  @apply decoration-lichen contrast-more:decoration-perrywinkle;
+  @apply decoration-lichen;
+}
+
+.decoration-accent-about p a:not(.inline-block):before,
+.decoration-accent-about ul a:not(.inline-block):before,
+.decoration-accent-about ol a:not(.inline-block):before,
+.decoration-accent-about a em:before {
+  @apply bg-lichen;
 }
 
 .text-accent-about {
@@ -26,6 +33,13 @@
   @apply decoration-enchanted-lavender;
 }
 
+.decoration-accent-essays p a:not(.inline-block):before,
+.decoration-accent-essays ul a:not(.inline-block):before,
+.decoration-accent-essays ol a:not(.inline-block):before,
+.decoration-accent-essays a em:before {
+  @apply bg-enchanted-lavender;
+}
+
 .text-accent-essays {
   @apply text-enchanted-lavender;
 }
@@ -40,6 +54,13 @@
 
 .decoration-accent-links {
   @apply decoration-honey-bee;
+}
+
+.decoration-accent-links p a:not(.inline-block):before,
+.decoration-accent-links ul a:not(.inline-block):before,
+.decoration-accent-links ol a:not(.inline-block):before,
+.decoration-accent-links a em:before {
+  @apply bg-honey-bee;
 }
 
 .text-accent-links {
@@ -58,6 +79,13 @@
   @apply decoration-wondrous-wisteria;
 }
 
+.decoration-accent-notes p a:not(.inline-block):before,
+.decoration-accent-notes ul a:not(.inline-block):before,
+.decoration-accent-notes ol a:not(.inline-block):before,
+.decoration-accent-notes a em:before {
+  @apply bg-wondrous-wisteria;
+}
+
 .text-accent-notes {
   @apply text-wondrous-wisteria;
 }
@@ -72,6 +100,13 @@
 
 .decoration-accent-work {
   @apply decoration-chai-latte;
+}
+
+.decoration-accent-work p a:not(.inline-block):before,
+.decoration-accent-work ul a:not(.inline-block):before,
+.decoration-accent-work ol a:not(.inline-block):before,
+.decoration-accent-work a em:before {
+  @apply bg-chai-latte;
 }
 
 .text-accent-work {

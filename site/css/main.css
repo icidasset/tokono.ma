@@ -8,7 +8,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-french-porcelain text-carbon-fiber font-sans;
+  @apply bg-french-porcelain text-magnet font-sans;
   @apply dark:bg-carbon-fiber dark:text-cows-milk;
   text-rendering: geometricPrecision;
 }
@@ -16,8 +16,9 @@ body {
 /**
  * Basics
  */
+
 main h1 {
-  @apply text-carbon-fiber font-display mb-12 mt-[-0.125em] text-5xl font-bold;
+  @apply text-magnet font-display mb-12 mt-[-0.125em] text-5xl font-bold;
   @apply dark:text-cows-milk;
   @apply sm:text-6xl;
   @apply md:text-7xl;
@@ -58,10 +59,8 @@ ol {
   @apply md:text-xl md:leading-relaxed;
 }
 
-p a,
-ul a,
-ol a {
-  @apply underline decoration-2 underline-offset-4;
+a em {
+  @apply not-italic;
 }
 
 ul li,
@@ -90,13 +89,45 @@ article pre code {
   margin-top: -0.75em;
 }
 
-.mark {
-  bottom: 0.225em;
+/**
+ * Markings & Links
+ */
+
+p a:not(.inline-block),
+ul a:not(.inline-block),
+ol a:not(.inline-block),
+a em {
+  @apply relative;
+}
+
+p:not(.truncate) a:not(.inline-block),
+ul:not(.truncate) a:not(.inline-block),
+ol:not(.truncate) a:not(.inline-block),
+:not(.truncate) a em {
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+.mark,
+p a:not(.inline-block):before,
+ul a:not(.inline-block):before,
+ol a:not(.inline-block):before,
+a em:before {
+  bottom: 0.35em;
   content: "";
   display: block;
   height: 0.35em;
-  left: 0;
+  left: 0px;
+  opacity: 0.5;
   position: absolute;
-  right: 0;
+  right: -1px;
   z-index: -1;
+}
+
+.mark {
+  bottom: 0.225em;
 }

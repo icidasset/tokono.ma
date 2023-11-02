@@ -16,6 +16,7 @@ import Shikensu.Focus as Shikensu exposing ( Focus(..) )
 import Shikensu.Path as Path
 import Stream
 import Task exposing ( Task )
+import Time
 import Views.Pages
 
 
@@ -24,7 +25,7 @@ import Views.Pages
 
 
 pages =
-    Array.pushFirst (page Pages.index (Views.Pages.view Pages.index)) (Array.map (\p -> page p (Views.Pages.view p)) Pages.pages)
+    Array.pushFirst Pages.index Pages.pages
 
 
 
@@ -58,10 +59,22 @@ writePagesToDisk fsPermission =
                         |> Path.directory
                         |> Path.combine path
                 )
-        -- Write each page to disk
+        -- Get current time
         |> Task.andThen
                 (\destinationDir ->
+                    Task.map
+                        (\time ->
+                            { destinationDir = destinationDir
+                            , time = time
+                            }
+                        )
+                        Time.now
+                )
+        -- Write each page to disk
+        |> Task.andThen
+                (\{ destinationDir, time } ->
                     pages
+                        |> Array.map (\p -> page p (Views.Pages.view p) time)
                         |> Array.map (Shikensu.writeDefinition fsPermission destinationDir)
                         |> Task.sequence
                 )
@@ -76,9 +89,9 @@ htmlBytes =
     Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
-page mod html =
+page mod html time =
     { baseName = "index"
-    , content = Just (htmlBytes (Layouts.Base.layout mod html))
+    , content = Just (htmlBytes (Layouts.Base.layout mod html time))
     , directoryPath = Path.directory mod.route
     , extensionName = Just "html"
     , metadata = Dict.empty

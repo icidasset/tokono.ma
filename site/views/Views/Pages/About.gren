@@ -10,7 +10,8 @@ import Views.Common as Common
 view =
     Layouts.Default.layout
         Pages.about
-        []
+        [ class "decoration-accent-about"
+        ]
         [ Html.h1
             [ class "text-accent-about"
             ]
@@ -79,6 +80,4 @@ view =
 
 
 paragraph =
-    Html.p
-        [ class "decoration-accent-about"
-        ]
+    Html.p []

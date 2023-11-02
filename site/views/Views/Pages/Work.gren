@@ -10,7 +10,8 @@ import Views.Common as Common
 view =
     Layouts.Default.layout
         Pages.work
-        []
+        [ class "decoration-accent-work"
+        ]
         [ Html.h1
             [ class "text-accent-work"
             ]
@@ -18,7 +19,7 @@ view =
             ]
         , paragraph
             [ Html.span
-                [ class "font-semibold"
+                [ class "font-medium"
                 ]
                 [ Html.text "Most of my work is done on web applications, but also some code libraries/packages and things related to electrical engineering."
                 ]
@@ -50,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            --
+            -- 
         , diffuse
         , oddsdk
         , shikensu
@@ -58,7 +59,7 @@ view =
         , circuits
         , quotes
         , checklists
-            --
+            -- 
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -96,21 +97,15 @@ imageHolder { padding } =
 
 
 paragraph =
-    Html.p
-        [ class "decoration-accent-work"
-        ]
+    Html.p []
 
 
 quote =
-    Html.blockquote
-        [ class "decoration-accent-work"
-        ]
+    Html.blockquote []
 
 
 li =
-    Html.li
-        [ class "decoration-accent-work"
-        ]
+    Html.li []
 
 
 
@@ -121,22 +116,25 @@ linksTable links =
     links
         |> Array.map
                 (\link ->
-                    [ Html.span
-                        [ class "inline-block text-base w-32"
+                    [ Html.p
+                        [ class "mb-1 truncate"
                         ]
-                        [ Html.text link.name
-                        , Html.text ":"
+                        [ Html.span
+                            [ class "inline-block text-base w-32"
+                            ]
+                            [ Html.text link.name
+                            , Html.text ":"
+                            ]
+                        , Html.a
+                            [ A.href link.url
+                            ]
+                            [ Html.text link.text
+                            ]
                         ]
-                    , Html.a
-                        [ A.href link.url
-                        ]
-                        [ Html.text link.text
-                        ]
-                    , Html.br [] []
                     ]
                 )
         |> Array.flatten
-        |> paragraph
+        |> Html.div []
 
 
 item id title links nodes =
@@ -379,8 +377,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-
-
+    
+    
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -394,8 +392,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-
-
+    
+    
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

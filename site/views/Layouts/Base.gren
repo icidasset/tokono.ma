@@ -4,10 +4,17 @@ import Common.Html as Html exposing ( Html )
 import Common.Html.Attributes as A
 import Pages exposing ( Page )
 import Views.Common exposing ( Route )
+import Time
 
 
-layout : Page -> Array (Html msg) -> Html msg
-layout page pageHtml =
+layout : Page -> Array (Html msg) -> Time.Posix -> Html msg
+layout page pageHtml time =
+    let
+      cacheId =
+        time
+          |> Time.posixToMillis
+          |> String.fromInt
+    in
     Html.html
         []
         [ -- -------------------------------------
@@ -30,7 +37,7 @@ layout page pageHtml =
                     (Views.Common.pathFromRoot
                         { root = page.route
                         }
-                        [ "stylesheet.css"
+                        [ "stylesheet.css?" ++ cacheId
                         ]
                     )
                 , A.rel "stylesheet"
@@ -41,7 +48,8 @@ layout page pageHtml =
             -- ---------------------------------------
         , [ Html.node
                 "script"
-                [ "site.js"
+                [ cacheId
+                    |> String.append "site.js?"
                     |> Array.singleton
                     |> Views.Common.pathFromRoot
                             { root = page.route

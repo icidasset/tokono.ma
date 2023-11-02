@@ -34,7 +34,7 @@ view =
             [ linkWithEmoji "🎵" "https://diffuse.sh" "Diffuse"
             , linkWithEmoji "📝" "https://herknen.fission.app/" "Herknen"
             , linkWithEmoji "📚" "https://quotes.fission.app/" "Quotes"
-            , linkWithEmoji "☑️" "https://checklists.citric.id" "Checklists"
+            , linkWithEmoji "✔︎" "https://checklists.citric.id" "Checklists"
             ]
         , Html.h2
             []
@@ -68,36 +68,42 @@ view =
             , link "https://www.happyhues.co" "Happy Hues"
             , link "https://www.thedayscolor.com" "The Day\'s Color"
             ]
-            --
-        , Common.closingEmoji "🔗"
+            -- 
+        , Common.closingEmoji "🌍"
         ]
 
 
 linkGroup =
-    Html.div
-        [ class "border border-cows-milk font-semibold rounded-md dark:border-magnet"
+    Html.p
+        [ class "decoration-accent-links"
         ]
 
 
 link href text =
     Html.a
-        [ class "inline-block border-cows-milk border-b border-r px-3 py-5 text-center w-1/2 dark:border-magnet"
+        [ class "inline-block mb-2 mr-10"
         , A.href href
         ]
-        [ Html.text text
+        [ Html.em
+            []
+            [ Html.text text
+            ]
         ]
 
 
 linkWithEmoji emoji href text =
     Html.a
-        [ class "inline-block border-cows-milk border-b border-r px-3 py-4 text-center w-1/2 dark:border-magnet"
+        [ class "inline-block mb-2 mr-10"
         , A.href href
         ]
         [ Html.span
-            [ class "font-emoji"
+            [ class "font-emoji inline-block mr-px"
             ]
             [ Html.text emoji
             ]
         , Html.text " "
-        , Html.text text
+        , Html.em
+            []
+            [ Html.text text
+            ]
         ]

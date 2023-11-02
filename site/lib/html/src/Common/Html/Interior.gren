@@ -1,0 +1,203 @@
+module Common.Html.Interior exposing ( Html(..), Attribute(..), Descendants(..), EventDecoder(..), map, transform )
+
+import Json.Decode exposing ( Decoder, Value )
+
+
+
+-- ROOT
+
+
+type Html msg
+    = Node String (Array (Attribute msg)) (Descendants msg)
+    | TextNode String
+
+
+
+-- PARTS
+
+
+type Attribute msg
+    = Attribute String String
+    | BoolProperty String Bool
+    | Event String (EventDecoder msg)
+    | StringProperty String String
+    | Style String String
+    | ValueProperty String Value
+
+
+type Descendants msg
+    = Regular (Array (Html msg)) -- | Keyed (List ( String, Html msg ))
+
+
+type EventDecoder msg
+    = Normal (Decoder msg)
+    | MayStopPropagation
+        (Decoder
+            { message : msg
+            , stopPropagation : Bool
+            }
+        )
+    | MayPreventDefault
+        (Decoder
+            { message : msg
+            , preventDefault : Bool
+            }
+        )
+    | Custom
+        (Decoder
+            { message : msg
+            , stopPropagation : Bool
+            , preventDefault : Bool
+            }
+        )
+
+
+
+-- 🛠️
+
+
+map : (a -> b) -> Html a -> Html b
+map f node =
+    case node of
+        Node tagName attrs descendants ->
+            Node tagName (Array.map (mapAttribute f) attrs) (mapDescendants f descendants)
+
+        TextNode content ->
+            TextNode content
+
+
+mapAttribute : (a -> b) -> Attribute a -> Attribute b
+mapAttribute fn attribute =
+    case attribute of
+        Attribute key value ->
+            Attribute key value
+
+        Event name eventDecoder ->
+            Event name (mapEventDecoder fn eventDecoder)
+
+        BoolProperty key value ->
+            BoolProperty key value
+
+        StringProperty key value ->
+            StringProperty key value
+
+        Style key value ->
+            Style key value
+
+        ValueProperty key value ->
+            ValueProperty key value
+
+
+mapDescendants : (a -> b) -> Descendants a -> Descendants b
+mapDescendants fn descendants =
+    case descendants of
+        Regular nodes ->
+            Regular (Array.map (map fn) nodes)
+
+
+mapEventDecoder : (a -> b) -> EventDecoder a -> EventDecoder b
+mapEventDecoder fn eventDecoder =
+    case eventDecoder of
+        Normal d ->
+            Normal (Json.Decode.map fn d)
+
+        MayStopPropagation d ->
+            MayStopPropagation
+                (Json.Decode.map
+                    (\a ->
+                        { message = fn a.message
+                        , stopPropagation = a.stopPropagation
+                        }
+                    )
+                    d
+                )
+
+        MayPreventDefault d ->
+            MayPreventDefault
+                (Json.Decode.map
+                    (\a ->
+                        { message = fn a.message
+                        , preventDefault = a.preventDefault
+                        }
+                    )
+                    d
+                )
+
+        Custom d ->
+            Custom
+                (Json.Decode.map
+                    (\v ->
+                        { message = fn v.message
+                        , stopPropagation = v.stopPropagation
+                        , preventDefault = v.preventDefault
+                        }
+                    )
+                    d
+                )
+
+
+transform =
+    transform_
+        { namespace = Nothing
+        }
+
+
+transform_ :
+    { namespace : Maybe String
+    }
+    -> { node :
+            String
+            -> Array (Attribute msg)
+            -> { namespace : Maybe String
+               }
+            -> outcome
+       , injectDescendants : outcome -> Array transformed -> transformed
+       , text : String -> transformed
+       }
+    -> Html msg
+    -> transformed
+transform_ context manager html =
+    case html of
+        Node tagName attributes descendants ->
+            let
+                xmlns =
+                    -- Check for a `xmlns` attribute which will change the active namespace
+                    attributes
+                        |> Array.findLast
+                                (\attribute ->
+                                    case attribute of
+                                        Attribute "xmlns" ns ->
+                                            True
+
+                                        _ ->
+                                            False
+                                )
+                        |> Maybe.andThen
+                                (\attribute ->
+                                    case attribute of
+                                        Attribute "xmlns" ns ->
+                                            Just ns
+
+                                        _ ->
+                                            Nothing
+                                )
+
+                newContext =
+                    -- If the `xmlns` attribute is present,
+                    -- the active XML namespace will change.
+                    case xmlns of
+                        Just ns ->
+                            { context | namespace = Just ns }
+
+                        Nothing ->
+                            context
+            in
+            manager.injectDescendants
+                (manager.node tagName attributes newContext)
+                (case descendants of
+                    Regular array ->
+                        Array.map (transform_ newContext manager) array
+                )
+
+        TextNode text ->
+            manager.text text

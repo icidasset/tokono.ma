@@ -1,0 +1,58 @@
+module Views.Pages.Essays exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.essays
+        [ class "decoration-accent-essays"
+        ]
+        [ Html.h1
+            [ class "text-accent-essays"
+            ]
+            [ Html.text "A few articles  I\'ve written over the years, mostly code related."
+            ]
+        , Html.ul
+            []
+            [ link "Building Blocks"
+            , link "Functional Programming & Elixir – Pt. 1, The Basics"
+            , link "Minimize Flaws Using Functional Programming"
+            ]
+        , Html.p
+            [ class "italic max-w-md mt-6 text-sm"
+            ]
+            [ Html.text "Ordered by name."
+            ]
+        , Html.h3
+            []
+            [ Html.text "Archive"
+            ]
+        , Html.p
+            [ class "italic max-w-md text-sm"
+            ]
+            [ Html.text "Most of this code doesn\'t work anymore or the information is outdated. Keeping it here in case it is still relevant to someone."
+            ]
+        , Html.ul
+            []
+            [ link "Webnative & Elm"
+            , link "Why I wrote static-base"
+            ]
+            -- 
+        , Common.closingEmoji "✍️"
+        ]
+
+
+link text =
+    Html.li
+        []
+        [ Html.a
+            [ A.href "#"
+            ]
+            [ Html.text text
+            ]
+        ]

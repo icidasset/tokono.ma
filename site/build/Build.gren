@@ -1,18 +1,90 @@
 module Build exposing ( main )
 
 import Bytes exposing ( Bytes )
-import Bytes.Decode
 import Bytes.Encode
+import Common.Html exposing ( Html )
+import Dict
+import FileSystem
+import Layouts.Base
+import Pages
 import Shikensu
+import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
 import Shikensu.Definition as Shikensu
+import Shikensu.Error exposing ( Error )
 import Shikensu.Focus as Shikensu exposing ( Focus(..) )
-import Shikensu.Focus
 import Shikensu.Path as Path
-import Task
+import Stream
+import Task exposing ( Task )
+import Time
+import Views.Pages
+
+
+
+-- 🚀
 
 
 main : Shikensu.Program
 main =
-    -- 🚀
-    Shikensu.program sequence source
+    Shikensu.perform
+        { onSuccess = \env _ -> Stream.sendLine env.stdout "🧪 Sequence completed"
+        , onError = \env err -> Stream.sendLine env.stderr ("🚨 " ++ Shikensu.Error.toString err)
+        }
+        sequence
+
+
+sequence : FileSystem.Permission -> Task Error (Array {})
+sequence =
+    writePagesToDisk
+
+
+writePagesToDisk : FileSystem.Permission -> Task Error (Array {})
+writePagesToDisk fsPermission =
+    fsPermission
+        |> Shikensu.currentWorkingDirectory
+        -- Destination directory: `../dist/`
+        |> Task.map
+                (\path ->
+                    [ ".."
+                    , "dist"
+                    ]
+                        |> Path.directory
+                        |> Path.combine path
+                )
+        -- Get current time
+        |> Task.andThen
+                (\destinationDir ->
+                    Task.map
+                        (\time ->
+                            { destinationDir = destinationDir
+                            , time = time
+                            }
+                        )
+                        Time.now
+                )
+        -- Write each page to disk
+        |> Task.andThen
+                (\{ destinationDir, time } ->
+                    Pages.allPages
+                        |> Array.map (\p -> page p (Views.Pages.view p) time)
+                        |> Array.map (Shikensu.writeDefinition fsPermission destinationDir)
+                        |> Task.sequence
+                )
+
+
+
+-- 🛠️
+
+
+htmlBytes : Html msg -> Bytes
+htmlBytes =
+    Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
+
+
+page mod html time =
+    { baseName = "index"
+    , content = Just (htmlBytes (Layouts.Base.layout mod html time))
+    , directoryPath = Path.directory mod.route
+    , extensionName = Just "html"
+    , metadata = Dict.empty
+    }

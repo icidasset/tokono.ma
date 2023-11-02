@@ -1,15 +1,54 @@
 set dotenv-load
 
 
-build:
+default: build
+  just serve & just watch
+
+
+build: build-folder build-css build-static-gren build-dynamic-gren
+build-optimised: build-folder build-css build-static-gren build-dynamic-gren-optimised
+
+
+build-folder:
   rm -rf dist
   mkdir -p dist
-  cp -R src/static/ ./dist/
-  tea npx tailwindcss -- --input=./src/css/main.css --output=./dist/stylesheet.css --minify
+  cp -R ./static/ ./dist/
 
-publish: build
+
+build-css:
+  pkgx npx tailwindcss -- --config=tailwind.config.js --input=./css/main.css --output=./dist/stylesheet.css --minify
+
+
+build-static-gren:
+  cd build && gren make Build.gren
+  cd build && pkgx node app
+  rm build/app
+
+
+build-dynamic-gren:
+  cd dynamic && gren make Main.gren --output=../dist/site.js
+
+
+build-dynamic-gren-optimised:
+  cd dynamic && gren make Main.gren --output=../dist/site.js
+
+
+format-gren:
+  cd build && gren format ../ --yes
+
+
+publish: build-optimised
   #!/usr/bin/env bash
-  cid=$(tea npx w3 -- up ./dist/ | tail -n 1 | sed "s/⁂ https:\/\/w3s.link\/ipfs\///")
+  cid=$(pkgx npx w3 -- up ./dist/ | tail -n 1 | sed "s/⁂ https:\/\/w3s.link\/ipfs\///")
   # https://dns-lexicon.readthedocs.io/
   echo "Publishing $cid"
-  lexicon dnsimple --auth-token $DNS_AUTH_TOKEN --content $cid update _dnslink.tokono.ma TXT
+  lexicon cloudflare --auth-token $CLOUDFLARE_AUTH_TOKEN --content $cid update --name _dnslink _dnslink.tokono.ma TXT
+
+
+@serve:
+  echo "Serving static files on http://localhost:5001"
+  dufs --port 5001 --render-spa ./dist/
+
+
+watch:
+  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css -- just build

@@ -1,0 +1,100 @@
+module Layouts.Default exposing ( layout )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Common.Html.Events as E
+import Json.Decode
+import Messages exposing ( Msg(..) )
+import Pages
+import Views.Common as Common
+
+
+layout page attributes contents =
+    [ Html.section
+        [ class "px-8 py-12 lg:flex"
+        ]
+        [ -- -------------------------------------
+          -- HEADER
+          -- -------------------------------------
+          Html.header
+            [ class "mb-12 sm:mb-16 lg:mb-0 lg:flex-none lg:ml-12 lg:mr-36"
+            ]
+            [ Html.div
+                [ class "flex flex-col items-end"
+                ]
+                [ Html.a
+                    [ A.class "block mb-8 w-[98px]"
+                    , A.href
+                        (Common.pathFromRoot
+                            { root = page.route
+                            }
+                            Pages.index.route
+                        )
+                    ]
+                    [ Common.ikebana
+                    ]
+                , Common.tokonoma
+                ]
+
+            , -- ----
+              -- NAV
+              -- ----
+              let
+                link linkPage =
+                    let
+                        isActive =
+                            page.id == linkPage.id
+                    in
+                    Html.div
+                        [ A.class "inline-block lg:block lg:mb-4"
+                        ]
+                        [ Html.a
+                            [ A.class "inline-block lh-crop relative"
+                            , A.target "_self"
+                            , if isActive then
+                                A.class "font-medium"
+                              else
+                                A.class ""
+                            , A.href
+                                (Common.pathFromRoot
+                                    { root = page.route
+                                    }
+                                    linkPage.route
+                                )
+                            , E.preventDefaultOn
+                                "click"
+                                (Json.Decode.succeed
+                                    { message = NavigateToPage linkPage
+                                    , preventDefault = True
+                                    }
+                                )
+                            ]
+                            [ Html.text linkPage.name
+                            , if isActive then
+                                Html.span
+                                    [ class ("mark bg-accent-" ++ String.join "-" page.route)
+                                    ]
+                                    []
+                              else
+                                Html.text ""
+                            ]
+                        ]
+              in
+              Html.nav
+                [ class "font-display font-light mt-12 space-x-4 text-xl text-right md:text-2xl lg:space-x-0 "
+                ]
+                (Array.map link Pages.pages)
+            ]
+
+        , -- -------------------------------------
+          -- MAIN
+          -- -------------------------------------
+          Html.main_
+            (Array.prefix
+                [ class "flex-1 max-w-2xl"
+                ]
+                attributes
+            )
+            contents
+        ]
+    ]

@@ -1,0 +1,137 @@
+/**
+ * About
+ */
+
+.bg-accent-about {
+  @apply bg-lichen;
+}
+
+.decoration-accent-about {
+  @apply decoration-lichen;
+}
+
+.decoration-accent-about p a:not(.inline-block):before,
+.decoration-accent-about ul a:not(.inline-block):before,
+.decoration-accent-about ol a:not(.inline-block):before,
+.decoration-accent-about a em:before {
+  @apply bg-lichen;
+}
+
+.text-accent-about {
+  @apply text-lichen contrast-more:text-perrywinkle;
+}
+
+/**
+ * Error
+ */
+
+.bg-accent-error {
+  @apply bg-chewing-gum;
+}
+
+.decoration-accent-error {
+  @apply decoration-chewing-gum;
+}
+
+.decoration-accent-error p a:not(.inline-block):before,
+.decoration-accent-error ul a:not(.inline-block):before,
+.decoration-accent-error ol a:not(.inline-block):before,
+.decoration-accent-error a em:before {
+  @apply bg-chewing-gum;
+}
+
+.text-accent-error {
+  @apply text-chewing-gum;
+}
+
+/**
+ * Essays
+ */
+
+.bg-accent-essays {
+  @apply bg-enchanted-lavender;
+}
+
+.decoration-accent-essays {
+  @apply decoration-enchanted-lavender;
+}
+
+.decoration-accent-essays p a:not(.inline-block):before,
+.decoration-accent-essays ul a:not(.inline-block):before,
+.decoration-accent-essays ol a:not(.inline-block):before,
+.decoration-accent-essays a em:before {
+  @apply bg-enchanted-lavender;
+}
+
+.text-accent-essays {
+  @apply text-enchanted-lavender;
+}
+
+/**
+ * Links
+ */
+
+.bg-accent-links {
+  @apply bg-honey-bee;
+}
+
+.decoration-accent-links {
+  @apply decoration-honey-bee;
+}
+
+.decoration-accent-links p a:not(.inline-block):before,
+.decoration-accent-links ul a:not(.inline-block):before,
+.decoration-accent-links ol a:not(.inline-block):before,
+.decoration-accent-links a em:before {
+  @apply bg-honey-bee;
+}
+
+.text-accent-links {
+  @apply text-honey-bee;
+}
+
+/**
+ * Notes
+ */
+
+.bg-accent-notes {
+  @apply bg-wondrous-wisteria;
+}
+
+.decoration-accent-notes {
+  @apply decoration-wondrous-wisteria;
+}
+
+.decoration-accent-notes p a:not(.inline-block):before,
+.decoration-accent-notes ul a:not(.inline-block):before,
+.decoration-accent-notes ol a:not(.inline-block):before,
+.decoration-accent-notes a em:before {
+  @apply bg-wondrous-wisteria;
+}
+
+.text-accent-notes {
+  @apply text-wondrous-wisteria;
+}
+
+/**
+ * Work
+ */
+
+.bg-accent-work {
+  @apply bg-chai-latte;
+}
+
+.decoration-accent-work {
+  @apply decoration-chai-latte;
+}
+
+.decoration-accent-work p a:not(.inline-block):before,
+.decoration-accent-work ul a:not(.inline-block):before,
+.decoration-accent-work ol a:not(.inline-block):before,
+.decoration-accent-work a em:before {
+  @apply bg-chai-latte;
+}
+
+.text-accent-work {
+  @apply text-chai-latte;
+}

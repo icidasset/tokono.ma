@@ -1,0 +1,11 @@
+module Messages exposing ( Msg(..) )
+
+import Pages exposing ( Page )
+
+
+
+-- 📣
+
+
+type Msg
+    = NavigateToPage Page

@@ -1,0 +1,52 @@
+module Views.Pages.Index exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Common.Html.Events as E
+import Json.Decode
+import Messages exposing ( Msg(..) )
+import Pages
+import Views.Common as Common
+
+
+view =
+    [ Html.main_
+        [ class "flex flex-col items-center justify-center min-h-screen py-8 text-center"
+        ]
+        [ Html.div
+            [ class "mb-10 sm:mb-16"
+            ]
+            [ Common.tokonoma
+            ]
+        , Html.div
+            [ class "mb-10 w-32 sm:mb-16 sm:w-40"
+            ]
+            [ Common.ikebana
+            ]
+        , Html.nav
+            [ class "font-display px-2 text-xl space-x-4 sm:space-x-12 md:space-x-24 md:text-2xl"
+            ]
+            (Array.map
+                (\page ->
+                    Html.a
+                        [ class "inline-block relative"
+                        , A.href (String.join "/" page.route)
+                        , E.preventDefaultOn
+                            "click"
+                            (Json.Decode.succeed
+                                { message = NavigateToPage page
+                                , preventDefault = True
+                                }
+                            )
+                        ]
+                        [ Html.text page.name
+                        , Html.span
+                            [ class ("mark opacity-50 bg-accent-" ++ String.join "-" page.route)
+                            ]
+                            []
+                        ]
+                )
+                Pages.pages
+            )
+        ]
+    ]

@@ -1,0 +1,431 @@
+module Views.Pages.Work exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.work
+        [ class "decoration-accent-work"
+        ]
+        [ Html.h1
+            [ class "text-accent-work"
+            ]
+            [ Html.text "Open-source work & personal projects."
+            ]
+        , paragraph
+            [ Html.span
+                [ class "font-medium"
+                ]
+                [ Html.text "Most of my work is done on web applications, but also some code libraries/packages and things related to electrical engineering."
+                ]
+            ]
+        , paragraph
+            [ Html.text "I\'ve written about some of my work here, in order of how I important I find the project or how much I worked on it. First one is a music player named "
+            , Html.a
+                [ A.href "#diffuse"
+                ]
+                [ Html.text "Diffuse"
+                ]
+            , Html.text ", and following are: a local-first toolkit "
+            , Html.a
+                [ A.href "#oddsdk"
+                ]
+                [ Html.text "ODD SDK"
+                ]
+            , Html.text ", a “static-site-generator” library "
+            , Html.a
+                [ A.href "#shikensu"
+                ]
+                [ Html.text "Shikensu"
+                ]
+            , Html.text ", an electrical-wave analyser "
+            , Html.a
+                [ A.href "#waves"
+                ]
+                [ Html.text "Waves"
+                ]
+            , Html.text ", and more …"
+            ]
+            -- 
+        , diffuse
+        , oddsdk
+        , shikensu
+        , waves
+        , circuits
+        , quotes
+        , checklists
+            -- 
+        , Common.closingEmoji "🛠️️"
+        ]
+
+
+tableOfContents =
+    let
+        toc id title =
+            li
+                [ Html.a
+                    [ A.href ("#" ++ id)
+                    ]
+                    [ Html.text title
+                    ]
+                ]
+    in
+    Html.ul
+        []
+        [ toc "diffuse" "Diffuse"
+        , toc "oddsdk" "Open Distributed Data SDK"
+        ]
+
+
+
+-- 🛠️
+
+
+imageHolder { padding } =
+    Html.div
+        [ class "bg-black bg-opacity-5 flex grayscale items-center justify-center mb-6 mt-6 overflow-hidden rounded-md hover:grayscale-0 transition duration-500 dark:bg-white dark:bg-opacity-5"
+        , if padding then
+            class "px-4 py-12"
+          else
+            class ""
+        ]
+
+
+paragraph =
+    Html.p []
+
+
+quote =
+    Html.blockquote []
+
+
+li =
+    Html.li []
+
+
+
+-- 🖼️
+
+
+linksTable links =
+    links
+        |> Array.map
+                (\link ->
+                    [ Html.p
+                        [ class "mb-1 truncate"
+                        ]
+                        [ Html.span
+                            [ class "inline-block text-base w-32"
+                            ]
+                            [ Html.text link.name
+                            , Html.text ":"
+                            ]
+                        , Html.a
+                            [ A.href link.url
+                            ]
+                            [ Html.text link.text
+                            ]
+                        ]
+                    ]
+                )
+        |> Array.flatten
+        |> Html.div []
+
+
+item id title links nodes =
+    nodes
+        |> Array.prefix
+                [ Html.h2
+                    []
+                    [ Html.text title
+                    ]
+                ]
+        |> Array.postfix
+                [ linksTable links
+                ]
+        |> Html.article
+                [ A.id id
+                ]
+
+
+
+-- WORK
+
+
+checklists =
+    item
+        "checklists"
+        "Checklists"
+        [ { name = "Application"
+          , text = "checklists.citric.id"
+          , url = "https://checklists.citric.id/"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/checklists"
+          , url = "https://github.com/icidasset/checklists/"
+          }
+        ]
+        [ paragraph
+            [ Html.text "A tiny app that makes checklists and embeds them in the URL itself so it can be easily shared."
+            ]
+        ]
+
+
+circuits =
+    item
+        "circuits"
+        "Circuits"
+        [ { name = "Website"
+          , text = "circuits.citric.id"
+          , url = "https://circuits.citric.id/"
+          }
+        ]
+        [ imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "circuits.webp"
+                        ]
+                    )
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "Electrical circuits explained."
+            ]
+        ]
+
+
+diffuse =
+    item
+        "diffuse"
+        "Diffuse"
+        [ { name = "Application"
+          , text = "diffuse.sh"
+          , url = "https://diffuse.sh"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/diffuse"
+          , url = "https://github.com/icidasset/diffuse"
+          }
+        ]
+        [ imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "diffuse.svg"
+                        ]
+                    )
+                , A.width 150
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+            ]
+        , imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
+                ]
+                []
+            ]
+        ]
+
+
+oddsdk =
+    item
+        "oddsdk"
+        "Open Distributed Data SDK"
+        [ { name = "Website"
+          , text = "odd.dev"
+          , url = "https://odd.dev/"
+          }
+        , { name = "Code (fork)"
+          , text = "github.com/icidasset/ts-odd"
+          , url = "https://github.com/icidasset/ts-odd"
+          }
+        , { name = "Quotes (app)"
+          , text = "github.com/icidasset/quotes"
+          , url = "https://github.com/icidasset/quotes"
+          }
+        , { name = "Herknen (app)"
+          , text = "github.com/icidasset/herknen"
+          , url = "https://github.com/icidasset/herknen"
+          }
+        , { name = "Drive (app)"
+          , text = "github.com/fission-codes/drive"
+          , url = "https://github.com/fission-codes/drive"
+          }
+        ]
+        [ imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "passwordlessauth.webp"
+                        ]
+                    )
+                , A.width 90
+                ]
+                []
+            ]
+        , quote
+            [ Html.text "The ODD SDK is a local-first toolkit that helps developers build systems that store data in a secure, reliable, and decentralised way. The focus is on the user, providing them with sufficient authority while still being convenient."
+            ]
+        , quote
+            [ Html.text "We want our data accessible from anywhere and distributed, meaning it can live partially or fully in multiple places. Ideally, as much of this data as possible lives on user owned devices and communication of this data will be done in a decentralised, peer-to-peer fashion."
+            ]
+        , paragraph
+            [ Html.text "This is the main project I worked on during my time at "
+            , Html.a
+                [ A.href "https://fission.codes"
+                ]
+                [ Html.text "Fission"
+                ]
+            , Html.text ". Still an avid user of this system and the protocols consisting of it ("
+            , Html.a
+                [ A.href "https://ucan.xyz"
+                ]
+                [ Html.text "UCAN"
+                ]
+            , Html.text ", "
+            , Html.a
+                [ A.href "https://github.com/wnfs-wg"
+                ]
+                [ Html.text "WNFS"
+                ]
+            , Html.text ", etc)."
+            ]
+        ]
+
+
+quotes =
+    item
+        "quotes"
+        "Quotes"
+        [ { name = "Application"
+          , text = "quotes.fission.app"
+          , url = "https://quotes.fission.app/"
+          }
+        , { name = "Code"
+          , text = "github.com/icidasset/quotes"
+          , url = "https://github.com/icidasset/quotes/"
+          }
+        ]
+        [ paragraph
+            [ Html.text "A tiny app that shows a random quote from a given collection. This app will be made local-first somewhere in the near future."
+            ]
+        ]
+
+
+shikensu =
+    item
+        "shikensu"
+        "Shikensu"
+        [ { name = "Gren edition"
+          , text = "github.com/icidasset/shikensu-gren"
+          , url = "https://github.com/icidasset/shikensu-gren"
+          }
+        , { name = "Haskell edition"
+          , text = "github.com/icidasset/shikensu-haskell"
+          , url = "https://github.com/icidasset/shikensu-haskell"
+          }
+        ]
+        [ paragraph
+            [ Html.text "I was tired of always keeping up with the latest static site generators, so instead I built a library that\'s one level down of a static-site generator. It\'s sort of a static-site generator in library format, you write code to generate your website. For example, say you have a folder of markdown articles and you want to generate HTML pages for each of them. You tell Shikensu, through code, to look at your folder that contains the markdown. Then Shikensu scans the entire folder structure and you end up with a data structure that can be manipulated and then optionally written back to disk to, for example, get your HTML pages. You would then instruct Shikensu in code to render the markdown, change the extensions, permalink the pages, etc."
+            ]
+        , paragraph
+            [ Html.text "Through the years I\'ve written various iterations of this, but the basic idea is still the same. The latest iteration is written in Gren (Elm fork/dialect). The one before that was written in Haskell."
+            ]
+        , Html.pre
+            []
+            [ Html.code
+                []
+                [ Html.text shikensuCode
+                ]
+            ]
+        ]
+
+
+shikensuCode =
+    """
+    main : Shikensu.Program
+    main =
+        -- 🚀
+        Shikensu.program sequence CurrentDirectory
+    
+    
+    sequence : Shikensu.Task -> Shikensu.Task
+    sequence task =
+        task
+            |> Task.map (Shikensu.withExtension "md")
+            |> Task.andThen Shikensu.read
+            |> Task.map
+                    (\\bundle ->
+                        bundle
+                            |> Shikensu.renameExtension "md" "html"
+                            |> Shikensu.permalink "index"
+                            |> Shikensu.renderContent renderMarkdown
+                    )
+            |> Task.andThen (Shikensu.write destination)
+    
+    
+    destination : Shikensu.Focus
+    destination =
+        Relative (Path.directory [ "build" ])
+    """
+
+
+waves =
+    item
+        "waves"
+        "Waves"
+        [ { name = "Application"
+          , text = "waves.citric.id"
+          , url = "https://waves.citric.id/"
+          }
+        ]
+        [ imageHolder
+            { padding = False
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "waves.webp"
+                        ]
+                    )
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "Electrical-wave analyser."
+            ]
+        ]

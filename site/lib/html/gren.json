@@ -1,0 +1,18 @@
+{
+  "type": "package",
+  "platform": "common",
+  "name": "icidasset/html-gren",
+  "summary": "HTML",
+  "license": "BSD-3-Clause",
+  "version": "1.0.0",
+  "exposed-modules": [
+    "Common.Html",
+    "Common.Html.Attributes",
+    "Common.Html.Events",
+    "Common.Html.Interior"
+  ],
+  "gren-version": "0.3.0 <= v < 0.4.0",
+  "dependencies": {
+    "gren-lang/core": "4.0.0 <= v < 5.0.0"
+  }
+}

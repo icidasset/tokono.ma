@@ -1,0 +1,71 @@
+module Layouts.Base exposing ( layout )
+
+import Common.Html as Html exposing ( Html )
+import Common.Html.Attributes as A
+import Json.Encode
+import Pages exposing ( Page )
+import Time
+import Views.Common exposing ( Route )
+
+
+layout : Page -> Array (Html msg) -> Time.Posix -> Html msg
+layout page pageHtml time =
+    let
+        cacheId =
+            time
+                |> Time.posixToMillis
+                |> String.fromInt
+    in
+    Html.html
+        []
+        [ -- -------------------------------------
+          -- HEAD
+          -- -------------------------------------
+          Html.head
+            []
+            [ Html.title
+                [ Html.text page.title
+                ]
+            , Html.meta
+                [ A.charset "utf-8"
+                ]
+            , Html.meta
+                [ A.name "viewport"
+                , A.content "width=device-width, initial-scale=1"
+                ]
+            , Html.link
+                [ A.href
+                    (Views.Common.pathFromRoot
+                        { root = page.route
+                        }
+                        [ "stylesheet.css?" ++ cacheId
+                        ]
+                    )
+                , A.rel "stylesheet"
+                ]
+            ]
+            -- ---------------------------------------
+            -- BODY
+            -- ---------------------------------------
+        , [ Html.node
+                "script"
+                [ cacheId
+                    |> String.append "site.js?"
+                    |> Array.singleton
+                    |> Views.Common.pathFromRoot
+                            { root = page.route
+                            }
+                    |> A.src
+                ]
+                []
+          , Html.node
+                "script"
+                []
+                [ Html.text "Gren.Main.init({ pageRoute: "
+                , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
+                , Html.text " })"
+                ]
+          ]
+            |> Array.prefix pageHtml
+            |> Html.body []
+        ]

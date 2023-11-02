@@ -1,0 +1,50 @@
+@font-face {
+  font-family: "Assistant";
+  font-weight: 1 999;
+  src: url("./fonts/assistant-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Caveat";
+  font-weight: 1 999;
+  src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Fira Code";
+  font-weight: 1 999;
+  src: url("./fonts/fira-code-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Jost";
+  font-weight: 1 999;
+  src: url("./fonts/jost-variable-roman_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: italic;
+  font-weight: 1 999;
+  src: url("./fonts/jost-variable-italic_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Gabarito";
+  font-weight: 1 999;
+  src: url("./fonts/gabarito-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Emoji";
+  src:
+    local("Noto Emoji"),
+    url("./fonts/noto-emoji-variable_wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Color Emoji";
+  src:
+    local("Noto Color Emoji"),
+    url("./fonts/noto-emoji-color.woff2") format("woff2");
+}

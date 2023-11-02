@@ -1,0 +1,109 @@
+module Views.Pages.Links exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.links
+        []
+        [ Html.h1
+            [ class "text-accent-links"
+            ]
+            [ Html.text "Links to some things related to myself, but also a bunch of other stuff."
+            ]
+        , Html.h2
+            []
+            [ Html.text "Socials"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🏞️" "https://bsky.app/profile/tokono.ma" "Bluesky"
+            , linkWithEmoji "🐱" "https://github.com/icidasset" "Github"
+            , linkWithEmoji "🦣" "https://mastodon.xyz/@icidasset" "Mastodon"
+            , linkWithEmoji "🪐" "https://www.bungie.net/7/en/User/Profile/3/4611686018475379626?bgn=icidasset" "Destiny"
+            ]
+        , Html.h2
+            []
+            [ Html.text "My apps"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🎵" "https://diffuse.sh" "Diffuse"
+            , linkWithEmoji "📝" "https://herknen.fission.app/" "Herknen"
+            , linkWithEmoji "📚" "https://quotes.fission.app/" "Quotes"
+            , linkWithEmoji "✔︎" "https://checklists.citric.id" "Checklists"
+            ]
+        , Html.h2
+            []
+            [ Html.text "Not related to me"
+            ]
+        , Html.p
+            []
+            [ Html.text "Websites & applications that I use."
+            ]
+        , Html.h3
+            []
+            [ Html.text "Web Apps"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🔐" "https://cryptii.com" "Cryptii"
+            , linkWithEmoji "🖼️" "https://edit.photo" "Photo editor"
+            , linkWithEmoji "🖌️" "https://www.tldraw.com" "TLDraw"
+            , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
+            ]
+        , Html.h3
+            []
+            [ Html.text "Colors"
+            ]
+        , linkGroup
+            [ link "https://hue.tools" "Tweak colors"
+            , link "https://convertacolor.com" "Color conversion"
+            , link "https://picular.co" "Google, but for colors"
+            , link "https://randoma11y.com" "Get random, accessible color combinations"
+            , link "https://farbvelo.elastiq.ch" "Random color explorer"
+            , link "https://meodai.github.io/poline/" "Enigmatic color palette generator"
+            , link "https://www.happyhues.co" "Happy Hues"
+            , link "https://www.thedayscolor.com" "The Day\'s Color"
+            ]
+            -- 
+        , Common.closingEmoji "🌍"
+        ]
+
+
+linkGroup =
+    Html.p
+        [ class "decoration-accent-links"
+        ]
+
+
+link href text =
+    Html.a
+        [ class "inline-block mb-2 mr-10"
+        , A.href href
+        ]
+        [ Html.em
+            []
+            [ Html.text text
+            ]
+        ]
+
+
+linkWithEmoji emoji href text =
+    Html.a
+        [ class "inline-block mb-2 mr-10"
+        , A.href href
+        ]
+        [ Html.span
+            [ class "font-emoji inline-block mr-px"
+            ]
+            [ Html.text emoji
+            ]
+        , Html.text " "
+        , Html.em
+            []
+            [ Html.text text
+            ]
+        ]

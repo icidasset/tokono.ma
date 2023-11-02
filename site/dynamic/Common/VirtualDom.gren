@@ -1,0 +1,54 @@
+module Common.VirtualDom exposing ( fromHtml )
+
+import Common.Html.Interior exposing (..)
+import Json.Encode
+import VirtualDom
+
+
+fromHtml : Html msg -> VirtualDom.Node msg
+fromHtml =
+    transform
+        { node =
+            \tagName attributes { namespace } ->
+                (case namespace of
+                    Just ns ->
+                        VirtualDom.nodeNS ns
+
+                    Nothing ->
+                        VirtualDom.node
+                )
+                    tagName
+                    (Array.map handleAttribute attributes)
+        , injectDescendants = \parentNodeResult childNodeResults -> parentNodeResult childNodeResults
+        , text = VirtualDom.text
+        }
+
+
+handleAttribute attr =
+    case attr of
+        Attribute key value ->
+            VirtualDom.attribute key value
+
+        BoolProperty key value ->
+            VirtualDom.property key (Json.Encode.bool value)
+
+        Event name (Normal decoder) ->
+            VirtualDom.on name (VirtualDom.Normal decoder)
+
+        Event name (MayStopPropagation decoder) ->
+            VirtualDom.on name (VirtualDom.MayStopPropagation decoder)
+
+        Event name (MayPreventDefault decoder) ->
+            VirtualDom.on name (VirtualDom.MayPreventDefault decoder)
+
+        Event name (Custom decoder) ->
+            VirtualDom.on name (VirtualDom.Custom decoder)
+
+        StringProperty key value ->
+            VirtualDom.property key (Json.Encode.string value)
+
+        Style key value ->
+            VirtualDom.style key value
+
+        ValueProperty key value ->
+            VirtualDom.property key value

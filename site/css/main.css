@@ -1,0 +1,133 @@
+@charset "UTF-8";
+
+@import "./fonts.css";
+@import "./accents.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-french-porcelain text-magnet font-sans;
+  @apply dark:bg-carbon-fiber dark:text-cows-milk;
+  text-rendering: geometricPrecision;
+}
+
+/**
+ * Basics
+ */
+
+main h1 {
+  @apply text-magnet font-display mb-12 mt-[-0.125em] text-5xl font-bold;
+  @apply dark:text-cows-milk;
+  @apply sm:text-6xl;
+  @apply md:text-7xl;
+  line-height: 0.95;
+}
+
+main h1 a {
+  filter: hue-rotate(180deg);
+}
+
+main h1 strong {
+  font-weight: inherit;
+}
+
+main h2 {
+  @apply font-display mb-8 mt-20 text-2xl font-extrabold opacity-80;
+  @apply sm:text-3xl;
+  @apply md:text-4xl;
+}
+
+main h3 {
+  @apply font-display mb-5 mt-8 text-lg font-bold opacity-80;
+  @apply sm:text-xl;
+  @apply md:text-2xl;
+}
+
+blockquote {
+  @apply border-empress border-l-4 border-opacity-30 pl-3;
+  @apply dark:border-cows-milk dark:border-opacity-30;
+}
+
+blockquote,
+p,
+ul,
+ol {
+  @apply mb-6 max-w-2xl text-base leading-relaxed;
+  @apply sm:text-lg sm:leading-relaxed;
+  @apply md:text-xl md:leading-relaxed;
+}
+
+a em {
+  @apply not-italic;
+}
+
+ul li,
+ol li {
+  @apply mb-3;
+}
+
+article pre {
+  @apply my-6;
+}
+
+article pre code {
+  @apply bg-cows-milk block overflow-auto rounded-md px-6 py-8 text-xs md:text-sm;
+  @apply dark:bg-black dark:bg-opacity-20;
+}
+
+.font-serif {
+  @apply tracking-tight;
+}
+
+.lh-crop::before {
+  content: "";
+  display: block;
+  height: 0;
+  width: 0;
+  margin-top: -0.75em;
+}
+
+/**
+ * Markings & Links
+ */
+
+p a:not(.inline-block),
+ul a:not(.inline-block),
+ol a:not(.inline-block),
+a em {
+  @apply relative;
+}
+
+p:not(.truncate) a:not(.inline-block),
+ul:not(.truncate) a:not(.inline-block),
+ol:not(.truncate) a:not(.inline-block),
+:not(.truncate) a em {
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+.mark,
+p a:not(.inline-block):before,
+ul a:not(.inline-block):before,
+ol a:not(.inline-block):before,
+a em:before {
+  bottom: 0.35em;
+  content: "";
+  display: block;
+  height: 0.35em;
+  left: 0px;
+  opacity: 0.5;
+  position: absolute;
+  right: -1px;
+  z-index: -1;
+}
+
+.mark {
+  bottom: 0.225em;
+}

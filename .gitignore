@@ -1,4 +1,8 @@
 .DS_Store
 .env
+.gren
+app
 node_modules
 dist
+tmp
+/site/dynamic/index.html

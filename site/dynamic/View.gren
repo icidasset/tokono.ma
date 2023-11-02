@@ -1,0 +1,36 @@
+module View exposing (..)
+
+import Browser exposing ( Document )
+import Common.Html
+import Common.VirtualDom
+import Pages
+import Types exposing ( Model, Msg(..) )
+import Views.Pages
+
+
+view : Model -> Document Msg
+view model =
+    let
+        pageRoute =
+            case
+                model.url.path
+                    |> String.dropLeft 1
+                    |> String.split "/"
+            of
+                [ "" ] ->
+                    []
+
+                r ->
+                    r
+
+        page =
+            Pages.allPages
+                |> Array.findFirst (\{ route } -> route == pageRoute)
+                |> Maybe.withDefault Pages.notFound
+
+        pageView =
+            Views.Pages.view page
+    in
+    { title = page.title
+    , body = Array.map Common.VirtualDom.fromHtml (Array.map (Common.Html.map ViewMsg) pageView)
+    }

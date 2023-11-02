@@ -22,6 +22,29 @@
 }
 
 /**
+ * Error
+ */
+
+.bg-accent-error {
+  @apply bg-chewing-gum;
+}
+
+.decoration-accent-error {
+  @apply decoration-chewing-gum;
+}
+
+.decoration-accent-error p a:not(.inline-block):before,
+.decoration-accent-error ul a:not(.inline-block):before,
+.decoration-accent-error ol a:not(.inline-block):before,
+.decoration-accent-error a em:before {
+  @apply bg-chewing-gum;
+}
+
+.text-accent-error {
+  @apply text-chewing-gum;
+}
+
+/**
  * Essays
  */
 

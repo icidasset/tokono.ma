@@ -18,7 +18,8 @@ type Html msg
 
 type Attribute msg
     = Attribute String String
-    | BoolProperty String Bool -- | Event String (EventDecoder msg)
+    | BoolProperty String Bool
+    | Event String (EventDecoder msg)
     | StringProperty String String
     | Style String String
     | ValueProperty String Value
@@ -71,9 +72,9 @@ mapAttribute fn attribute =
         Attribute key value ->
             Attribute key value
 
-        -- Event name eventDecoder ->
-        --  Event name (mapEventDecoder f eventDecoder)
-        -- 
+        Event name eventDecoder ->
+            Event name (mapEventDecoder fn eventDecoder)
+
         BoolProperty key value ->
             BoolProperty key value
 
@@ -92,6 +93,47 @@ mapDescendants fn descendants =
     case descendants of
         Regular nodes ->
             Regular (Array.map (map fn) nodes)
+
+
+mapEventDecoder : (a -> b) -> EventDecoder a -> EventDecoder b
+mapEventDecoder fn eventDecoder =
+    case eventDecoder of
+        Normal d ->
+            Normal (Json.Decode.map fn d)
+
+        MayStopPropagation d ->
+            MayStopPropagation
+                (Json.Decode.map
+                    (\a ->
+                        { message = fn a.message
+                        , stopPropagation = a.stopPropagation
+                        }
+                    )
+                    d
+                )
+
+        MayPreventDefault d ->
+            MayPreventDefault
+                (Json.Decode.map
+                    (\a ->
+                        { message = fn a.message
+                        , preventDefault = a.preventDefault
+                        }
+                    )
+                    d
+                )
+
+        Custom d ->
+            Custom
+                (Json.Decode.map
+                    (\v ->
+                        { message = fn v.message
+                        , stopPropagation = v.stopPropagation
+                        , preventDefault = v.preventDefault
+                        }
+                    )
+                    d
+                )
 
 
 transform =
@@ -140,9 +182,9 @@ transform_ context manager html =
                                             Nothing
                                 )
 
-                descendantContext =
+                newContext =
                     -- If the `xmlns` attribute is present,
-                    -- the XML namespace of the descendants will change.
+                    -- the active XML namespace will change.
                     case xmlns of
                         Just ns ->
                             { context | namespace = Just ns }
@@ -151,15 +193,10 @@ transform_ context manager html =
                             context
             in
             manager.injectDescendants
-                (manager.node
-                    tagName
-                    attributes
-                    { namespace = context.namespace
-                    }
-                )
+                (manager.node tagName attributes newContext)
                 (case descendants of
                     Regular array ->
-                        Array.map (transform_ descendantContext manager) array
+                        Array.map (transform_ newContext manager) array
                 )
 
         TextNode text ->

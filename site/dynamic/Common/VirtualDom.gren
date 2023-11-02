@@ -32,6 +32,18 @@ handleAttribute attr =
         BoolProperty key value ->
             VirtualDom.property key (Json.Encode.bool value)
 
+        Event name (Normal decoder) ->
+            VirtualDom.on name (VirtualDom.Normal decoder)
+
+        Event name (MayStopPropagation decoder) ->
+            VirtualDom.on name (VirtualDom.MayStopPropagation decoder)
+
+        Event name (MayPreventDefault decoder) ->
+            VirtualDom.on name (VirtualDom.MayPreventDefault decoder)
+
+        Event name (Custom decoder) ->
+            VirtualDom.on name (VirtualDom.Custom decoder)
+
         StringProperty key value ->
             VirtualDom.property key (Json.Encode.string value)
 

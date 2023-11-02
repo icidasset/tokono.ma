@@ -1,11 +1,11 @@
-module Common.Html.Attributes exposing ( style, property, attribute, class, classList, id, title, hidden, type_, value, checked, placeholder, selected, accept, acceptCharset, action, autocomplete, autofocus, disabled, enctype, list, maxlength, minlength, method, multiple, name, novalidate, pattern, readonly, required, size, for, form, max, min, step, cols, rows, wrap, href, target, download, hreflang, media, ping, rel, ismap, usemap, shape, coords, src, height, width, alt, autoplay, controls, loop, preload, poster, default, kind, srclang, sandbox, srcdoc, reversed, start, align, colspan, rowspan, headers, scope, accesskey, contenteditable, contextmenu, dir, draggable, dropzone, itemprop, lang, spellcheck, tabindex, cite, datetime, pubdate, manifest, content, charset, httpEquiv, xmlns )
+module Common.Html.Attributes exposing ( style, attribute, property, stringProperty, boolProperty, class, classList, id, title, hidden, type_, value, checked, placeholder, selected, accept, acceptCharset, action, autocomplete, autofocus, disabled, enctype, list, maxlength, minlength, method, multiple, name, novalidate, pattern, readonly, required, size, for, form, max, min, step, cols, rows, wrap, href, target, download, hreflang, media, ping, rel, ismap, usemap, shape, coords, src, height, width, alt, autoplay, controls, loop, preload, poster, default, kind, srclang, sandbox, srcdoc, reversed, start, align, colspan, rowspan, headers, scope, accesskey, contenteditable, contextmenu, dir, draggable, dropzone, itemprop, lang, spellcheck, tabindex, cite, datetime, pubdate, manifest, content, charset, httpEquiv, xmlns )
 
 {-| Helper functions for HTML attributes. They are organized roughly by
 category. Each attribute is labeled with the HTML tags it can be used with, so
 just search the page for `video` if you want video stuff.
 
 # Primitives
-@docs style, property, attribute
+@docs style, attribute, property, stringProperty, boolProperty
 
 # Super Common Attributes
 @docs class, classList, id, title, hidden

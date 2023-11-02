@@ -2,18 +2,19 @@ module Layouts.Base exposing ( layout )
 
 import Common.Html as Html exposing ( Html )
 import Common.Html.Attributes as A
+import Json.Encode
 import Pages exposing ( Page )
-import Views.Common exposing ( Route )
 import Time
+import Views.Common exposing ( Route )
 
 
 layout : Page -> Array (Html msg) -> Time.Posix -> Html msg
 layout page pageHtml time =
     let
-      cacheId =
-        time
-          |> Time.posixToMillis
-          |> String.fromInt
+        cacheId =
+            time
+                |> Time.posixToMillis
+                |> String.fromInt
     in
     Html.html
         []
@@ -57,6 +58,13 @@ layout page pageHtml time =
                     |> A.src
                 ]
                 []
+          , Html.node
+                "script"
+                []
+                [ Html.text "Gren.Main.init({ pageRoute: "
+                , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
+                , Html.text " })"
+                ]
           ]
             |> Array.prefix pageHtml
             |> Html.body []

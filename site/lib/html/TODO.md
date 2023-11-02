@@ -1,4 +1,1 @@
-- `Html.map`
-- Events
 - Keyed nodes
-- Properties, values and other kinds of special attributes

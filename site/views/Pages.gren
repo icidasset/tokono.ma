@@ -16,7 +16,8 @@ type alias Page =
 
 
 type PageId
-    = About
+    = ErrNotFound -- 
+    | About
     | Essays
     | Index
     | Links
@@ -36,6 +37,24 @@ pages =
     , notes
     , about
     ]
+
+
+allPages : Array Page
+allPages =
+    Array.pushFirst index pages
+
+
+
+-- 📃  /  ERRORS
+
+
+notFound : Page
+notFound =
+    { id = ErrNotFound
+    , name = "404"
+    , title = Views.Common.title
+    , route = []
+    }
 
 
 

@@ -1,0 +1,22 @@
+module Views.Pages.Errors.NotFound exposing ( view )
+
+import Common.Html as Html
+import Common.Html.Attributes as A exposing ( class )
+import Layouts.Default
+import Pages
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.notFound
+        [ class "decoration-accent-error"
+        ]
+        [ Html.h1
+            [ class "text-accent-error"
+            ]
+            [ Html.text "Woops, page not found."
+            ]
+            -- 
+        , Common.closingEmoji "🤷"
+        ]

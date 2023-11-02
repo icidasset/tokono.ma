@@ -69,6 +69,10 @@ attributesToString attrs =
                     else
                         acc
 
+                Event _ _ ->
+                    -- Events are ignored
+                    acc
+
                 StringProperty key value ->
                     collect (Attribute (propName key) value) acc
 

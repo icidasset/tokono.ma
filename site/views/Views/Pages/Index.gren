@@ -2,6 +2,9 @@ module Views.Pages.Index exposing ( view )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
+import Common.Html.Events as E
+import Json.Decode
+import Messages exposing ( Msg(..) )
 import Pages
 import Views.Common as Common
 
@@ -28,6 +31,13 @@ view =
                     Html.a
                         [ class "inline-block relative"
                         , A.href (String.join "/" page.route)
+                        , E.preventDefaultOn
+                            "click"
+                            (Json.Decode.succeed
+                                { message = NavigateToPage page
+                                , preventDefault = True
+                                }
+                            )
                         ]
                         [ Html.text page.name
                         , Html.span

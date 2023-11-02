@@ -21,14 +21,6 @@ import Views.Pages
 
 
 
--- 🏔️
-
-
-pages =
-    Array.pushFirst Pages.index Pages.pages
-
-
-
 -- 🚀
 
 
@@ -73,7 +65,7 @@ writePagesToDisk fsPermission =
         -- Write each page to disk
         |> Task.andThen
                 (\{ destinationDir, time } ->
-                    pages
+                    Pages.allPages
                         |> Array.map (\p -> page p (Views.Pages.view p) time)
                         |> Array.map (Shikensu.writeDefinition fsPermission destinationDir)
                         |> Task.sequence

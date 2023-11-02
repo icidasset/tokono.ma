@@ -2,6 +2,9 @@ module Layouts.Default exposing ( layout )
 
 import Common.Html as Html
 import Common.Html.Attributes as A exposing ( class )
+import Common.Html.Events as E
+import Json.Decode
+import Messages exposing ( Msg(..) )
 import Pages
 import Views.Common as Common
 
@@ -47,6 +50,7 @@ layout page attributes contents =
                         ]
                         [ Html.a
                             [ A.class "inline-block lh-crop relative"
+                            , A.target "_self"
                             , if isActive then
                                 A.class "font-medium"
                               else
@@ -56,6 +60,13 @@ layout page attributes contents =
                                     { root = page.route
                                     }
                                     linkPage.route
+                                )
+                            , E.preventDefaultOn
+                                "click"
+                                (Json.Decode.succeed
+                                    { message = NavigateToPage linkPage
+                                    , preventDefault = True
+                                    }
                                 )
                             ]
                             [ Html.text linkPage.name

@@ -1,7 +1,10 @@
 module Main exposing ( main )
 
-import Browser
+import Browser exposing ( UrlRequest(..) )
+import Browser.Navigation
+import Messages as ViewMsg
 import Types exposing (..)
+import Url exposing ( Url )
 import View exposing ( view )
 
 
@@ -20,8 +23,8 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = \_ -> Bypassed -- TODO: UrlRequest -> msg
-        , onUrlChange = \_ -> Bypassed -- TODO: Url -> msg
+        , onUrlRequest = UrlRequested
+        , onUrlChange = UrlChanged
         }
 
 
@@ -29,8 +32,18 @@ main =
 -- 🌳
 
 
+init :
+    Flags
+    -> Url
+    -> Browser.Navigation.Key
+    -> { model : Model
+       , command : Cmd Msg
+       }
 init flags url key =
-    { model = {}
+    { model =
+        { navKey = key
+        , url = url
+        }
     , command = Cmd.none
     }
 
@@ -47,9 +60,29 @@ update :
        }
 update msg model =
     case msg of
-        Bypassed ->
+        ViewMsg (ViewMsg.NavigateToPage page) ->
+            let
+                url =
+                    "/" ++ String.join "/" page.route
+            in
             { model = model
+            , command = Browser.Navigation.pushUrl model.navKey url
+            }
+
+        -- NAVIGATION
+        UrlChanged url ->
+            { model = { model | url = url }
             , command = Cmd.none
+            }
+
+        UrlRequested (External string) ->
+            { model = model
+            , command = Browser.Navigation.load string
+            }
+
+        UrlRequested (Internal url) ->
+            { model = model
+            , command = Browser.Navigation.pushUrl model.navKey (Url.toString url)
             }
 
 

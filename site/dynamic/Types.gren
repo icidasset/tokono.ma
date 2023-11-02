@@ -1,10 +1,19 @@
 module Types exposing (..)
+
+import Browser
+import Browser.Navigation
+import Messages as View
+import Url exposing ( Url )
+
+
+
 -- 🌳
 
 
-
 type alias Model =
-    {}
+    { navKey : Browser.Navigation.Key
+    , url : Url
+    }
 
 
 
@@ -12,4 +21,6 @@ type alias Model =
 
 
 type Msg
-    = Bypassed
+    = UrlChanged Url
+    | UrlRequested Browser.UrlRequest
+    | ViewMsg View.Msg

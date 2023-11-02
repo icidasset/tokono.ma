@@ -8,6 +8,7 @@
   "exposed-modules": [
     "Common.Html",
     "Common.Html.Attributes",
+    "Common.Html.Events",
     "Common.Html.Interior"
   ],
   "gren-version": "0.3.0 <= v < 0.4.0",

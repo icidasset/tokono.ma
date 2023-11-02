@@ -8,12 +8,18 @@ import Json.Decode exposing ( Decoder, Value )
 
 
 type Html msg
-    = Node String (Array (Attribute msg)) (Descendants msg)
+    = Node NodeProperties (Array (Attribute msg)) (Descendants msg)
     | TextNode String
 
 
 
 -- PARTS
+
+
+type alias NodeProperties =
+    { key : Maybe String
+    , tagName : String
+    }
 
 
 type Attribute msg
@@ -26,7 +32,7 @@ type Attribute msg
 
 
 type Descendants msg
-    = Regular (Array (Html msg)) -- | Keyed (List ( String, Html msg ))
+    = Regular (Array (Html msg))
 
 
 type EventDecoder msg
@@ -59,8 +65,8 @@ type EventDecoder msg
 map : (a -> b) -> Html a -> Html b
 map f node =
     case node of
-        Node tagName attrs descendants ->
-            Node tagName (Array.map (mapAttribute f) attrs) (mapDescendants f descendants)
+        Node props attrs descendants ->
+            Node props (Array.map (mapAttribute f) attrs) (mapDescendants f descendants)
 
         TextNode content ->
             TextNode content
@@ -146,7 +152,7 @@ transform_ :
     { namespace : Maybe String
     }
     -> { node :
-            String
+            NodeProperties
             -> Array (Attribute msg)
             -> { namespace : Maybe String
                }
@@ -158,7 +164,7 @@ transform_ :
     -> transformed
 transform_ context manager html =
     case html of
-        Node tagName attributes descendants ->
+        Node props attributes descendants ->
             let
                 xmlns =
                     -- Check for a `xmlns` attribute which will change the active namespace
@@ -193,7 +199,7 @@ transform_ context manager html =
                             context
             in
             manager.injectDescendants
-                (manager.node tagName attributes newContext)
+                (manager.node props attributes newContext)
                 (case descendants of
                     Regular array ->
                         Array.map (transform_ newContext manager) array

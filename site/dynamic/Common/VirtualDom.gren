@@ -9,16 +9,50 @@ fromHtml : Html msg -> VirtualDom.Node msg
 fromHtml =
     transform
         { node =
-            \tagName attributes { namespace } ->
-                (case namespace of
+            \{ key, tagName } attributes { namespace } ->
+                let
+                    handledAttributes =
+                        Array.map handleAttribute attributes
+                in
+                case namespace of
                     Just ns ->
-                        VirtualDom.nodeNS ns
+                        case key of
+                            Just k ->
+                                \nodes ->
+                                    VirtualDom.keyedNodeNS
+                                        ns
+                                        tagName
+                                        handledAttributes
+                                        (Array.map
+                                            (\node ->
+                                                { key = k
+                                                , node = node
+                                                }
+                                            )
+                                            nodes
+                                        )
+
+                            Nothing ->
+                                VirtualDom.nodeNS ns tagName handledAttributes
 
                     Nothing ->
-                        VirtualDom.node
-                )
-                    tagName
-                    (Array.map handleAttribute attributes)
+                        case key of
+                            Just k ->
+                                \nodes ->
+                                    VirtualDom.keyedNode
+                                        tagName
+                                        handledAttributes
+                                        (Array.map
+                                            (\node ->
+                                                { key = k
+                                                , node = node
+                                                }
+                                            )
+                                            nodes
+                                        )
+
+                            Nothing ->
+                                VirtualDom.node tagName handledAttributes
         , injectDescendants = \parentNodeResult childNodeResults -> parentNodeResult childNodeResults
         , text = VirtualDom.text
         }

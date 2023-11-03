@@ -3,6 +3,7 @@ module Main exposing ( main )
 import Browser exposing ( UrlRequest(..) )
 import Browser.Navigation
 import Common.String as String
+import Markdown
 import Messages as ViewMsg
 import Types exposing (..)
 import Url exposing ( Url )
@@ -43,6 +44,19 @@ init :
        }
 init flags url key =
     let
+        parsed =
+            Markdown.parse
+                """
+                ## H2 [link](#href)
+
+                Testing a [link](#href). Some more text.
+
+                Paragraph 2.
+                """
+
+        _ =
+            Debug.log "" parsed
+
         rootUrl =
             url.path
                 |> String.removePrefix "/"

@@ -8,8 +8,11 @@
       "gren-lang/browser": "3.0.0",
       "gren-lang/core": "4.0.1",
       "gren-lang/url": "3.0.0",
-      "icidasset/html-gren": "local:../../lib/html/"
+      "icidasset/html-gren": "local:../../lib/html/",
+      "icidasset/markdown-gren": "local:../../lib/markdown/"
     },
-    "indirect": {}
+    "indirect": {
+      "gren-lang/parser": "3.0.1"
+    }
   }
 }

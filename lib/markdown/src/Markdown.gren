@@ -1,0 +1,261 @@
+module Markdown exposing (..)
+
+import Parser exposing (..)
+
+
+parse string =
+    Parser.run parser string
+
+
+parser =
+    loop [] blocksParser
+
+
+
+-- BLOCKS
+
+
+type Block
+    = Heading
+        { level : Int
+        }
+        (Array Inline)
+    | Paragraph (Array Inline)
+
+
+blocksParser : Array Block -> Parser (Step (Array Block) (Array Block))
+blocksParser blocks =
+    let
+        block p =
+            succeed
+                (\b ->
+                    blocks
+                        |> Array.pushLast b
+                        |> Loop
+                )
+                |= p
+    in
+    Parser.oneOf
+        [ map (\_ -> Done blocks) (succeed identity |. spaces |. end)
+
+        , -- 
+          block headingParser
+        , block paragraphParser
+
+        , -- 
+          succeed (Done blocks)
+        ]
+
+
+blockDeliminator =
+    oneOf
+        [ chompIf (\c -> c == '\n') |. chompIf (\c -> c == '\n') |. spaces
+        , end
+        ]
+
+
+headingParser : Parser Block
+headingParser =
+    some (symbol "#")
+        |> getChompedString
+        |> map String.length
+        |> andThen
+                (\level ->
+                    if level > 6 then
+                        problem "Headers only go up to 6"
+                    else
+                        succeed
+                            (Heading
+                                { level = level
+                                }
+                            )
+                            |. some (chompIf isSpace)
+                            |= loop [] inlineParser
+                            |. blockDeliminator
+                )
+
+
+paragraphParser : Parser Block
+paragraphParser =
+    succeed Paragraph |= loop [] inlineParser |. blockDeliminator
+
+
+
+-- INLINE
+
+
+type Inline
+    = Image
+        { alt : String
+        , url : String
+        }
+    | Link
+        { text : String
+        , url : String
+        }
+    | Text String
+
+
+inlineParser : Array Inline -> Parser (Step (Array Inline) (Array Inline))
+inlineParser inlineElements =
+    Parser.oneOf
+        [ -- ----- --
+          -- Image --
+          -- ----- --
+          succeed identity
+            |. symbol "!["
+            |= getChompedString (chompUntil "]")
+            |. symbol "]"
+            |> andThen
+                    (\alt ->
+                        -- TODO: Support image titles
+                        succeed identity
+                            |. symbol "("
+                            |= getChompedString (chompUntil ")")
+                            |. symbol ")"
+                            |> map
+                                    (\url ->
+                                        { alt = alt
+                                        , url = url
+                                        }
+                                    )
+                            |> map
+                                    (\image ->
+                                        inlineElements
+                                            |> Array.pushLast (Image image)
+                                            |> Loop
+                                    )
+                    )
+
+        , -- ---- --
+          -- Link --
+          -- ---- --
+          succeed identity
+            |. symbol "["
+            |= getChompedString (chompUntil "]")
+            |. symbol "]"
+            |> andThen
+                    (\text ->
+                        -- TODO: Support link titles
+                        succeed identity
+                            |. symbol "("
+                            |= getChompedString (chompUntil ")")
+                            |. symbol ")"
+                            |> map
+                                    (\url ->
+                                        { text = text
+                                        , url = url
+                                        }
+                                    )
+                            |> map
+                                    (\link ->
+                                        inlineElements
+                                            |> Array.pushLast (Link link)
+                                            |> Loop
+                                    )
+                    )
+
+        , -- ---- --
+          -- Text --
+          -- ---- --
+          succeed
+            (\text ->
+                case text of
+                    "" ->
+                        Done inlineElements
+
+                    _ ->
+                        inlineElements
+                            |> Array.pushLast (Text text)
+                            |> (if String.contains "\n\n" text then
+                                    Done
+                                 else
+                                    Loop
+                                )
+            )
+            |= getChompedString
+                    (oneOf
+                        [ chompUntil "\n\n"
+                        , chompUntil "!"
+                        , chompUntil "["
+                        ]
+                    )
+
+        , -- 
+          succeed
+            (\text ->
+                inlineElements
+                    |> Array.pushLast (Text text)
+                    |> Done
+            )
+            |= getChompedString (chompUntilEndOr "\n\n")
+
+        , -- --- --
+          -- Fin --
+          -- --- --
+          map (\_ -> Done inlineElements) end
+
+        , -- 
+          succeed (Done inlineElements)
+        ]
+
+
+
+-- 🛠️
+
+
+isLineEnding c =
+    c == '\n' || c == '\r'
+
+
+isSpace c =
+    c == ' '
+
+
+isNotSpace c =
+    c /= ' '
+
+
+
+-- 
+
+
+many : Parser a -> Parser (Array a)
+many p =
+    loop [] (manyHelp p)
+
+
+some :
+    Parser a
+    -> Parser
+        { match : a
+        , rest : Array a
+        }
+some p =
+    succeed
+        (\a b ->
+            { match = a
+            , rest = b
+            }
+        )
+        |= p
+        |= many p
+
+
+between : Parser opening -> Parser closing -> Parser a -> Parser a
+between opening closing p =
+    succeed identity |. opening |= p |. closing
+
+
+manyHelp : Parser a -> Array a -> Parser (Step (Array a) (Array a))
+manyHelp p vs =
+    oneOf
+        [ succeed
+            (\v ->
+                vs
+                    |> Array.pushLast v
+                    |> Loop
+            )
+            |= p
+        , succeed (Done vs)
+        ]

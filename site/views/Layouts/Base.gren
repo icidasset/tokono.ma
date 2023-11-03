@@ -38,7 +38,7 @@ layout page pageHtml time =
                     (Views.Common.pathFromRoot
                         { root = page.route
                         }
-                        [ "stylesheet.css?" ++ cacheId
+                        [ "stylesheet.css?v=" ++ cacheId
                         ]
                     )
                 , A.rel "stylesheet"
@@ -50,7 +50,7 @@ layout page pageHtml time =
         , [ Html.node
                 "script"
                 [ cacheId
-                    |> String.append "site.js?"
+                    |> String.append "site.js?v="
                     |> Array.singleton
                     |> Views.Common.pathFromRoot
                             { root = page.route

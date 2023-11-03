@@ -1,14 +1,14 @@
 {
   "type": "application",
   "platform": "node",
-  "source-directories": ["./", "../views", "../lib/svg/src"],
+  "source-directories": ["./", "../views", "../../lib/svg/src"],
   "gren-version": "0.3.0",
   "dependencies": {
     "direct": {
       "gren-lang/core": "4.0.1",
       "gren-lang/node": "3.0.1",
       "icidasset/shikensu-gren": "4.0.0",
-      "icidasset/html-gren": "local:../lib/html/"
+      "icidasset/html-gren": "local:../../lib/html/"
     },
     "indirect": {
       "gren-lang/url": "3.0.0"

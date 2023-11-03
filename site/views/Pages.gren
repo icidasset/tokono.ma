@@ -16,7 +16,7 @@ type alias Page =
 
 
 type PageId
-    = ErrNotFound -- 
+    = ErrNotFound
     | About
     | Essays
     | Index

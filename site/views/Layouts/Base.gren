@@ -61,9 +61,9 @@ layout page pageHtml time =
           , Html.node
                 "script"
                 []
-                [ Html.text "Gren.Main.init({ pageRoute: "
+                [ Html.text "Gren.Main.init({ flags: { pageRoute: "
                 , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
-                , Html.text " })"
+                , Html.text " }})"
                 ]
           ]
             |> Array.prefix pageHtml

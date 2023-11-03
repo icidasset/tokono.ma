@@ -55,12 +55,12 @@ layout page attributes contents =
                                 A.class "font-medium"
                               else
                                 A.class ""
-                            , A.href
-                                (Common.pathFromRoot
-                                    { root = page.route
-                                    }
-                                    linkPage.route
-                                )
+                            , linkPage.route
+                                |> Common.pathFromRoot
+                                        { root = page.route
+                                        }
+                                |> (\r -> r ++ "/")
+                                |> A.href
                             , E.preventDefaultOn
                                 "click"
                                 (Json.Decode.succeed

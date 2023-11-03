@@ -2,6 +2,7 @@ module Main exposing ( main )
 
 import Browser exposing ( UrlRequest(..) )
 import Browser.Navigation
+import Common.String as String
 import Messages as ViewMsg
 import Types exposing (..)
 import Url exposing ( Url )
@@ -13,7 +14,8 @@ import View exposing ( view )
 
 
 type alias Flags =
-    {}
+    { pageRoute : Array String
+    }
 
 
 main : Program Flags Model Msg
@@ -40,8 +42,29 @@ init :
        , command : Cmd Msg
        }
 init flags url key =
+    let
+        rootUrl =
+            url.path
+                |> String.removePrefix "/"
+                |> String.removeSuffix "/"
+                |> String.split "/"
+                |> Array.dropLast (Array.length flags.pageRoute)
+                |> (\path ->
+                        case path of
+                            [] ->
+                                ""
+
+                            [ "" ] ->
+                                ""
+
+                            _ ->
+                                "/" ++ String.join "/" path ++ "/"
+                    )
+                |> (\path -> { url | path = path })
+    in
     { model =
         { navKey = key
+        , rootUrl = rootUrl
         , url = url
         }
     , command = Cmd.none
@@ -63,7 +86,7 @@ update msg model =
         ViewMsg (ViewMsg.NavigateToPage page) ->
             let
                 url =
-                    "/" ++ String.join "/" page.route
+                    "/" ++ model.rootUrl.path ++ String.join "/" page.route ++ "/"
             in
             { model = model
             , command = Browser.Navigation.pushUrl model.navKey url

@@ -1,0 +1,22 @@
+module Common.String exposing (..)
+
+
+
+removePrefix : String -> String -> String
+removePrefix leading string =
+    if String.startsWith leading string then
+        string
+            |> String.dropLeft (String.length leading)
+            |> removePrefix leading
+    else
+        string
+
+
+removeSuffix : String -> String -> String
+removeSuffix leading string =
+    if String.endsWith leading string then
+        string
+            |> String.dropRight (String.length leading)
+            |> removeSuffix leading
+    else
+        string

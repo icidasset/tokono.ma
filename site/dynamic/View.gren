@@ -2,6 +2,7 @@ module View exposing (..)
 
 import Browser exposing ( Document )
 import Common.Html
+import Common.String as String
 import Common.VirtualDom
 import Pages
 import Types exposing ( Model, Msg(..) )
@@ -14,7 +15,8 @@ view model =
         pageRoute =
             case
                 model.url.path
-                    |> String.dropLeft 1
+                    |> String.removePrefix "/"
+                    |> String.removeSuffix "/"
                     |> String.split "/"
             of
                 [ "" ] ->

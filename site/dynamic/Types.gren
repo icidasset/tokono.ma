@@ -12,6 +12,7 @@ import Url exposing ( Url )
 
 type alias Model =
     { navKey : Browser.Navigation.Key
+    , rootUrl : Url
     , url : Url
     }
 

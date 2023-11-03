@@ -30,7 +30,7 @@ view =
                 (\page ->
                     Html.a
                         [ class "inline-block relative"
-                        , A.href (String.join "/" page.route)
+                        , A.href (String.join "/" page.route ++ "/")
                         , E.preventDefaultOn
                             "click"
                             (Json.Decode.succeed

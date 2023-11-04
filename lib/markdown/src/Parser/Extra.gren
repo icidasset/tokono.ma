@@ -1,0 +1,76 @@
+module Parser.Extra exposing (..)
+
+import Parser exposing (..)
+
+
+
+-- 🏔️
+
+
+isLineEnding c =
+    c == '\n' || c == '\r'
+
+
+isSpace c =
+    c == ' '
+
+
+isNotSpace c =
+    c /= ' '
+
+
+notMoreThanXSpaces n =
+    succeed identity
+        |= getChompedString (chompWhile isSpace)
+        |> andThen
+                (\spaces ->
+                    if String.length spaces > n then
+                        problem ("Encountered more than " ++ String.fromInt n ++ " spaces")
+                    else
+                        succeed spaces
+                )
+
+
+
+-- 🛠️
+
+
+many : Parser a -> Parser (Array a)
+many p =
+    loop [] (manyHelp p)
+
+
+some :
+    Parser a
+    -> Parser
+        { match : a
+        , rest : Array a
+        }
+some p =
+    succeed
+        (\a b ->
+            { match = a
+            , rest = b
+            }
+        )
+        |= p
+        |= many p
+
+
+between : Parser opening -> Parser closing -> Parser a -> Parser a
+between opening closing p =
+    succeed identity |. opening |= p |. closing
+
+
+manyHelp : Parser a -> Array a -> Parser (Step (Array a) (Array a))
+manyHelp p vs =
+    oneOf
+        [ succeed
+            (\v ->
+                vs
+                    |> Array.pushLast v
+                    |> Loop
+            )
+            |= p
+        , succeed (Done vs)
+        ]

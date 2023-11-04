@@ -1,0 +1,32 @@
+module Tests exposing ( main )
+
+import Expect
+import Markdown
+import Test exposing (..)
+
+
+
+-- main : Program
+-- main =
+--   run all
+-- TESTS
+
+
+all =
+    Test.concat
+        [ parsing
+        ]
+
+
+
+-- PARSING
+
+
+parsing =
+    Test.concat
+        [ singleParagraph
+        ]
+
+
+singleParagraph =
+    Markdown.parse "Paragraph"

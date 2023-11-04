@@ -49,6 +49,8 @@ init flags url key =
                 """
                 ## H2 [link](#href)
 
+                > # H1
+
                 Testing a [link](#href). Some more text.
 
                 Paragraph 2.

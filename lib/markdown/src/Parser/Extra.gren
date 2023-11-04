@@ -15,10 +15,6 @@ isSpace c =
     c == ' '
 
 
-isNotSpace c =
-    c /= ' '
-
-
 notMoreThanXSpaces n =
     succeed identity
         |= getChompedString (chompWhile isSpace)

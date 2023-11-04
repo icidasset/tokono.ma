@@ -5,11 +5,15 @@ import Parser.Extra exposing (..)
 
 
 parse string =
-    Parser.run parser string
+    Parser.run (parser [] []) string
 
 
-parser =
-    loop [] blocksParser
+parseWithOptions { blockParsers, inlineParsers } string =
+    Parser.run (parser blockParsers inlineParsers) string
+
+
+parser customBlockParsers customInlineParsers =
+    loop [] (blocksParser customBlockParsers customInlineParsers)
 
 
 
@@ -25,8 +29,8 @@ type Block
     | Paragraph (Array Inline)
 
 
-blocksParser : Array Block -> Parser (Step (Array Block) (Array Block))
-blocksParser blocks =
+blocksParser : Array (Parser Block) -> Array (Parser Inline) -> Array Block -> Parser (Step (Array Block) (Array Block))
+blocksParser customBlockParsers customInlineParsers blocks =
     let
         block p =
             succeed
@@ -39,32 +43,28 @@ blocksParser blocks =
 
         -- Check if we reached the end of the document
         theEnd =
-            map (\_ -> Done blocks) (succeed identity |. spaces |. end)
+            map (\_ -> Done blocks) (succeed identity |. end)
     in
     Parser.oneOf
         [ theEnd
-        , block blockParser
+        , block (blockParser customBlockParsers customInlineParsers)
         ]
 
 
-blockParser : Parser Block
-blockParser =
+blockParser : Array (Parser Block) -> Array (Parser Inline) -> Parser Block
+blockParser customBlockParsers customInlineParsers =
     Parser.oneOf
-        [ blockQuoteParser
-        , headingParser
-        , paragraphParser
+        [ blockQuoteParser customBlockParsers customInlineParsers
+        , headingParser customInlineParsers
+        , paragraphParser customInlineParsers
+
+        , -- 
+          oneOf customBlockParsers
         ]
 
 
-blockDeliminator =
-    oneOf
-        [ chompIf (\c -> c == '\n') |. chompIf (\c -> c == '\n') |. spaces
-        , end
-        ]
-
-
-blockQuoteParser : Parser Block
-blockQuoteParser =
+blockQuoteParser : Array (Parser Block) -> Array (Parser Inline) -> Parser Block
+blockQuoteParser customBlockParsers customInlineParsers =
     succeed identity
         |. notMoreThanXSpaces 3
         |. oneOf
@@ -72,7 +72,6 @@ blockQuoteParser =
                 , symbol "> "
                 ]
         |= getChompedString (chompUntilEndOr "\n\n")
-        |. blockDeliminator
         |> andThen
                 (\string ->
                     let
@@ -95,18 +94,21 @@ blockQuoteParser =
                         lines
                             |> Array.map
                                     (\line ->
+                                        let
+                                            performParse =
+                                                String.trimLeft
+                                                    >> parseWithOptions
+                                                            { blockParsers = customBlockParsers
+                                                            , inlineParsers = customInlineParsers
+                                                            }
+                                                    >> Result.withDefault []
+                                        in
                                         case String.split ">" line of
                                             [ prefix, suffix ] ->
-                                                suffix
-                                                    |> String.trimLeft
-                                                    |> parse
-                                                    |> Result.withDefault []
+                                                performParse suffix
 
                                             [ suffix ] ->
-                                                suffix
-                                                    |> String.trimLeft
-                                                    |> parse
-                                                    |> Result.withDefault []
+                                                performParse suffix
 
                                             _ ->
                                                 []
@@ -120,9 +122,11 @@ blockQuoteParser =
         |> backtrackable
 
 
-headingParser : Parser Block
-headingParser =
-    some (symbol "#")
+headingParser : Array (Parser Inline) -> Parser Block
+headingParser customInlineParsers =
+    succeed identity
+        |. notMoreThanXSpaces 3
+        |. some (symbol "#")
         |> getChompedString
         |> map String.length
         |> andThen
@@ -136,15 +140,14 @@ headingParser =
                                 }
                             )
                             |. some (chompIf isSpace)
-                            |= loop [] inlineParser
-                            |. blockDeliminator
+                            |= loop [] (inlineParser customInlineParsers)
                 )
         |> backtrackable
 
 
-paragraphParser : Parser Block
-paragraphParser =
-    succeed Paragraph |= loop [] inlineParser |. blockDeliminator
+paragraphParser : Array (Parser Inline) -> Parser Block
+paragraphParser customInlineParsers =
+    succeed Paragraph |= loop [] (inlineParser customInlineParsers)
 
 
 
@@ -152,7 +155,8 @@ paragraphParser =
 
 
 type Inline
-    = Image
+    = InlineCode String
+    | Image
         { alt : String
         , url : String
         }
@@ -163,8 +167,8 @@ type Inline
     | Text String
 
 
-inlineParser : Array Inline -> Parser (Step (Array Inline) (Array Inline))
-inlineParser inlineElements =
+inlineParser : Array (Parser Inline) -> Array Inline -> Parser (Step (Array Inline) (Array Inline))
+inlineParser customInlineParsers inlineElements =
     let
         inline =
             map
@@ -173,38 +177,40 @@ inlineParser inlineElements =
                         |> Array.pushLast el
                         |> Loop
                 )
+
+        -- Check if we reached the end of the document
+        theEnd =
+            map (\_ -> Done inlineElements) end
     in
     Parser.oneOf
-        [ inline imageParser
-        , inline linkParser
+        [ theEnd
 
-        , --
-          oneOf
-            [ succeed
-                (\text ->
-                    case text of
-                        "" ->
-                            Done inlineElements
+        , -- 
+          inline (backtrackable codeParser)
+        , inline (backtrackable imageParser)
+        , inline (backtrackable linkParser)
 
-                        _ ->
-                            inlineElements
-                                |> Array.pushLast (Text text)
-                                |> Loop
-                )
-                |= getChompedString (chompWhile (\c -> c /= '!' && c /= '[' && c /= '\n' && c /= '\r'))
-                |> backtrackable
+        , -- 
+          inline (backtrackable (oneOf customInlineParsers))
 
-            , --
-              succeed
-                (\text ->
-                    inlineElements
-                        |> Array.pushLast (Text text)
-                        |> Done
-                )
-                |= getChompedString (chompUntilEndOr "\n\n")
-                |> backtrackable
-            ]
+        , -- 
+          textLoopParser inlineElements
         ]
+
+
+codeParser : Parser Inline
+codeParser =
+    succeed identity
+        |. symbol "`"
+        |= getChompedString (chompWhile (\c -> c == '`'))
+        |> andThen
+                (\opening ->
+                    succeed identity
+                        |= getChompedString (chompUntilEndOr (opening ++ "`"))
+                        |. symbol (opening ++ "`")
+                        |> map String.trim
+                        |> map InlineCode
+                )
 
 
 imageParser : Parser Inline
@@ -228,7 +234,6 @@ imageParser =
                                         }
                                 )
                 )
-        |> backtrackable
 
 
 linkParser : Parser Inline
@@ -252,4 +257,39 @@ linkParser =
                                         }
                                 )
                 )
-        |> backtrackable
+
+
+textLoopParser : Array Inline -> Parser (Step (Array Inline) (Array Inline))
+textLoopParser inlineElements =
+    succeed
+        (\text ->
+            case text of
+                "" ->
+                    Done inlineElements
+
+                _ ->
+                    case Array.popLast inlineElements of
+                        Just { last, initial } ->
+                            case
+                                [ Text text
+                                , last
+                                ]
+                            of
+                                [ Text "\n", Text previousText ] ->
+                                    if String.endsWith "\n" previousText then
+                                        Done initial
+                                    else
+                                        Loop (Array.pushLast (Text (previousText ++ text)) initial)
+
+                                [ _, Text previousText ] ->
+                                    Loop (Array.pushLast (Text (previousText ++ text)) initial)
+
+                                _ ->
+                                    Loop (Array.pushLast (Text text) inlineElements)
+
+                        Nothing ->
+                            Loop
+                                [ Text text
+                                ]
+        )
+        |= getChompedString (chompIf (\_ -> True))

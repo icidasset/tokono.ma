@@ -23,7 +23,8 @@ parser customBlockParsers customInlineParsers =
 
 
 type Block
-    = Heading
+    = BlockQuote (Array Block)
+    | Heading
         { level : Int
         }
         (Array Inline)
@@ -31,53 +32,70 @@ type Block
 
 
 type RawBlock
-    = RawHeading
+    = RawBlockQuote String
+    | RawHeading
         { level : Int
         }
         String
     | RawParagraph (Array Char)
 
 
+blocksParser : Parser (Array Block)
 blocksParser =
     map
         (Array.foldl
             (\rawBlock blocks ->
                 case rawBlock of
+                    RawBlockQuote string ->
+                        let
+                            innerBlocks =
+                                parse string
+                                    |> Debug.log ""
+                                    |> Result.withDefault []
+                        in
+                        Array.pushLast (BlockQuote innerBlocks) blocks
+
                     RawHeading props string ->
                         let
-                            inline =
+                            inlines =
                                 parseInline string
                                     |> Debug.log ""
                                     |> Result.withDefault []
                         in
-                        Array.pushLast (Heading props inline) blocks
+                        Array.pushLast (Heading props inlines) blocks
 
                     RawParagraph [] ->
                         blocks
 
                     RawParagraph chars ->
                         let
-                            inline =
+                            inlines =
                                 chars
                                     |> String.fromArray
                                     |> parseInline
                                     |> Debug.log ""
                                     |> Result.withDefault []
                         in
-                        Array.pushLast (Paragraph inline) blocks
+                        Array.pushLast (Paragraph inlines) blocks
             )
             []
         )
         (loop [] rawBlockParser)
 
 
+rawBlockParser : Array RawBlock -> Parser (Step (Array RawBlock) (Array RawBlock))
 rawBlockParser blocks =
+    let
+        block =
+            map (\b -> Loop (Array.pushLast b blocks))
+    in
     oneOf
         [ -- Check if we reached the end
           map (\_ -> Done blocks) (succeed identity |. end)
 
-        , -- 
-          map (\b -> Loop (Array.pushLast b blocks)) headingParser
+        , --
+          block headingParser
+        , block blockQuoteParser
 
         , -- Tries to parse the raw blocks one char at a time.
           succeed
@@ -116,6 +134,34 @@ rawBlockParser blocks =
             )
             |= char
         ]
+
+
+blockQuoteParser : Parser RawBlock
+blockQuoteParser =
+    succeed identity
+        |. notMoreThanXSpaces 3
+        |. specificChar '>'
+        |= getChompedString (chompUntilEndOr "\n\n")
+        |> andThen
+                (\string ->
+                    -- Take out a single '>' from each line,
+                    -- but only if it's led by no more than 3 spaces.
+                    string
+                        |> String.split "\n"
+                        |> Array.map
+                                (\line ->
+                                    if String.startsWith "    " line then
+                                        line
+                                    else if String.startsWith ">" (String.trim line) then
+                                        String.trim (String.dropLeft 1 (String.trim line))
+                                    else
+                                        String.trim line
+                                )
+                        |> String.join "\n"
+                        |> RawBlockQuote
+                        |> succeed
+                )
+        |> backtrackable
 
 
 headingParser : Parser RawBlock
@@ -163,11 +209,16 @@ type Inline
 
 parseInline : String -> Result (Array DeadEnd) (Array Inline)
 parseInline =
-    Parser.run (loop [] (inlineParser []))
+    Parser.run inlineParser
 
 
-inlineParser : Array (Parser Inline) -> Array Inline -> Parser (Step (Array Inline) (Array Inline))
-inlineParser customInlineParsers inlineElements =
+inlineParser : Parser (Array Inline)
+inlineParser =
+    loop [] (inlineParserLoop [])
+
+
+inlineParserLoop : Array (Parser Inline) -> Array Inline -> Parser (Step (Array Inline) (Array Inline))
+inlineParserLoop customInlineParsers inlineElements =
     let
         inline =
             map
@@ -181,15 +232,15 @@ inlineParser customInlineParsers inlineElements =
         [ -- Check if we reached the end
           map (\_ -> Done inlineElements) end
 
-        , -- 
+        , --
           inline (backtrackable codeParser)
         , inline (backtrackable imageParser)
         , inline (backtrackable linkParser)
 
-        , -- 
+        , --
           inline (backtrackable (oneOf customInlineParsers))
 
-        , -- 
+        , --
           textLoopParser inlineElements
         ]
 

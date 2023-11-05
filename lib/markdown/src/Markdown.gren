@@ -29,6 +29,7 @@ type Block
         }
         (Array Inline)
     | Paragraph (Array Inline)
+    | ThematicBreak
 
 
 type RawBlock
@@ -38,6 +39,7 @@ type RawBlock
         }
         String
     | RawParagraph String
+    | RawThematicBreak
 
 
 blocksParser : Parser (Array Block)
@@ -50,7 +52,6 @@ blocksParser =
                         let
                             innerBlocks =
                                 parse string
-                                    |> Debug.log ""
                                     |> Result.withDefault []
                         in
                         Array.pushLast (BlockQuote innerBlocks) blocks
@@ -59,7 +60,6 @@ blocksParser =
                         let
                             inlines =
                                 parseInline string
-                                    |> Debug.log ""
                                     |> Result.withDefault []
                         in
                         Array.pushLast (Heading props inlines) blocks
@@ -69,10 +69,12 @@ blocksParser =
                             inlines =
                                 string
                                     |> parseInline
-                                    |> Debug.log ""
                                     |> Result.withDefault []
                         in
                         Array.pushLast (Paragraph inlines) blocks
+
+                    RawThematicBreak ->
+                        Array.pushLast ThematicBreak blocks
             )
             []
         )
@@ -92,6 +94,7 @@ rawBlockParser blocks =
         , -- 
           block (backtrackable headingParser)
         , block (backtrackable blockQuoteParser)
+        , block (backtrackable thematicBreakParser)
 
         , -- If all fails, then it's a paragraph.
           -- Try parsing one line at a time.
@@ -120,6 +123,7 @@ blockQuoteParser =
         |. notMoreThanXSpaces 3
         |. specificChar '>'
         |= getChompedString (chompUntilEndOr "\n\n")
+        |. spaces
         |> andThen
                 (\string ->
                     -- Take out a single '>' from each line,
@@ -163,6 +167,33 @@ headingParser =
                                     [ end
                                     , spaces
                                     ]
+                )
+
+
+thematicBreakParser =
+    succeed identity
+        |. notMoreThanXSpaces 3
+        |= oneOf
+                [ specificChar '-'
+                , specificChar '_'
+                , specificChar '*'
+                ]
+        |> andThen
+                (\openingChar ->
+                    let
+                        term =
+                            String.fromArray (Array.repeat 2 openingChar)
+                    in
+                    succeed identity
+                        |= getChompedString (chompUntilEndOr "\n")
+                        |. spaces
+                        |> andThen
+                                (\text ->
+                                    if String.startsWith term text then
+                                        succeed RawThematicBreak
+                                    else
+                                        problem "Not a thematic break"
+                                )
                 )
 
 

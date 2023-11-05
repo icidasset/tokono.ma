@@ -55,6 +55,10 @@ init flags url key =
 
                 > Block*quote* with a [link](#href).
 
+                ---
+                ***
+                ___
+
                 Para_graph_ **2**.
                 """
 

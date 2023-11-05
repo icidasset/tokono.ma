@@ -36,7 +36,6 @@ type RawBlock
         }
         String
     | RawParagraph (Array Char)
-    | RawParagraphChar Char
 
 
 blocksParser =
@@ -66,10 +65,6 @@ blocksParser =
                                     |> Result.withDefault []
                         in
                         Array.pushLast (Paragraph inline) blocks
-
-                    RawParagraphChar char ->
-                        -- Should never occur
-                        blocks
             )
             []
         )
@@ -81,55 +76,45 @@ rawBlockParser blocks =
         [ -- Check if we reached the end
           map (\_ -> Done blocks) (succeed identity |. end)
 
+        , -- 
+          map (\b -> Loop (Array.pushLast b blocks)) headingParser
+
         , -- Tries to parse the raw blocks one char at a time.
           succeed
-            (\b ->
+            (\char ->
                 case Array.popLast blocks of
-                    Just { last, initial } ->
+                    Just { last = RawParagraph par, initial } ->
                         case
-                            [ b
-                            , last
-                            ]
+                            { currentChar = char
+                            , previousChar = Array.popLast par
+                            }
                         of
-                            [ RawParagraphChar char, RawParagraph par ] ->
-                                case
-                                    [ Just char
-                                    , Array.last par
-                                    ]
-                                of
-                                    [ Just '\n', Just '\n' ] ->
-                                        case Array.dropLast 1 par of
-                                            [] ->
-                                                initial
-                                                    |> Array.pushLast (RawParagraph [])
-                                                    |> Loop
+                            { currentChar = '\n', previousChar = Just { last = '\n', initial = [] } } ->
+                                initial
+                                    |> Array.pushLast (RawParagraph [])
+                                    |> Loop
 
-                                            parWithoutLineEnd ->
-                                                initial
-                                                    |> Array.pushLast (RawParagraph parWithoutLineEnd)
-                                                    |> Array.pushLast (RawParagraph [])
-                                                    |> Loop
-
-                                    _ ->
-                                        initial
-                                            |> Array.pushLast (RawParagraph (Array.pushLast char par))
-                                            |> Loop
-
-                            [ RawParagraphChar char, _ ] ->
-                                blocks
-                                    |> Array.pushLast (RawParagraph (Array.singleton char))
+                            { currentChar = '\n', previousChar = (Just { last = '\n' }) as previousChar } ->
+                                initial
+                                    |> Array.pushLast
+                                            (RawParagraph
+                                                <| Maybe.withDefault []
+                                                <| Maybe.map .initial previousChar
+                                            )
+                                    |> Array.pushLast (RawParagraph [])
                                     |> Loop
 
                             _ ->
-                                Loop (Array.pushLast b blocks)
+                                initial
+                                    |> Array.pushLast (RawParagraph (Array.pushLast char par))
+                                    |> Loop
 
-                    Nothing ->
-                        Loop (Array.singleton b)
+                    _ ->
+                        blocks
+                            |> Array.pushLast (RawParagraph (Array.singleton char))
+                            |> Loop
             )
-            |= oneOf
-                    [ headingParser
-                    , map RawParagraphChar char
-                    ]
+            |= char
         ]
 
 

@@ -49,9 +49,11 @@ init flags url key =
                 """
                 ## H2 [link](#href)
 
-                > # H1 ``code``
+                # H1 ``code``
 
                 Testing a [link](#href). Some more text.
+
+                > Blockquote with a [link](#href).
 
                 Paragraph 2.
                 """

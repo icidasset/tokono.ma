@@ -37,7 +37,7 @@ type RawBlock
         { level : Int
         }
         String
-    | RawParagraph (Array Char)
+    | RawParagraph String
 
 
 blocksParser : Parser (Array Block)
@@ -64,14 +64,10 @@ blocksParser =
                         in
                         Array.pushLast (Heading props inlines) blocks
 
-                    RawParagraph [] ->
-                        blocks
-
-                    RawParagraph chars ->
+                    RawParagraph string ->
                         let
                             inlines =
-                                chars
-                                    |> String.fromArray
+                                string
                                     |> parseInline
                                     |> Debug.log ""
                                     |> Result.withDefault []
@@ -93,46 +89,28 @@ rawBlockParser blocks =
         [ -- Check if we reached the end
           map (\_ -> Done blocks) (succeed identity |. end)
 
-        , --
-          block headingParser
-        , block blockQuoteParser
+        , -- 
+          block (backtrackable headingParser)
+        , block (backtrackable blockQuoteParser)
 
-        , -- Tries to parse the raw blocks one char at a time.
+        , -- If all fails, then it's a paragraph.
+          -- Try parsing one line at a time.
           succeed
-            (\char ->
+            (\line ->
                 case Array.popLast blocks of
                     Just { last = RawParagraph par, initial } ->
-                        case
-                            { currentChar = char
-                            , previousChar = Array.popLast par
-                            }
-                        of
-                            { currentChar = '\n', previousChar = Just { last = '\n', initial = [] } } ->
-                                initial
-                                    |> Array.pushLast (RawParagraph [])
-                                    |> Loop
-
-                            { currentChar = '\n', previousChar = (Just { last = '\n' }) as previousChar } ->
-                                initial
-                                    |> Array.pushLast
-                                            (RawParagraph
-                                                <| Maybe.withDefault []
-                                                <| Maybe.map .initial previousChar
-                                            )
-                                    |> Array.pushLast (RawParagraph [])
-                                    |> Loop
-
-                            _ ->
-                                initial
-                                    |> Array.pushLast (RawParagraph (Array.pushLast char par))
-                                    |> Loop
+                        initial
+                            |> Array.pushLast (RawParagraph (par ++ "\n" ++ line))
+                            |> Loop
 
                     _ ->
                         blocks
-                            |> Array.pushLast (RawParagraph (Array.singleton char))
+                            |> Array.pushLast (RawParagraph line)
                             |> Loop
             )
-            |= char
+            |. spaces
+            |= getChompedString (chompUntilEndOr "\n")
+            |. spaces
         ]
 
 
@@ -161,7 +139,6 @@ blockQuoteParser =
                         |> RawBlockQuote
                         |> succeed
                 )
-        |> backtrackable
 
 
 headingParser : Parser RawBlock
@@ -187,7 +164,6 @@ headingParser =
                                     , spaces
                                     ]
                 )
-        |> backtrackable
 
 
 
@@ -195,7 +171,12 @@ headingParser =
 
 
 type Inline
-    = InlineCode String
+    = Emphasis
+        { times : Int
+        }
+        String
+    | HardLineBreak
+    | InlineCode String
     | Image
         { alt : String
         , url : String
@@ -227,37 +208,129 @@ inlineParserLoop customInlineParsers inlineElements =
                         |> Array.pushLast el
                         |> Loop
                 )
+
+        lastElement =
+            Array.last inlineElements
     in
     Parser.oneOf
         [ -- Check if we reached the end
           map (\_ -> Done inlineElements) end
 
-        , --
-          inline (backtrackable codeParser)
+        , -- 
+          inline (backtrackable (emphasisWithUnderscoreParser lastElement))
+        , inline (backtrackable emphasisWithStarParser)
+        , inline (backtrackable hardLineBreakParser)
         , inline (backtrackable imageParser)
+        , inline (backtrackable inlineCodeParser)
         , inline (backtrackable linkParser)
 
-        , --
+        , -- 
           inline (backtrackable (oneOf customInlineParsers))
 
-        , --
-          textLoopParser inlineElements
+        , -- 
+          textLoopParser inlineElements lastElement
         ]
 
 
-codeParser : Parser Inline
-codeParser =
+emphasisWithStarParser : Parser Inline
+emphasisWithStarParser =
     succeed identity
-        |. specificChar '`'
-        |= getChompedString (chompWhile (\c -> c == '`'))
+        |= some (specificChar '*')
         |> andThen
                 (\opening ->
+                    let
+                        closing =
+                            "*" ++ String.fromArray opening.rest
+
+                        times =
+                            String.length closing
+                    in
                     succeed identity
-                        |= getChompedString (chompUntilEndOr (opening ++ "`"))
-                        |. symbol (opening ++ "`")
-                        |> map String.trim
-                        |> map InlineCode
+                        |= getChompedString (chompUntilEndOr closing)
+                        |. symbol closing
+                        |> andThen
+                                (\emphasisedText ->
+                                    let
+                                        chars =
+                                            String.toArray emphasisedText
+
+                                        firstChar =
+                                            Maybe.withDefault ' ' (Array.first chars)
+                                    in
+                                    if isUnicodeSpace firstChar || isPunctuation firstChar then
+                                        problem "Illegal character, cannot emphasise"
+                                    else
+                                        emphasisedText
+                                            |> Emphasis
+                                                    { times = times
+                                                    }
+                                            |> succeed
+                                )
                 )
+
+
+emphasisWithUnderscoreParser : Maybe Inline -> Parser Inline
+emphasisWithUnderscoreParser lastElement =
+    let
+        isPrecededByASpaceOrNothing =
+            case lastElement of
+                Just (Text t) ->
+                    case Array.last (String.toArray t) of
+                        Just char ->
+                            isUnicodeSpace char
+
+                        Nothing ->
+                            True
+
+                _ ->
+                    True
+    in
+    if isPrecededByASpaceOrNothing then
+        succeed identity
+            |= some (specificChar '_')
+            |> andThen
+                    (\opening ->
+                        let
+                            closing =
+                                "_" ++ String.fromArray opening.rest
+
+                            times =
+                                String.length closing
+                        in
+                        succeed identity
+                            |= getChompedString (chompUntilEndOr closing)
+                            |. symbol closing
+                            |> andThen
+                                    (\emphasisedText ->
+                                        let
+                                            chars =
+                                                String.toArray emphasisedText
+
+                                            firstChar =
+                                                Maybe.withDefault ' ' (Array.first chars)
+                                        in
+                                        if isUnicodeSpace firstChar || isPunctuation firstChar then
+                                            problem "Illegal character, cannot emphasise"
+                                        else
+                                            emphasisedText
+                                                |> Emphasis
+                                                        { times = times
+                                                        }
+                                                |> succeed
+                                    )
+                    )
+    else
+        problem "Cannot emphasise if not preceded by a space"
+
+
+hardLineBreakParser : Parser Inline
+hardLineBreakParser =
+    succeed identity
+        |. specificChar ' '
+        |. specificChar ' '
+        |. many (specificChar ' ')
+        |. specificChar '\n'
+        |> map (\_ -> HardLineBreak)
 
 
 imageParser : Parser Inline
@@ -280,6 +353,21 @@ imageParser =
                                         , url = url
                                         }
                                 )
+                )
+
+
+inlineCodeParser : Parser Inline
+inlineCodeParser =
+    succeed identity
+        |. specificChar '`'
+        |= getChompedString (chompWhile (\c -> c == '`'))
+        |> andThen
+                (\opening ->
+                    succeed identity
+                        |= getChompedString (chompUntilEndOr (opening ++ "`"))
+                        |. symbol (opening ++ "`")
+                        |> map String.trim
+                        |> map InlineCode
                 )
 
 
@@ -309,8 +397,8 @@ linkParser =
 {-| Parses one character at a time, so that it can try the other inline parsers
 after each character. Concatenates `Text` automatically.
 -}
-textLoopParser : Array Inline -> Parser (Step (Array Inline) (Array Inline))
-textLoopParser inlineElements =
+textLoopParser : Array Inline -> Maybe Inline -> Parser (Step (Array Inline) (Array Inline))
+textLoopParser inlineElements lastElement =
     succeed
         (\text ->
             case text of
@@ -318,18 +406,11 @@ textLoopParser inlineElements =
                     Done inlineElements
 
                 _ ->
-                    case Array.popLast inlineElements of
-                        Just { last, initial } ->
-                            case last of
-                                Text previousText ->
-                                    Loop (Array.pushLast (Text (previousText ++ text)) initial)
+                    case lastElement of
+                        Just (Text previousText) ->
+                            Loop (Array.pushLast (Text (previousText ++ text)) (Array.dropLast 1 inlineElements))
 
-                                _ ->
-                                    Loop (Array.pushLast (Text text) inlineElements)
-
-                        Nothing ->
-                            Loop
-                                [ Text text
-                                ]
+                        _ ->
+                            Loop (Array.pushLast (Text text) inlineElements)
         )
         |= getChompedString chompOne

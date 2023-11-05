@@ -13,8 +13,28 @@ isLineEnding c =
     c == '\n' || c == '\r'
 
 
+isPunctuation c =
+    let
+        code =
+            Char.toCode c
+    in
+    (code >= 33 && code <= 47) || (code >= 58 && code <= 64) || (code >= 91 && code <= 96) || (code >= 123 && code <= 126)
+
+
 isSpace c =
     c == ' '
+
+
+isTab c =
+    c == '\t'
+
+
+isUnicodeSpace c =
+    let
+        code =
+            Char.toCode c
+    in
+    isSpace c || isLineEnding c || isTab c || code == 12 || code == 160 || code == 5760 || (code >= 8192 && code <= 8202) || code == 8239 || code == 8287 || code == 12288
 
 
 

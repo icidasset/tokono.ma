@@ -51,11 +51,11 @@ init flags url key =
 
                 # H1 ``code``
 
-                Testing a [link](#href). Some more text.
+                Testing a [link](#href). Some __more__ text.
 
-                > Blockquote with a [link](#href).
+                > Block*quote* with a [link](#href).
 
-                Paragraph 2.
+                Para_graph_ **2**.
                 """
 
         _ =

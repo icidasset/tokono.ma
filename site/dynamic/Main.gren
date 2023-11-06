@@ -53,11 +53,20 @@ init flags url key =
 
                 Testing a [link](#href). Some __more__ text.
 
+                    code
+                    line 2
+                Not code.
+
                 > Block*quote* with a [link](#href).
 
                 ---
                 ***
                 ___
+
+                ```
+                Fenced code
+                Line 2
+                ```
 
                 Para_graph_ **2**.
                 """

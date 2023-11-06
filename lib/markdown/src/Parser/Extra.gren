@@ -41,11 +41,6 @@ isUnicodeSpace c =
 -- 🛠️
 
 
-between : Parser opening -> Parser closing -> Parser a -> Parser a
-between opening closing p =
-    succeed identity |. opening |= p |. closing
-
-
 char : Parser Char
 char =
     chompOne
@@ -66,64 +61,6 @@ chompOne =
 chompOneOrMore : (Char -> Bool) -> Parser {}
 chompOneOrMore predicate =
     chompIf predicate |. chompWhile predicate
-
-
-{-| Chomps until a parser applies but unconsumes that parser's progress.
-
-Pass in a predicate that includes everything until the first char of the
-lookAhead parser. This is so that we can short-circuit the slow process
-of trying the parser and then consuming just one char over and over again.
-
-e.g. the parser passed to chompUntilLookAhead can be arbitrarily slow,
-like parsing the rest of the input before failing somewhere far ahead,
-yet all we do in that event is consume a single character and apply
-the parser again at offset + 1.
-
--}
-chompUntilLookAhead : (Char -> Bool) -> Parser a -> Parser {}
-chompUntilLookAhead predicate parser =
-    (loop ""
-        <| (\acc ->
-                oneOf
-                    [ succeed (\s -> Loop (acc ++ s))
-                        |= (chompOneOrMore predicate
-                                |> getChompedString
-                            )
-                    , succeed (Done acc) |. lookAhead parser
-                    , succeed (\s -> Loop (acc ++ s)) |= getChompedString chompOne
-                    , succeed (Done acc)
-                    ]
-            )
-    )
-        |> andThen
-                (\acc ->
-                    if String.isEmpty acc then
-                        problem "expected some text"
-                    else
-                        succeed {}
-                )
-
-
-{-| Create a parser that backtracks on success.
--}
-lookAhead : Parser a -> Parser {}
-lookAhead parser =
-    oneOf
-        [ oneOf
-            [ parser
-                |> backtrackable
-                |> andThen (\_ -> commit {})
-                |> andThen (\_ -> problem "")
-            , succeed
-                (parser
-                    |> backtrackable
-                    |> map (\_ -> {})
-                )
-            ]
-            |> backtrackable
-        , succeed (succeed {})
-        ]
-        |> andThen identity
 
 
 many : Parser a -> Parser (Array a)

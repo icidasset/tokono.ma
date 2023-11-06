@@ -1,0 +1,268 @@
+module Markdown.Parser.Inlines exposing (..)
+
+{-|-}
+
+import Parser exposing (..)
+import Parser.Extra exposing (..)
+
+
+
+-- 🌳
+
+
+type Inline
+    = Emphasis
+        { times : Int
+        }
+        String
+    | HardLineBreak
+    | InlineCode String
+    | Image
+        { alt : String
+        , url : String
+        }
+    | Link
+        { text : String
+        , url : String
+        }
+    | Text String
+
+
+
+-- 🛠️
+
+
+parse : String -> Result (Array DeadEnd) (Array Inline)
+parse =
+    Parser.run parser
+
+
+
+-- TOP-LEVEL PARSER
+
+
+parser : Parser (Array Inline)
+parser =
+    loop [] (parserLoop [])
+
+
+parserLoop : Array (Parser Inline) -> Array Inline -> Parser (Step (Array Inline) (Array Inline))
+parserLoop customInlineParsers inlineElements =
+    let
+        inline =
+            map
+                (\el ->
+                    inlineElements
+                        |> Array.pushLast el
+                        |> Loop
+                )
+
+        lastElement =
+            Array.last inlineElements
+    in
+    Parser.oneOf
+        [ -- Check if we reached the end
+          map (\_ -> Done inlineElements) end
+
+        , -- 
+          inline (backtrackable (emphasisWithUnderscoreParser lastElement))
+        , inline (backtrackable emphasisWithStarParser)
+        , inline (backtrackable hardLineBreakParser)
+        , inline (backtrackable imageParser)
+        , inline (backtrackable inlineCodeParser)
+        , inline (backtrackable linkParser)
+
+        , -- 
+          inline (backtrackable (oneOf customInlineParsers))
+
+        , -- 
+          textLoopParser inlineElements lastElement
+        ]
+
+
+
+-- INDIVIDUAL PARSERS
+
+
+emphasisWithStarParser : Parser Inline
+emphasisWithStarParser =
+    succeed identity
+        |= some (specificChar '*')
+        |> andThen
+                (\opening ->
+                    let
+                        closing =
+                            "*" ++ String.fromArray opening.rest
+
+                        times =
+                            String.length closing
+                    in
+                    succeed identity
+                        |= getChompedString (chompUntilEndOr closing)
+                        |. symbol closing
+                        |> andThen
+                                (\emphasisedText ->
+                                    let
+                                        chars =
+                                            String.toArray emphasisedText
+
+                                        firstChar =
+                                            Maybe.withDefault ' ' (Array.first chars)
+                                    in
+                                    if isUnicodeSpace firstChar || isPunctuation firstChar then
+                                        problem "Illegal character, cannot emphasise"
+                                    else
+                                        emphasisedText
+                                            |> Emphasis
+                                                    { times = times
+                                                    }
+                                            |> succeed
+                                )
+                )
+
+
+emphasisWithUnderscoreParser : Maybe Inline -> Parser Inline
+emphasisWithUnderscoreParser lastElement =
+    let
+        isPrecededByASpaceOrNothing =
+            case lastElement of
+                Just (Text t) ->
+                    case Array.last (String.toArray t) of
+                        Just char ->
+                            isUnicodeSpace char
+
+                        Nothing ->
+                            True
+
+                _ ->
+                    True
+    in
+    if isPrecededByASpaceOrNothing then
+        succeed identity
+            |= some (specificChar '_')
+            |> andThen
+                    (\opening ->
+                        let
+                            closing =
+                                "_" ++ String.fromArray opening.rest
+
+                            times =
+                                String.length closing
+                        in
+                        succeed identity
+                            |= getChompedString (chompUntilEndOr closing)
+                            |. symbol closing
+                            |> andThen
+                                    (\emphasisedText ->
+                                        let
+                                            chars =
+                                                String.toArray emphasisedText
+
+                                            firstChar =
+                                                Maybe.withDefault ' ' (Array.first chars)
+                                        in
+                                        if isUnicodeSpace firstChar || isPunctuation firstChar then
+                                            problem "Illegal character, cannot emphasise"
+                                        else
+                                            emphasisedText
+                                                |> Emphasis
+                                                        { times = times
+                                                        }
+                                                |> succeed
+                                    )
+                    )
+    else
+        problem "Cannot emphasise if not preceded by a space"
+
+
+hardLineBreakParser : Parser Inline
+hardLineBreakParser =
+    succeed identity
+        |. specificChar ' '
+        |. specificChar ' '
+        |. many (specificChar ' ')
+        |. specificChar '\n'
+        |> map (\_ -> HardLineBreak)
+
+
+imageParser : Parser Inline
+imageParser =
+    succeed identity
+        |. symbol "!["
+        |= getChompedString (chompUntil "]")
+        |. specificChar ']'
+        |> andThen
+                (\alt ->
+                    -- TODO: Support image titles
+                    succeed identity
+                        |. specificChar '('
+                        |= getChompedString (chompUntil ")")
+                        |. specificChar ')'
+                        |> map
+                                (\url ->
+                                    Image
+                                        { alt = alt
+                                        , url = url
+                                        }
+                                )
+                )
+
+
+inlineCodeParser : Parser Inline
+inlineCodeParser =
+    succeed identity
+        |. specificChar '`'
+        |= getChompedString (chompWhile (\c -> c == '`'))
+        |> andThen
+                (\opening ->
+                    succeed identity
+                        |= getChompedString (chompUntilEndOr (opening ++ "`"))
+                        |. symbol (opening ++ "`")
+                        |> map String.trim
+                        |> map InlineCode
+                )
+
+
+linkParser : Parser Inline
+linkParser =
+    succeed identity
+        |. specificChar '['
+        |= getChompedString (chompUntil "]")
+        |. specificChar ']'
+        |> andThen
+                (\text ->
+                    -- TODO: Support link titles
+                    succeed identity
+                        |. specificChar '('
+                        |= getChompedString (chompUntil ")")
+                        |. specificChar ')'
+                        |> map
+                                (\url ->
+                                    Link
+                                        { text = text
+                                        , url = url
+                                        }
+                                )
+                )
+
+
+{-| Parses one character at a time, so that it can try the other inline parsers
+after each character. Concatenates `Text` automatically.
+-}
+textLoopParser : Array Inline -> Maybe Inline -> Parser (Step (Array Inline) (Array Inline))
+textLoopParser inlineElements lastElement =
+    succeed
+        (\text ->
+            case text of
+                "" ->
+                    Done inlineElements
+
+                _ ->
+                    case lastElement of
+                        Just (Text previousText) ->
+                            Loop (Array.pushLast (Text (previousText ++ text)) (Array.dropLast 1 inlineElements))
+
+                        _ ->
+                            Loop (Array.pushLast (Text text) inlineElements)
+        )
+        |= getChompedString chompOne

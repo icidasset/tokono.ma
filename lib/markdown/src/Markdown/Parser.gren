@@ -1,0 +1,9 @@
+module Markdown.Parser exposing (..)
+
+{-|-}
+
+import Markdown.Parser.Blocks
+
+
+parse =
+    Markdown.Parser.Blocks.parse

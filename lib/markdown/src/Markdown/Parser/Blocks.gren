@@ -42,7 +42,7 @@ type RawBlock
     | RawThematicBreak -- TODO: RawOrderedList String
     | RawUnorderedList
         { leadingSpaces : Int
-        , symbol : Char
+        , symbol : String
         }
         (Array (Array String))
 
@@ -176,74 +176,7 @@ rawBlockParser blocks =
         , block (backtrackable fencedCodeParser)
 
         , -- Unordered list
-          succeed
-            (\({ leadingSpaces, line, symbol } as list) ->
-                case Array.popLast blocks of
-                    Just { last = RawUnorderedList lastListProps lastListItems, initial } ->
-                        if leadingSpaces >= lastListProps.leadingSpaces + 2 then
-                            -- Content belongs to previous list item
-                            let
-                                formattedLine =
-                                    if leadingSpaces > 0 then
-                                        String.fromArray
-                                            [ symbol
-                                            ]
-                                            ++ " "
-                                            ++ line
-                                    else
-                                        line
-                            in
-                            case Array.popLast lastListItems of
-                                Just { last = lastItem, initial = otherItems } ->
-                                    lastItem
-                                        |> Array.pushLast formattedLine
-                                        |> (\item -> Array.pushLast item otherItems)
-                                        |> RawUnorderedList lastListProps
-                                        |> (\b -> Array.pushLast b initial)
-                                        |> Loop
-
-                                Nothing ->
-                                    [ [ formattedLine
-                                      ]
-                                    ]
-                                        |> RawUnorderedList lastListProps
-                                        |> (\b -> Array.pushLast b initial)
-                                        |> Loop
-                        else if symbol == lastListProps.symbol then
-                            -- Same list, new item
-                            lastListItems
-                                |> Array.pushLast
-                                        [ line
-                                        ]
-                                |> RawUnorderedList lastListProps
-                                |> (\b -> Array.pushLast b initial)
-                                |> Loop
-                        else
-                            -- New list
-                            [ [ line
-                              ]
-                            ]
-                                |> RawUnorderedList
-                                        { leadingSpaces = leadingSpaces
-                                        , symbol = symbol
-                                        }
-                                |> (\b -> Array.pushLast b blocks)
-                                |> Loop
-
-                    _ ->
-                        blocks
-                            |> Array.pushLast
-                                    (RawUnorderedList
-                                        { leadingSpaces = leadingSpaces
-                                        , symbol = symbol
-                                        }
-                                        [ [ line
-                                          ]
-                                        ]
-                                    )
-                            |> Loop
-            )
-            |= backtrackable unorderedListParser
+          succeed (unorderedListManager blocks) |= backtrackable unorderedListParser
 
         , -- Indented code
           succeed
@@ -443,11 +376,45 @@ thematicBreakParser =
                 )
 
 
+unorderedListManager :
+    Array RawBlock
+    -> { leadingSpaces : Int
+       , line : String
+       , symbol : String
+       }
+    -> Step (Array RawBlock) (Array RawBlock)
+unorderedListManager blocks list =
+    case Array.popLast blocks of
+        Just { last = RawUnorderedList lastListProps lastListItems, initial } ->
+            -- Previous list exists
+            lastBlockWasList
+                { currentList = list
+                , lastList =
+                    { props = lastListProps
+                    , items = lastListItems
+                    }
+                , allBlocksExceptLast = initial
+                , allBlocks = blocks
+                }
+
+        _ ->
+            -- New list
+            list.line
+                |> Array.singleton
+                |> Array.singleton
+                |> RawUnorderedList
+                        { leadingSpaces = list.leadingSpaces
+                        , symbol = list.symbol
+                        }
+                |> (\b -> Array.pushLast b blocks)
+                |> Loop
+
+
 unorderedListParser :
     Parser
         { leadingSpaces : Int
         , line : String
-        , symbol : Char
+        , symbol : String
         }
 unorderedListParser =
     succeed identity
@@ -470,8 +437,61 @@ unorderedListParser =
                                                 (\line ->
                                                     { leadingSpaces = Array.length leadingSpaces
                                                     , line = line
-                                                    , symbol = listChar
+                                                    , symbol = String.fromArray (Array.singleton listChar)
                                                     }
                                                 )
                                 )
                 )
+
+
+
+-- LISTS
+
+
+lastBlockWasList { currentList, lastList, allBlocksExceptLast, allBlocks } =
+    let
+        { leadingSpaces, line, symbol } =
+            currentList
+
+        addToBlocks l b =
+            Loop (Array.pushLast b l)
+
+        addToSameList =
+            RawUnorderedList lastList.props >> addToBlocks allBlocksExceptLast
+
+        formattedLine =
+            if leadingSpaces > 0 then
+                symbol ++ " " ++ line
+            else
+                line
+
+        wrapLine =
+            Array.singleton >> Array.singleton
+    in
+    if leadingSpaces >= lastList.props.leadingSpaces + String.length lastList.props.symbol then
+        -- Content belongs to previous list item
+        case Array.popLast lastList.items of
+            Just { last = lastItem, initial = otherItems } ->
+                lastItem
+                    |> Array.pushLast formattedLine
+                    |> (\newLines -> Array.pushLast newLines otherItems)
+                    |> addToSameList
+
+            Nothing ->
+                formattedLine
+                    |> wrapLine
+                    |> addToSameList
+    else if symbol == lastList.props.symbol then
+        -- Same list, new item
+        lastList.items
+            |> Array.pushLast (Array.singleton line)
+            |> addToSameList
+    else
+        -- New list
+        line
+            |> wrapLine
+            |> RawUnorderedList
+                    { leadingSpaces = leadingSpaces
+                    , symbol = symbol
+                    }
+            |> addToBlocks allBlocks

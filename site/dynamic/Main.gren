@@ -8,7 +8,7 @@ import Messages as ViewMsg
 import Types exposing (..)
 import Url exposing ( Url )
 import View exposing ( view )
-
+import Json.Decode
 
 
 -- ⛩️
@@ -44,9 +44,23 @@ init :
        }
 init flags url key =
     let
+        metadataDecoder =
+          Json.Decode.map
+            (\published ->
+              { published = published
+              }
+            )
+            (Json.Decode.field "published" Json.Decode.bool)
+
         parsed =
             Markdown.parse
+                { frontmatter = Just (Markdown.jsonFrontmatter metadataDecoder)
+                }
                 """
+                {
+                  "published": false
+                }
+
                 ## H2 [link](#href)
 
                 # H1 ``code``

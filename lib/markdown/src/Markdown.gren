@@ -5,5 +5,9 @@ module Markdown exposing (..)
 import Markdown.Parser
 
 
+jsonFrontmatter =
+    Markdown.Parser.jsonFrontmatter
+
+
 parse =
     Markdown.Parser.parse

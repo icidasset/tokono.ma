@@ -21,6 +21,14 @@ type Block
         { level : Int
         }
         (Array Inline)
+    | OrderedLooseList
+        { start : Int
+        }
+        (Array (Array Block))
+    | OrderedTightList
+        { start : Int
+        }
+        (Array (Array Inline))
     | Paragraph (Array Inline)
     | ThematicBreak
     | UnorderedLooseList (Array (Array Block))
@@ -38,8 +46,14 @@ type RawBlock
         }
         String
     | RawIndentedCode String
+    | RawOrderedList
+        { leadingSpaces : Int
+        , start : Int
+        , symbol : String
+        }
+        (Array (Array String))
     | RawParagraph String
-    | RawThematicBreak -- TODO: RawOrderedList String
+    | RawThematicBreak
     | RawUnorderedList
         { leadingSpaces : Int
         , symbol : String
@@ -72,8 +86,7 @@ parser =
                     RawBlockQuote string ->
                         let
                             innerBlocks =
-                                parse string
-                                    |> Result.withDefault []
+                                Result.withDefault [] (parse string)
                         in
                         Array.pushLast (BlockQuote innerBlocks) blocks
 
@@ -112,6 +125,29 @@ parser =
                                 }
                             )
                             blocks
+
+                    -- 
+                    -- OrderedLooseList & OrderedTightList
+                    -- 
+                    RawOrderedList { start } rawListItems ->
+                        let
+                            listItems =
+                                Array.map (String.join "\n") rawListItems
+
+                            isLooseList =
+                                Array.any (\a -> Array.length a > 1) rawListItems
+
+                            props =
+                                { start = start
+                                }
+
+                            block =
+                                if isLooseList then
+                                    OrderedLooseList props (Array.map (String.trim >> parse >> Result.withDefault []) listItems)
+                                else
+                                    OrderedTightList props (Array.map (String.trim >> Markdown.Parser.Inlines.parse >> Result.withDefault []) listItems)
+                        in
+                        Array.pushLast block blocks
 
                     -- 
                     -- Paragraph
@@ -173,10 +209,15 @@ rawBlockParser blocks =
           block (backtrackable headingParser)
         , block (backtrackable blockQuoteParser)
         , block (backtrackable thematicBreakParser)
-        , block (backtrackable fencedCodeParser)
 
         , -- Unordered list
           succeed (unorderedListManager blocks) |= backtrackable unorderedListParser
+
+        , -- Ordered list
+          succeed (orderedListManager blocks) |= backtrackable orderedListParser
+
+        , -- Fenced code
+          block (backtrackable fencedCodeParser)
 
         , -- Indented code
           succeed
@@ -348,6 +389,108 @@ headingParser =
                 )
 
 
+orderedListManager :
+    Array RawBlock
+    -> { leadingSpaces : Int
+       , line : String
+       , start : Int
+       , symbol : String
+       }
+    -> Step (Array RawBlock) (Array RawBlock)
+orderedListManager blocks list =
+    let
+        props =
+            { leadingSpaces = list.leadingSpaces
+            , start = list.start
+            , symbol = list.symbol
+            }
+    in
+    case Array.popLast blocks of
+        Just { last = RawOrderedList lastListProps lastListItems, initial } ->
+            -- Previous list exists
+            lastBlockWasList
+                RawOrderedList
+                { currentList =
+                    { props = props
+                    , line = list.line
+                    }
+                , lastList =
+                    { props = lastListProps
+                    , items = lastListItems
+                    }
+                , allBlocksExceptLast = initial
+                , allBlocks = blocks
+                }
+
+        _ ->
+            -- New list
+            list.line
+                |> Array.singleton
+                |> Array.singleton
+                |> RawOrderedList props
+                |> (\b -> Array.pushLast b blocks)
+                |> Loop
+
+
+orderedListParser :
+    Parser
+        { leadingSpaces : Int
+        , line : String
+        , start : Int
+        , symbol : String
+        }
+orderedListParser =
+    succeed identity
+        |= many (specificChar ' ')
+        |> andThen
+                (\leadingSpaces ->
+                    if Array.length leadingSpaces > 3 then
+                        problem "Cannot have more than 3 leading spaces"
+                    else
+                        succeed identity
+                            |= getChompedString (chompOneOrMore Char.isDigit)
+                            |> andThen
+                                    (\string ->
+                                        case String.toInt string of
+                                            Just int ->
+                                                succeed int
+
+                                            Nothing ->
+                                                problem "Couldn\'t parse string as number"
+                                    )
+                            |> andThen
+                                    (\start ->
+                                        succeed identity
+                                            |. oneOf
+                                                    [ specificChar '.'
+                                                    , specificChar ')'
+                                                    ]
+                                            |. many (specificChar ' ')
+                                            |> getChompedString
+                                            |> map
+                                                    (\s ->
+                                                        { start = start
+                                                        , symbol = s
+                                                        }
+                                                    )
+                                    )
+                            |> andThen
+                                    (\{ start, symbol } ->
+                                        succeed identity
+                                            |= getChompedString (chompUntilEndOr "\n")
+                                            |. chompWhile isLineEnding
+                                            |> map
+                                                    (\line ->
+                                                        { leadingSpaces = Array.length leadingSpaces
+                                                        , line = line
+                                                        , start = start
+                                                        , symbol = symbol
+                                                        }
+                                                    )
+                                    )
+                )
+
+
 thematicBreakParser : Parser RawBlock
 thematicBreakParser =
     succeed identity
@@ -388,7 +531,14 @@ unorderedListManager blocks list =
         Just { last = RawUnorderedList lastListProps lastListItems, initial } ->
             -- Previous list exists
             lastBlockWasList
-                { currentList = list
+                RawUnorderedList
+                { currentList =
+                    { props =
+                        { leadingSpaces = list.leadingSpaces
+                        , symbol = list.symbol
+                        }
+                    , line = list.line
+                    }
                 , lastList =
                     { props = lastListProps
                     , items = lastListItems
@@ -421,26 +571,29 @@ unorderedListParser =
         |= many (specificChar ' ')
         |> andThen
                 (\leadingSpaces ->
-                    succeed identity
-                        |= oneOf
-                                [ specificChar '-'
-                                , specificChar '+'
-                                , specificChar '*'
-                                ]
-                        |. many (specificChar ' ')
-                        |> andThen
-                                (\listChar ->
-                                    succeed identity
-                                        |= getChompedString (chompUntilEndOr "\n")
-                                        |. chompWhile isLineEnding
-                                        |> map
-                                                (\line ->
-                                                    { leadingSpaces = Array.length leadingSpaces
-                                                    , line = line
-                                                    , symbol = String.fromArray (Array.singleton listChar)
-                                                    }
-                                                )
-                                )
+                    if Array.length leadingSpaces > 3 then
+                        problem "Cannot have more than 3 leading spaces"
+                    else
+                        succeed identity
+                            |= oneOf
+                                    [ specificChar '-'
+                                    , specificChar '+'
+                                    , specificChar '*'
+                                    ]
+                            |. many (specificChar ' ')
+                            |> andThen
+                                    (\listChar ->
+                                        succeed identity
+                                            |= getChompedString (chompUntilEndOr "\n")
+                                            |. chompWhile isLineEnding
+                                            |> map
+                                                    (\line ->
+                                                        { leadingSpaces = Array.length leadingSpaces
+                                                        , line = line
+                                                        , symbol = String.fromArray (Array.singleton listChar)
+                                                        }
+                                                    )
+                                    )
                 )
 
 
@@ -448,27 +601,52 @@ unorderedListParser =
 -- LISTS
 
 
-lastBlockWasList { currentList, lastList, allBlocksExceptLast, allBlocks } =
+lastBlockWasList :
+    ({ props
+        | leadingSpaces : Int
+        , symbol : String
+     }
+     -> Array (Array String)
+     -> RawBlock
+    )
+    -> { currentList :
+            { props :
+                { props
+                    | leadingSpaces : Int
+                    , symbol : String
+                }
+            , line : String
+            }
+       , lastList :
+            { props :
+                { props
+                    | leadingSpaces : Int
+                    , symbol : String
+                }
+            , items : Array (Array String)
+            }
+       , allBlocksExceptLast : Array RawBlock
+       , allBlocks : Array RawBlock
+       }
+    -> Step (Array RawBlock) (Array RawBlock)
+lastBlockWasList constructor { currentList, lastList, allBlocksExceptLast, allBlocks } =
     let
-        { leadingSpaces, line, symbol } =
-            currentList
-
         addToBlocks l b =
             Loop (Array.pushLast b l)
 
         addToSameList =
-            RawUnorderedList lastList.props >> addToBlocks allBlocksExceptLast
+            constructor lastList.props >> addToBlocks allBlocksExceptLast
 
         formattedLine =
-            if leadingSpaces > 0 then
-                symbol ++ " " ++ line
+            if currentList.props.leadingSpaces > 0 then
+                currentList.props.symbol ++ " " ++ currentList.line
             else
-                line
+                currentList.line
 
         wrapLine =
             Array.singleton >> Array.singleton
     in
-    if leadingSpaces >= lastList.props.leadingSpaces + String.length lastList.props.symbol then
+    if currentList.props.leadingSpaces >= lastList.props.leadingSpaces + String.length lastList.props.symbol then
         -- Content belongs to previous list item
         case Array.popLast lastList.items of
             Just { last = lastItem, initial = otherItems } ->
@@ -481,17 +659,14 @@ lastBlockWasList { currentList, lastList, allBlocksExceptLast, allBlocks } =
                 formattedLine
                     |> wrapLine
                     |> addToSameList
-    else if symbol == lastList.props.symbol then
+    else if currentList.props.symbol == lastList.props.symbol then
         -- Same list, new item
         lastList.items
-            |> Array.pushLast (Array.singleton line)
+            |> Array.pushLast (Array.singleton currentList.line)
             |> addToSameList
     else
         -- New list
-        line
+        currentList.line
             |> wrapLine
-            |> RawUnorderedList
-                    { leadingSpaces = leadingSpaces
-                    , symbol = symbol
-                    }
+            |> constructor currentList.props
             |> addToBlocks allBlocks

@@ -75,6 +75,9 @@ init flags url key =
                 - B
                   - Nested
                 - C
+
+                1. Ordered
+                2. List
                 """
 
         _ =

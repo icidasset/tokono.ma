@@ -1,9 +1,9 @@
----
-title: "Building Blocks"
-category: "Code"
-published: true
-published_on: 16-03-2018
----
+{
+  "title": "Building Blocks",
+  "category": "Code",
+  "published": true,
+  "published_on": "16-03-2018"
+}
 
 
 _This is a more visual approach to the topic of purely-typed functional programming. What does it mean to have a "functional" programming language? What are types? What makes a functional-programming language "pure"? These are the questions we will answer here, with a focus on simplicity._

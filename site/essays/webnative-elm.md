@@ -1,9 +1,9 @@
----
-title: "Webnative & Elm"
-category: "Code"
-published: true
-published_on: 07-05-2021
----
+{
+  "title": "Webnative & Elm",
+  "category": "Code",
+  "published": true,
+  "published_on": "07-05-2021"
+}
 
 
 _[Webnative](https://guide.fission.codes/developers/webnative) is an effort from [Fission](https://guide.fission.codes/#what-is-fission) to make building web applications easy and simple. The two most important changes here are, in my opinion, (a) you don't need your own backend/server, and (b) the user fully owns their data, they take it with them from app to app._

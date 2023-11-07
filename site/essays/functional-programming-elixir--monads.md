@@ -1,8 +1,8 @@
----
-title: "Functional Programming & Elixir – Pt. 2, Monads"
-category: "Code"
-published: false
----
+{
+  "title": "Functional Programming & Elixir – Pt. 2, Monads",
+  "category": "Code",
+  "published": false
+}
 
 _**Note:** This article is still a work in progress, so feedback is welcome._
 

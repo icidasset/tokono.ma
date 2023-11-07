@@ -1,9 +1,9 @@
----
-title: "What I’ve learned from COVID-19"
-category: "Health"
-published: false
-published_on: 12-12-2020
----
+{
+  "title": "What I’ve learned from COVID-19",
+  "category": "Health",
+  "published": false,
+  "published_on": "12-12-2020"
+}
 
 _Viruses are a big part of nature, they are around us constantly, in the air, in the sea, in the soil, in our body, millions of different variations. These aren’t organisms, but packets of information for our genome to update our system. We are designed to absorb viruses, we need them for biodiversity and to adapt to changes in the environment. That’s evident by looking at our genome, 50% of the human genome is built from various viral inputs._
 

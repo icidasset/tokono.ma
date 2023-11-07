@@ -1,9 +1,9 @@
----
-title: "Why I wrote static-base"
-category: "Code"
-published: true
-published_on: 29-07-2016
----
+{
+  "title": "Why I wrote static-base",
+  "category": "Code",
+  "published": true,
+  "published_on": "29-07-2016"
+}
 
 __Update__: I wrote a better version of this library in Haskell, called [Shikensu](https://github.com/icidasset/shikensu).
 
@@ -11,9 +11,9 @@ __Update__: I wrote a better version of this library in Haskell, called [Shikens
 
 First of all, what is it anyway? It's a small functional toolset written for [node.js](https://nodejs.org/en/) to **build static websites**, and by that I mean, output html files. As it is still the fundamental part of the web, it's probably not a bad idea to consider it as a rather important piece of puzzle.
 
-<small>_Links:_</small>  
-[**static-base** github repo](https://github.com/icidasset/static-base)  
-[**static-base-contrib** github repo](https://github.com/icidasset/static-base-contrib)  
+<small>_Links:_</small>
+[**static-base** github repo](https://github.com/icidasset/static-base)
+[**static-base-contrib** github repo](https://github.com/icidasset/static-base-contrib)
 [**static-base-preset** github repo](https://github.com/icidasset/static-base-preset)
 
 I guess the most used, and easiest to understand, example would be a blog. You input text in a certain format, for example Markdown, and after the processing you get html. Let me explain it in more detail:
@@ -50,8 +50,8 @@ That would be our markdown sequence.
 
 The idea originated from [metalsmith](http://www.metalsmith.io/), which works like this:
 
-> 1 – Read all the files in a source directory.  
-> 2 – Invoke a series of plugins that manipulate the files.  
+> 1 – Read all the files in a source directory.
+> 2 – Invoke a series of plugins that manipulate the files.
 > 3 – Write the results to a destination directory!
 
 _Source: [the metalsmith website](http://www.metalsmith.io/)_

@@ -1,0 +1,27 @@
+module Markdown.Inline exposing ( Inline(..) )
+
+{-| Inline-level types and operations.
+
+@docs Inline
+
+-}
+-- 🌳
+
+
+
+type Inline
+    = Emphasis
+        { times : Int
+        }
+        String
+    | HardLineBreak
+    | InlineCode String
+    | Image
+        { alt : String
+        , url : String
+        }
+    | Link
+        { text : String
+        , url : String
+        }
+    | Text String

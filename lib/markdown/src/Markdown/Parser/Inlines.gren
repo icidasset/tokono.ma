@@ -2,30 +2,9 @@ module Markdown.Parser.Inlines exposing (..)
 
 {-|-}
 
+import Markdown.Inline exposing ( Inline(..) )
 import Parser exposing (..)
 import Parser.Extra exposing (..)
-
-
-
--- 🌳
-
-
-type Inline
-    = Emphasis
-        { times : Int
-        }
-        String
-    | HardLineBreak
-    | InlineCode String
-    | Image
-        { alt : String
-        , url : String
-        }
-    | Link
-        { text : String
-        , url : String
-        }
-    | Text String
 
 
 
@@ -69,11 +48,13 @@ parserLoop customInlineParsers inlineElements =
         , inline (backtrackable emphasisWithStarParser)
         , inline (backtrackable hardLineBreakParser)
         , inline (backtrackable imageParser)
-        , inline (backtrackable inlineCodeParser)
         , inline (backtrackable linkParser)
 
         , -- 
           inline (backtrackable (oneOf customInlineParsers))
+
+        , -- 
+          backtrackable (inlineCodeParser inlineElements lastElement)
 
         , -- 
           textLoopParser inlineElements lastElement
@@ -208,18 +189,45 @@ imageParser =
                 )
 
 
-inlineCodeParser : Parser Inline
-inlineCodeParser =
+inlineCodeParser : Array Inline -> Maybe Inline -> Parser (Step (Array Inline) (Array Inline))
+inlineCodeParser inlineElements lastElement =
     succeed identity
         |. specificChar '`'
         |= getChompedString (chompWhile (\c -> c == '`'))
         |> andThen
                 (\opening ->
-                    succeed identity
-                        |= getChompedString (chompUntilEndOr (opening ++ "`"))
-                        |. symbol (opening ++ "`")
-                        |> map String.trim
-                        |> map InlineCode
+                    let
+                        completeOpening =
+                            opening ++ "`"
+                    in
+                    oneOf
+                        [ succeed identity
+                            |= getChompedString (chompUntilEndOr completeOpening)
+                            |. symbol completeOpening
+                            |> backtrackable
+                            |> map String.trim
+                            |> map InlineCode
+                            |> andThen
+                                    (\code ->
+                                        succeed identity
+                                            |= oneOf
+                                                    [ map (\_ -> True) (lookAhead (specificChar '`'))
+                                                    , succeed False
+                                                    ]
+                                            |> andThen
+                                                    (\bool ->
+                                                        if bool then
+                                                            -- TODO: Continue chomping
+                                                            problem "Too much closing \'`\' characters"
+                                                        else
+                                                            succeed code
+                                                    )
+                                    )
+                            |> map (\el -> Loop (Array.pushLast el inlineElements))
+
+                        , -- 
+                          succeed (textLoop inlineElements lastElement completeOpening)
+                        ]
                 )
 
 
@@ -251,18 +259,23 @@ after each character. Concatenates `Text` automatically.
 -}
 textLoopParser : Array Inline -> Maybe Inline -> Parser (Step (Array Inline) (Array Inline))
 textLoopParser inlineElements lastElement =
-    succeed
-        (\text ->
-            case text of
-                "" ->
-                    Done inlineElements
+    succeed (textLoop inlineElements lastElement) |= getChompedString chompOne
+
+
+
+-- ㊙️
+
+
+textLoop : Array Inline -> Maybe Inline -> String -> Step (Array Inline) (Array Inline)
+textLoop inlineElements lastElement text =
+    case text of
+        "" ->
+            Done inlineElements
+
+        _ ->
+            case lastElement of
+                Just (Text previousText) ->
+                    Loop (Array.pushLast (Text (previousText ++ text)) (Array.dropLast 1 inlineElements))
 
                 _ ->
-                    case lastElement of
-                        Just (Text previousText) ->
-                            Loop (Array.pushLast (Text (previousText ++ text)) (Array.dropLast 1 inlineElements))
-
-                        _ ->
-                            Loop (Array.pushLast (Text text) inlineElements)
-        )
-        |= getChompedString chompOne
+                    Loop (Array.pushLast (Text text) inlineElements)

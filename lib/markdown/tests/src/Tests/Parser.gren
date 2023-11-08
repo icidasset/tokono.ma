@@ -1,0 +1,154 @@
+module Tests.Parser exposing ( tests )
+
+{-|
+
+These tests match the code presented in the spec:
+https://spec.commonmark.org/0.30/#inlines
+
+The tests should be in the same order as in the spec.
+
+-}
+
+import Expect
+import Markdown
+import Markdown.Block exposing ( Block(..) )
+import Markdown.Inline exposing ( Inline(..) )
+import Markdown.Parser.Inlines as Inlines
+import Test exposing (..)
+
+
+
+-- TESTS
+
+
+tests =
+    Test.concat
+        [ inlines
+        ]
+
+
+
+-- BLOCKS
+
+
+singleParagraph =
+    test "parsing solely one paragraph"
+        <| (\_ ->
+                Expect.equal
+                    ("Paragraph"
+                        |> Markdown.parse
+                                { frontmatter = Nothing
+                                }
+                        |> .blocks
+                    )
+                    [ Paragraph
+                        [ Text "Paragraph"
+                        ]
+                    ]
+            )
+
+
+
+-- INLINES  /  🛠️
+
+
+testInline string expectedResult =
+    testInlines
+        string
+        [ expectedResult
+        ]
+
+
+testInlines string expectedResult =
+    test
+        string
+        (\_ ->
+            string
+                |> Inlines.parse
+                |> Expect.equal (Ok expectedResult)
+        )
+
+
+
+-- INLINES  /  TESTS
+
+
+inlines =
+    Test.concat
+        [ codeSpan
+        ]
+
+
+codeSpan =
+    describe
+        "Code spans"
+        [ testInline "`foo`" (InlineCode "foo")
+        , testInline "`` foo ` bar ``" (InlineCode "foo ` bar")
+        , testInline "` `` `" (InlineCode "``")
+        , testInline "`  ``  `" (InlineCode " `` ")
+        , testInline "` a`" (InlineCode " a")
+        , testInline "` b `" (InlineCode " b ")
+        , testInline "` `" (InlineCode " ")
+        , testInline "`  `" (InlineCode "  ")
+
+        , -- 
+          testInline
+            """
+            ``
+            foo
+            bar
+            baz
+            ``
+            """
+            (InlineCode "foo bar   baz")
+        , testInline
+            """
+            ``
+            foo
+            ``
+            """
+            (InlineCode "foo ")
+        , testInline
+            """
+            `foo   bar
+            baz`
+            """
+            (InlineCode "foo   bar  baz")
+        , testInlines
+            "`foo\\`bar`"
+            [ InlineCode "foo\\"
+            , Text "bar`"
+            ]
+
+        , -- 
+          testInline "``foo`bar``" (InlineCode "foo`bar")
+        , testInline "` foo `` bar `" (InlineCode "foo `` bar")
+
+        , -- 
+          testInlines
+            "*foo`*`"
+            [ Text "*foo"
+            , InlineCode "*"
+            ]
+        , testInlines
+            "[not a `link](/foo`)"
+            [ Text "[not a "
+            , InlineCode "link](/foo"
+            , Text ")"
+            ]
+
+        , -- 
+          -- TODO: Haven't implemented HTML parsing: , testInline "`<a href=\"`\">`" (InlineCode "<a href=\"`\">")
+          -- TODO: Haven't implemented HTML parsing: , testInline "<a href=\"`\">`"
+          testInline "`<http://foo.bar.`baz>`" (InlineCode "<http://foo.bar.`baz>")
+            -- TODO: Haven't implemented autolinks: testInline "<http://foo.bar.`baz>`'"
+        , testInline "```foo``" (Text "```foo``")
+        , testInline "`foo" (Text "`foo")
+
+        , -- 
+          testInlines
+            "`foo``bar``"
+            [ Text "`foo"
+            , InlineCode "bar"
+            ]
+        ]

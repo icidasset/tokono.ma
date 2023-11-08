@@ -63,6 +63,28 @@ chompOneOrMore predicate =
     chompIf predicate |. chompWhile predicate
 
 
+{-| Create a parser that backtracks on success.
+-}
+lookAhead : Parser a -> Parser {}
+lookAhead parser =
+    oneOf
+        [ oneOf
+            [ parser
+                |> backtrackable
+                |> andThen (\_ -> commit {})
+                |> andThen (\_ -> problem "")
+            , succeed
+                (parser
+                    |> backtrackable
+                    |> map (\_ -> {})
+                )
+            ]
+            |> backtrackable
+        , succeed (succeed {})
+        ]
+        |> andThen identity
+
+
 many : Parser a -> Parser (Array a)
 many p =
     loop [] (manyHelp p)

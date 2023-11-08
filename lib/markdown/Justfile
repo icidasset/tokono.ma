@@ -1,0 +1,2 @@
+test:
+  cd tests && gren make src/Tests.gren && node app && rm app

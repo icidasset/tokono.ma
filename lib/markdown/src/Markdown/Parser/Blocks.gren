@@ -2,37 +2,15 @@ module Markdown.Parser.Blocks exposing (..)
 
 {-|-}
 
-import Markdown.Parser.Inlines exposing ( Inline )
+import Markdown.Block exposing ( Block(..) )
+import Markdown.Inline exposing ( Inline )
+import Markdown.Parser.Inlines
 import Parser exposing (..)
 import Parser.Extra exposing (..)
 
 
 
 -- 🌳
-
-
-type Block
-    = BlockQuote (Array Block)
-    | CodeBlock
-        { body : String
-        , language : Maybe String
-        }
-    | Heading
-        { level : Int
-        }
-        (Array Inline)
-    | OrderedLooseList
-        { start : Int
-        }
-        (Array (Array Block))
-    | OrderedTightList
-        { start : Int
-        }
-        (Array (Array Inline))
-    | Paragraph (Array Inline)
-    | ThematicBreak
-    | UnorderedLooseList (Array (Array Block))
-    | UnorderedTightList (Array (Array Inline))
 
 
 type RawBlock

@@ -3,7 +3,8 @@ module Markdown.Parser exposing (..)
 {-|-}
 
 import Json.Decode as Json
-import Markdown.Parser.Blocks exposing ( Block )
+import Markdown.Block exposing ( Block )
+import Markdown.Parser.Blocks
 import Markdown.Parser.Frontmatter.Json
 import Markdown.Parser.Frontmatter.Types as Frontmatter
 import Parser exposing ( Parser )

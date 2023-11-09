@@ -3,12 +3,13 @@ module Main exposing ( main )
 import Browser exposing ( UrlRequest(..) )
 import Browser.Navigation
 import Common.String as String
+import Json.Decode
 import Markdown
 import Messages as ViewMsg
 import Types exposing (..)
 import Url exposing ( Url )
 import View exposing ( view )
-import Json.Decode
+
 
 
 -- ⛩️
@@ -44,59 +45,6 @@ init :
        }
 init flags url key =
     let
-        metadataDecoder =
-          Json.Decode.map
-            (\published ->
-              { published = published
-              }
-            )
-            (Json.Decode.field "published" Json.Decode.bool)
-
-        parsed =
-            Markdown.parse
-                { frontmatter = Just (Markdown.jsonFrontmatter metadataDecoder)
-                }
-                """
-                {
-                  "published": false
-                }
-
-                ## H2 [link](#href)
-
-                # H1 ``code``
-
-                Testing a [link](#href). Some __more__ text.
-
-                    code
-                    line 2
-                Not code.
-
-                > Block*quote* with a [link](#href).
-
-                ---
-                ***
-                ___
-
-                ```
-                Fenced code
-                Line 2
-                ```
-
-                Para_graph_ **2**.
-
-                - A
-                 - Not nested
-                - B
-                  - Nested
-                - C
-
-                1. Ordered
-                2. List
-                """
-
-        _ =
-            Debug.log "" parsed
-
         rootUrl =
             url.path
                 |> String.removePrefix "/"

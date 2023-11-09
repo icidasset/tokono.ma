@@ -87,16 +87,16 @@ codeSpan =
         , testInline "` `` `" (InlineCode "``")
         , testInline "`  ``  `" (InlineCode " `` ")
         , testInline "` a`" (InlineCode " a")
-        , testInline "` b `" (InlineCode " b ")
+        , testInline "`\u{00A0}b\u{00A0}`" (InlineCode "\u{00A0}b\u{00A0}")
         , testInline "` `" (InlineCode " ")
         , testInline "`  `" (InlineCode "  ")
 
-        , -- 
+        , --
           testInline
             """
             ``
             foo
-            bar
+            bar\u{0020}\u{0020}
             baz
             ``
             """
@@ -104,13 +104,13 @@ codeSpan =
         , testInline
             """
             ``
-            foo
+            foo\u{0020}
             ``
             """
             (InlineCode "foo ")
         , testInline
             """
-            `foo   bar
+            `foo   bar\u{0020}
             baz`
             """
             (InlineCode "foo   bar  baz")
@@ -120,11 +120,11 @@ codeSpan =
             , Text "bar`"
             ]
 
-        , -- 
+        , --
           testInline "``foo`bar``" (InlineCode "foo`bar")
         , testInline "` foo `` bar `" (InlineCode "foo `` bar")
 
-        , -- 
+        , --
           testInlines
             "*foo`*`"
             [ Text "*foo"
@@ -137,15 +137,21 @@ codeSpan =
             , Text ")"
             ]
 
-        , -- 
-          -- TODO: Haven't implemented HTML parsing: , testInline "`<a href=\"`\">`" (InlineCode "<a href=\"`\">")
-          -- TODO: Haven't implemented HTML parsing: , testInline "<a href=\"`\">`"
-          testInline "`<http://foo.bar.`baz>`" (InlineCode "<http://foo.bar.`baz>")
-            -- TODO: Haven't implemented autolinks: testInline "<http://foo.bar.`baz>`'"
-        , testInline "```foo``" (Text "```foo``")
+        , -- TODO: Still need to implement HTML parsing.
+          --       Some `Inline` elements may need to be replaced by a `Html` inline element here.
+          skip (testInline "`<a href=\"`\">`" (InlineCode "<a href=\"`\">"))
+        , skip (testInline "<a href=\"`\">`" (Text "<a href=\"`\">`"))
+
+        , -- TODO: Still need to implement autolinks.
+          --       Some `Inline` elements may need to be replaced by a `AutoLink` inline element here.
+          skip (testInline "`<http://foo.bar.`baz>`" (InlineCode "<http://foo.bar.`baz>"))
+        , skip (testInline "<http://foo.bar.`baz>`\'" (Text "<a href=\"http://foo.bar.%60baz\">http://foo.bar.`baz</a>`"))
+
+        , --
+          testInline "```foo``" (Text "```foo``")
         , testInline "`foo" (Text "`foo")
 
-        , -- 
+        , --
           testInlines
             "`foo``bar``"
             [ Text "`foo"

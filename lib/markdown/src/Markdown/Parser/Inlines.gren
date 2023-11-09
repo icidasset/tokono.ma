@@ -44,6 +44,9 @@ parserLoop customInlineParsers inlineElements =
           map (\_ -> Done inlineElements) end
 
         , -- 
+          backtrackable (inlineCodeParser inlineElements lastElement)
+
+        , -- 
           inline (backtrackable (emphasisWithUnderscoreParser lastElement))
         , inline (backtrackable emphasisWithStarParser)
         , inline (backtrackable hardLineBreakParser)
@@ -52,9 +55,6 @@ parserLoop customInlineParsers inlineElements =
 
         , -- 
           inline (backtrackable (oneOf customInlineParsers))
-
-        , -- 
-          backtrackable (inlineCodeParser inlineElements lastElement)
 
         , -- 
           textLoopParser inlineElements lastElement
@@ -92,6 +92,8 @@ emphasisWithStarParser =
                                     in
                                     if isUnicodeSpace firstChar || isPunctuation firstChar then
                                         problem "Illegal character, cannot emphasise"
+                                    else if String.contains "`" emphasisedText then
+                                        problem "Inline code has precedence"
                                     else
                                         emphasisedText
                                             |> Emphasis
@@ -144,6 +146,8 @@ emphasisWithUnderscoreParser lastElement =
                                         in
                                         if isUnicodeSpace firstChar || isPunctuation firstChar then
                                             problem "Illegal character, cannot emphasise"
+                                        else if String.contains "`" emphasisedText then
+                                            problem "Inline code has precedence"
                                         else
                                             emphasisedText
                                                 |> Emphasis
@@ -191,42 +195,78 @@ imageParser =
 
 inlineCodeParser : Array Inline -> Maybe Inline -> Parser (Step (Array Inline) (Array Inline))
 inlineCodeParser inlineElements lastElement =
-    succeed identity
+    succeed
+        (\o s ->
+            { opening = o ++ "`" ++ s
+            , closing = s ++ o ++ "`"
+            }
+        )
         |. specificChar '`'
         |= getChompedString (chompWhile (\c -> c == '`'))
+        |= oneOf
+                [ getChompedString (symbol " ")
+                , getChompedString (symbol "\n")
+                , succeed ""
+                ]
         |> andThen
-                (\opening ->
+                (\{ opening, closing } ->
                     let
-                        completeOpening =
-                            opening ++ "`"
+                        chompUntilClosing close code =
+                            succeed identity
+                                |= getChompedString (chompUntilEndOr close)
+                                |. symbol close
+                                |> backtrackable
+                                |> andThen (checkClosing close code)
+
+                        checkClosing close code additionalCode =
+                            let
+                                allCode =
+                                    code ++ additionalCode
+                            in
+                            succeed identity
+                                |= oneOf
+                                        [ map (\_ -> True) (specificChar '`')
+                                        , succeed False
+                                        ]
+                                |> andThen
+                                        (\bool ->
+                                            if bool then
+                                                -- problem "Closing did not match"
+                                                chompUntilClosing close (allCode ++ closing ++ "`")
+                                            else
+                                                succeed allCode
+                                        )
+
+                        addToBlocks code =
+                            let
+                                finalCode =
+                                    code
+                                        |> (\c ->
+                                                if code == "" && String.endsWith " " opening then
+                                                    c ++ " "
+                                                else
+                                                    c
+                                            )
+                                        |> (\c ->
+                                                if code == "" && String.startsWith " " closing then
+                                                    c ++ " "
+                                                else
+                                                    c
+                                            )
+                                        |> String.replace "\n" " "
+                            in
+                            Loop (Array.pushLast (InlineCode finalCode) inlineElements)
                     in
                     oneOf
-                        [ succeed identity
-                            |= getChompedString (chompUntilEndOr completeOpening)
-                            |. symbol completeOpening
-                            |> backtrackable
-                            |> map String.trim
-                            |> map InlineCode
-                            |> andThen
-                                    (\code ->
-                                        succeed identity
-                                            |= oneOf
-                                                    [ map (\_ -> True) (lookAhead (specificChar '`'))
-                                                    , succeed False
-                                                    ]
-                                            |> andThen
-                                                    (\bool ->
-                                                        if bool then
-                                                            -- TODO: Continue chomping
-                                                            problem "Too much closing \'`\' characters"
-                                                        else
-                                                            succeed code
-                                                    )
-                                    )
-                            |> map (\el -> Loop (Array.pushLast el inlineElements))
+                        [ -- Either it's actual inline code:
+                          -- (a) with some or no whitespace on both ends
+                          map addToBlocks (chompUntilClosing closing "")
 
-                        , -- 
-                          succeed (textLoop inlineElements lastElement completeOpening)
+                        , -- (b) with some whitespace at the beginning, but not the end
+                          map (\c -> addToBlocks (" " ++ c)) (chompUntilClosing (String.trimLeft closing) "")
+
+                        , -- Or the opening is text
+                          succeed (textLoop inlineElements lastElement opening)
                         ]
                 )
 
@@ -239,18 +279,25 @@ linkParser =
         |. specificChar ']'
         |> andThen
                 (\text ->
-                    -- TODO: Support link titles
-                    succeed identity
-                        |. specificChar '('
-                        |= getChompedString (chompUntil ")")
-                        |. specificChar ')'
-                        |> map
-                                (\url ->
-                                    Link
-                                        { text = text
-                                        , url = url
-                                        }
-                                )
+                    if String.contains "`" text then
+                        problem "Inline code has precedence"
+                    else
+                        -- TODO: Support link titles
+                        succeed identity
+                            |. specificChar '('
+                            |= getChompedString (chompUntil ")")
+                            |. specificChar ')'
+                            |> andThen
+                                    (\url ->
+                                        if String.contains "`" url then
+                                            problem "Inline code has precedence"
+                                        else
+                                            { text = text
+                                            , url = url
+                                            }
+                                                |> Link
+                                                |> succeed
+                                    )
                 )
 
 

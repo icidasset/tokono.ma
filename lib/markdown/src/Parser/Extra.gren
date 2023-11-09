@@ -71,7 +71,7 @@ lookAhead parser =
         [ oneOf
             [ parser
                 |> backtrackable
-                |> andThen (\_ -> commit {})
+                |> andThen (\a -> commit {})
                 |> andThen (\_ -> problem "")
             , succeed
                 (parser

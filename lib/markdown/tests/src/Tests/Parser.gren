@@ -76,6 +76,7 @@ testInlines string expectedResult =
 inlines =
     Test.concat
         [ codeSpan
+        , emphasis
         ]
 
 
@@ -157,4 +158,104 @@ codeSpan =
             [ Text "`foo"
             , InlineCode "bar"
             ]
+        ]
+
+
+emphasis =
+  only
+  <|  describe
+        "Emphasis and strong emphasis"
+        [ testInline
+            "*foo bar*"
+            (Emphasis
+                { times = 1
+                }
+                [ Text "foo bar"
+                ]
+            )
+
+        , --
+          testInline "a * foo bar*" (Text "a * foo bar*")
+        , testInline "a*\"foo\"*" (Text "a*\"foo\"*")
+        , testInline "*\u{00A0}a\u{00A0}*" (Text "*\u{00A0}a\u{00A0}*")
+
+        , --
+          testInlines
+            "foo*bar*"
+            [ Text "foo"
+            , Emphasis
+                { times = 1
+                }
+                [ Text "bar"
+                ]
+            ]
+        , testInlines
+            "5*6*78"
+            [ Text "5"
+            , Emphasis
+                { times = 1
+                }
+                [ Text "6"
+                ]
+            , Text "78"
+            ]
+
+        , --
+          testInline
+            "_foo bar_"
+            (Emphasis
+                { times = 1
+                }
+                [ Text "foo bar"
+                ]
+            )
+
+        , --
+          testInline "_ foo bar_" (Text "_ foo bar_")
+        , testInline "foo_bar_" (Text "foo_bar_")
+        , testInline "5_6_78" (Text "5_6_78")
+        , testInline "пристаням_стремятся_" (Text "пристаням_стремятся_")
+        , testInline "aa_\"bb\"_cc" (Text "aa_\"bb\"_cc")
+
+        , --
+          testInlines
+            "foo-_(bar)_"
+            [ Text "foo-"
+            , Emphasis
+                { times = 1
+                }
+                [ Text "(bar)"
+                ]
+            ]
+
+        , --
+          testInline "_foo*" (Text "_foo*")
+        , testInline "*foo bar *" (Text "*foo bar *")
+
+        , --
+          testInline
+            """
+            *foo bar
+            *
+            """
+            (Text "*foo bar\n*")
+
+        , --
+          testInline "*(*foo)" (Text "*(*foo)")
+
+        , --
+          testInline
+                    "*(*foo*)*"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "("
+                        , Emphasis
+                            { times = 1
+                            }
+                            [ Text "foo"
+                            ]
+                        , Text ")"
+                        ]
+                    )
         ]

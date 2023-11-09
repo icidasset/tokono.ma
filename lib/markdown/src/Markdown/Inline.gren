@@ -13,7 +13,7 @@ type Inline
     = Emphasis
         { times : Int
         }
-        String
+        (Array Inline)
     | HardLineBreak
     | InlineCode String
     | Image

@@ -383,4 +383,20 @@ emphasis =
                 , -- RULE 7
                   testInline "**foo bar **" (Text "**foo bar **")
                 , testInline "**(**foo)" (Text "**(**foo)")
+
+                , -- 
+                  testInline
+                    "*(**foo**)*"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "("
+                        , Emphasis
+                            { times = 2
+                            }
+                            [ Text "foo"
+                            ]
+                        , Text ")"
+                        ]
+                    )
                 ]

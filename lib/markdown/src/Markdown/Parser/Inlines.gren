@@ -77,6 +77,10 @@ emphasisParser emphasisChar lastElement =
                     Nothing
 
         chompUntilNextClosing opts =
+            let
+                _ =
+                    Debug.log "chomp" opts
+            in
             succeed identity
                 |= getChompedString (chompUntilEndOr opts.closing)
                 |. symbol opts.closing
@@ -118,7 +122,13 @@ emphasisParser emphasisChar lastElement =
                     String.toArray allEmphasisedText
 
                 firstChar =
-                    Array.first chars
+                    if opts.checkOpening then
+                        Array.first chars
+                    else
+                        Maybe.map .first (String.uncons additionalEmphasisedText)
+
+                lastCharPrevious =
+                    Array.last (String.toArray (String.dropRight (String.length opts.closing) opts.emphasisedText))
 
                 lastChar =
                     Array.last chars
@@ -127,13 +137,15 @@ emphasisParser emphasisChar lastElement =
                     { opts
                         | checkOpening = False
                         , emphasisedText = allEmphasisedText ++ opts.closing
-                        , skipOneClosing = False
                     }
             in
-            if opts.skipOneClosing then
-                chompUntilNextClosing chompOpts
-            else if opts.checkOpening && not (isViableOpening originalCharBefore firstChar) then
+            if opts.checkOpening && not (isViableOpening originalCharBefore firstChar) then
                 problem "Illegal character, cannot emphasise"
+            else if not opts.checkOpening && isViableOpening lastCharPrevious firstChar then
+                oneOf
+                    [ chompUntilNextClosing chompOpts
+                    , succeed allEmphasisedText
+                    ]
             else if Maybe.map isUnicodeSpace lastChar == Just True then
                 chompUntilNextClosing chompOpts
             else if Maybe.map isPunctuation lastChar == Just True then
@@ -148,29 +160,7 @@ emphasisParser emphasisChar lastElement =
                                 if isViableClosing then
                                     succeed allEmphasisedText
                                 else
-                                    -- Is it another opening instead?
-                                    andThen
-                                        (\maybeFirstChar ->
-                                            let
-                                                first =
-                                                    case maybeFirstChar of
-                                                        Just char ->
-                                                            Array.singleton char
-
-                                                        Nothing ->
-                                                            Array.empty
-                                            in
-                                            maybeFirstChar
-                                                |> isViableOpening lastChar
-                                                |> (\bool ->
-                                                        chompUntilNextClosing
-                                                            { chompOpts
-                                                                | emphasisedText = allEmphasisedText ++ opts.closing ++ String.fromArray first
-                                                                , skipOneClosing = bool
-                                                            }
-                                                    )
-                                        )
-                                        parseOneChar
+                                    chompUntilNextClosing chompOpts
                             )
             else if String.contains "`" allEmphasisedText then
                 problem "Inline code has precedence"
@@ -187,7 +177,7 @@ emphasisParser emphasisChar lastElement =
                         |> map (\_ -> allEmphasisedText)
 
                     , -- 
-                      chompUntilNextClosing { chompOpts | skipOneClosing = True }
+                      chompUntilNextClosing chompOpts
                     ]
             else
                 succeed allEmphasisedText
@@ -235,7 +225,6 @@ emphasisParser emphasisChar lastElement =
                                 { checkOpening = True
                                 , closing = closing
                                 , emphasisedText = ""
-                                , skipOneClosing = False
                                 }
                             )
                     )

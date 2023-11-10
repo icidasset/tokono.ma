@@ -351,4 +351,36 @@ emphasis =
                   testInline "__ foo bar__" (Text "__ foo bar__")
                 , testInline "__\nfoo bar__" (Text "__\nfoo bar__")
                 , testInline "a__\"foo\"__" (Text "a__\"foo\"__")
+                , testInline "foo__bar__" (Text "foo__bar__")
+                , testInline "5__6__78" (Text "5__6__78")
+                , testInline "пристаням__стремятся__" (Text "пристаням__стремятся__")
+
+                , -- 
+                  testInline
+                    "__foo, __bar__, baz__"
+                    (Emphasis
+                        { times = 2
+                        }
+                        [ Text "foo, "
+                        , Emphasis
+                            { times = 2
+                            }
+                            [ Text "bar"
+                            ]
+                        , Text ", baz"
+                        ]
+                    )
+                , testInlines
+                    "foo-__(bar)__"
+                    [ Text "foo-"
+                    , Emphasis
+                        { times = 2
+                        }
+                        [ Text "(bar)"
+                        ]
+                    ]
+
+                , -- RULE 7
+                  testInline "**foo bar **" (Text "**foo bar **")
+                , testInline "**(**foo)" (Text "**(**foo)")
                 ]

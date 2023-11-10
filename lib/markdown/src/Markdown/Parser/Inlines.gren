@@ -43,20 +43,20 @@ parserLoop customInlineParsers inlineElements =
         [ -- Check if we reached the end
           map (\_ -> Done inlineElements) end
 
-        , --
+        , -- 
           backtrackable (inlineCodeParser inlineElements lastElement)
 
-        , --
+        , -- 
           inline (backtrackable (emphasisWithUnderscoreParser lastElement))
         , inline (backtrackable (emphasisWithStarParser lastElement))
         , inline (backtrackable hardLineBreakParser)
         , inline (backtrackable imageParser)
         , inline (backtrackable linkParser)
 
-        , --
+        , -- 
           inline (backtrackable (oneOf customInlineParsers))
 
-        , --
+        , -- 
           textLoopParser inlineElements lastElement
         ]
 
@@ -65,191 +65,192 @@ parserLoop customInlineParsers inlineElements =
 -- INDIVIDUAL PARSERS
 
 
-emphasisWithStarParser : Maybe Inline -> Parser Inline
-emphasisWithStarParser lastElement =
-    succeed identity
-        |= some (specificChar '*')
-        |> andThen
-                (\opening ->
-                    let
-                        originalCharBefore =
-                            case lastElement of
-                                Just (Text t) ->
-                                    Array.last (String.toArray t)
-
-                                _ ->
-                                    Nothing
-
-                        closing =
-                            "*" ++ String.fromArray opening.rest
-
-                        times =
-                            String.length closing
-
-                        chompUntilNextClosing checkOpening emphasisedText skipOneClosing =
-                            succeed identity
-                                |= getChompedString (chompUntilEndOr closing)
-                                |. symbol closing
-                                |> andThen (check checkOpening emphasisedText skipOneClosing)
-
-                        isViableOpening charBefore firstChar =
-                            let
-                                isPrecededByASpacePunctuationOrNothing =
-                                    case charBefore of
-                                        Just char ->
-                                            isUnicodeSpace char || isPunctuation char
-
-                                        _ ->
-                                            True
-                            in
-                            if Maybe.map isUnicodeSpace firstChar == Just True then
-                                False
-                            else if Maybe.map isPunctuation firstChar == Just True && not isPrecededByASpacePunctuationOrNothing then
-                                False
-                            else
-                                True
-
-                        check checkOpening emphasisedText skipOneClosing additionalEmphasisedText =
-                            let
-                                allEmphasisedText =
-                                    emphasisedText ++ additionalEmphasisedText
-
-                                chars =
-                                    String.toArray allEmphasisedText
-
-                                firstChar =
-                                    Array.first chars
-
-                                lastChar =
-                                    Array.last chars
-                            in
-                            if skipOneClosing then
-                                chompUntilNextClosing False (allEmphasisedText ++ closing) False
-                            else if checkOpening && not (isViableOpening originalCharBefore firstChar) then
-                                problem "Illegal character, cannot emphasise"
-                            else if Maybe.map isUnicodeSpace lastChar == Just True then
-                                chompUntilNextClosing False (allEmphasisedText ++ closing) False
-                            else if Maybe.map isPunctuation lastChar == Just True then
-                                succeed identity
-                                    |= oneOf
-                                            [ map (\_ -> True) (lookAhead (chompIf (\c -> isUnicodeSpace c || isPunctuation c)))
-                                            , map (\_ -> True) (lookAhead end)
-                                            , succeed False
-                                            ]
-                                    |> andThen
-                                            (\isViableClosing ->
-                                                if isViableClosing then
-                                                    succeed allEmphasisedText
-                                                else
-                                                    -- Is it another opening instead?
-                                                    succeed identity
-                                                        |= oneOf
-                                                                [ map Just char
-                                                                , map (\_ -> Nothing) end
-                                                                ]
-                                                        |> andThen
-                                                                (\maybeFirstChar ->
-                                                                    let
-                                                                        first =
-                                                                            case maybeFirstChar of
-                                                                                Just char ->
-                                                                                    Array.singleton char
-
-                                                                                Nothing ->
-                                                                                    Array.empty
-                                                                    in
-                                                                    chompUntilNextClosing False (allEmphasisedText ++ closing ++ String.fromArray first) (isViableOpening lastChar maybeFirstChar)
-                                                                )
-                                            )
-                            else if String.contains "`" allEmphasisedText then
-                                problem "Inline code has precedence"
-                            else
-                                succeed allEmphasisedText
-                    in
-                    map
-                        (\emphasisedText ->
-                            emphasisedText
-                                |> parse
-                                |> Result.withDefault []
-                                |> Emphasis
-                                        { times = times
-                                        }
-                        )
-                        (chompUntilNextClosing True "" False)
-                )
-
-
-emphasisWithUnderscoreParser : Maybe Inline -> Parser Inline
-emphasisWithUnderscoreParser lastElement =
+emphasisParser : Char -> Maybe Inline -> Parser Inline
+emphasisParser emphasisChar lastElement =
     let
-        isPrecededByASpacePunctuationOrNothing =
+        originalCharBefore =
             case lastElement of
                 Just (Text t) ->
-                    case Array.last (String.toArray t) of
+                    Array.last (String.toArray t)
+
+                _ ->
+                    Nothing
+
+        chompUntilNextClosing opts =
+            succeed identity
+                |= getChompedString (chompUntilEndOr opts.closing)
+                |. symbol opts.closing
+                |> andThen (check opts)
+
+        isViableOpening charBefore firstChar =
+            let
+                isPrecededByASpacePunctuationOrNothing =
+                    case charBefore of
                         Just char ->
                             isUnicodeSpace char || isPunctuation char
 
-                        Nothing ->
+                        _ ->
                             True
 
-                _ ->
-                    True
+                isPrecededByPartialOpening =
+                    case charBefore of
+                        Just char ->
+                            char == emphasisChar
+
+                        Nothing ->
+                            False
+            in
+            if isPrecededByPartialOpening then
+                False
+            else if Maybe.map isUnicodeSpace firstChar == Just True then
+                False
+            else if Maybe.map isPunctuation firstChar == Just True then
+                isPrecededByASpacePunctuationOrNothing
+            else
+                True
+
+        check opts additionalEmphasisedText =
+            let
+                allEmphasisedText =
+                    opts.emphasisedText ++ additionalEmphasisedText
+
+                chars =
+                    String.toArray allEmphasisedText
+
+                firstChar =
+                    Array.first chars
+
+                lastChar =
+                    Array.last chars
+
+                chompOpts =
+                    { opts
+                        | checkOpening = False
+                        , emphasisedText = allEmphasisedText ++ opts.closing
+                        , skipOneClosing = False
+                    }
+            in
+            if opts.skipOneClosing then
+                chompUntilNextClosing chompOpts
+            else if opts.checkOpening && not (isViableOpening originalCharBefore firstChar) then
+                problem "Illegal character, cannot emphasise"
+            else if Maybe.map isUnicodeSpace lastChar == Just True then
+                chompUntilNextClosing chompOpts
+            else if Maybe.map isPunctuation lastChar == Just True then
+                succeed identity
+                    |= oneOf
+                            [ map (\_ -> True) (lookAhead (chompIf (\c -> isUnicodeSpace c || isPunctuation c)))
+                            , map (\_ -> True) (lookAhead end)
+                            , succeed False
+                            ]
+                    |> andThen
+                            (\isViableClosing ->
+                                if isViableClosing then
+                                    succeed allEmphasisedText
+                                else
+                                    -- Is it another opening instead?
+                                    andThen
+                                        (\maybeFirstChar ->
+                                            let
+                                                first =
+                                                    case maybeFirstChar of
+                                                        Just char ->
+                                                            Array.singleton char
+
+                                                        Nothing ->
+                                                            Array.empty
+                                            in
+                                            maybeFirstChar
+                                                |> isViableOpening lastChar
+                                                |> (\bool ->
+                                                        chompUntilNextClosing
+                                                            { chompOpts
+                                                                | emphasisedText = allEmphasisedText ++ opts.closing ++ String.fromArray first
+                                                                , skipOneClosing = bool
+                                                            }
+                                                    )
+                                        )
+                                        parseOneChar
+                            )
+            else if String.contains "`" allEmphasisedText then
+                problem "Inline code has precedence"
+            else if emphasisChar == '_' then
+                -- Disallow intraword
+                oneOf
+                    [ succeed identity
+                        |. lookAhead
+                                (oneOf
+                                    [ chompIf (\c -> isUnicodeSpace c || isPunctuation c)
+                                    , end
+                                    ]
+                                )
+                        |> map (\_ -> allEmphasisedText)
+
+                    , -- 
+                      chompUntilNextClosing { chompOpts | skipOneClosing = True }
+                    ]
+            else
+                succeed allEmphasisedText
+
+        parseOneChar =
+            succeed identity
+                |= oneOf
+                        [ map Just char
+                        , map (\_ -> Nothing) end
+                        ]
+
+        preemptiveCheck =
+            if emphasisChar == '_' then
+                case originalCharBefore of
+                    Just c ->
+                        isUnicodeSpace c || isPunctuation c
+
+                    Nothing ->
+                        True
+            else
+                True
     in
-    if isPrecededByASpacePunctuationOrNothing then
+    if preemptiveCheck then
         succeed identity
-            |= some (specificChar '_')
+            |= some (specificChar emphasisChar)
             |> andThen
                     (\opening ->
                         let
                             closing =
-                                "_" ++ String.fromArray opening.rest
+                                String.fromArray (Array.pushFirst emphasisChar opening.rest)
 
                             times =
                                 String.length closing
                         in
-                        succeed identity
-                            |= getChompedString (chompUntilEndOr closing)
-                            |. symbol closing
-                            |> andThen
-                                    (\emphasisedText ->
-                                        let
-                                            chars =
-                                                String.toArray emphasisedText
-
-                                            firstChar =
-                                                Array.first chars
-
-                                            lastChar =
-                                                Array.last chars
-                                        in
-                                        if Maybe.map isUnicodeSpace firstChar == Just True then
-                                            problem "Illegal character, cannot emphasise"
-                                        else if Maybe.map isUnicodeSpace lastChar == Just True then
-                                            problem "Illegal character, cannot emphasise"
-                                        else if Maybe.map isPunctuation lastChar == Just True then
-                                            succeed identity
-                                                |. oneOf
-                                                        [ chompIf (\c -> isUnicodeSpace c || isPunctuation c)
-                                                        , end
-                                                        ]
-                                                |> map (\_ -> emphasisedText)
-                                        else if String.contains "`" emphasisedText then
-                                            problem "Inline code has precedence"
-                                        else
-                                            succeed emphasisedText
-                                    )
-                            |> map
-                                    (\emphasisedText ->
-                                        emphasisedText
-                                            |> parse
-                                            |> Result.withDefault []
-                                            |> Emphasis
-                                                    { times = times
-                                                    }
-                                    )
+                        map
+                            (\emphasisedText ->
+                                emphasisedText
+                                    |> parse
+                                    |> Result.withDefault []
+                                    |> Emphasis
+                                            { times = times
+                                            }
+                            )
+                            (chompUntilNextClosing
+                                { checkOpening = True
+                                , closing = closing
+                                , emphasisedText = ""
+                                , skipOneClosing = False
+                                }
+                            )
                     )
     else
-        problem "Cannot emphasise if not preceded by a space"
+        problem "Emphasis pre-emptive check failed"
+
+
+emphasisWithStarParser : Maybe Inline -> Parser Inline
+emphasisWithStarParser =
+    emphasisParser '*'
+
+
+emphasisWithUnderscoreParser : Maybe Inline -> Parser Inline
+emphasisWithUnderscoreParser =
+    emphasisParser '_'
 
 
 hardLineBreakParser : Parser Inline

@@ -65,8 +65,8 @@ parserLoop customInlineParsers inlineElements =
 -- INDIVIDUAL PARSERS
 
 
-emphasisParser : Char -> Maybe Inline -> Parser Inline
-emphasisParser emphasisChar lastElement =
+emphasisParser : Char -> Int -> Maybe Inline -> Parser Inline
+emphasisParser emphasisChar subtractFromOpening lastElement =
     let
         originalCharBefore =
             case lastElement of
@@ -89,18 +89,39 @@ emphasisParser emphasisChar lastElement =
     in
     if preemptiveCheck then
         succeed identity
-            |= some (specificChar emphasisChar)
+            |= lookAhead (some (specificChar emphasisChar))
             |> andThen
                     (\opening ->
                         let
                             closing =
                                 String.fromArray (Array.pushFirst emphasisChar opening.rest)
+                        in
+                        case String.dropLeft (max 0 (Debug.log "subtractFromOpening" subtractFromOpening)) closing of
+                            "" ->
+                                problem "There\'s nothing left"
 
+                            s ->
+                                succeed s
+                    )
+            |> andThen
+                    (\closing ->
+                        let
                             times =
                                 String.length closing
 
-                            _ =
-                                Debug.log "🚀" closing
+                            wrapUp emphasisedText =
+                                case emphasisedText of
+                                    "" ->
+                                        problem "Nothing to emphasise"
+
+                                    _ ->
+                                        emphasisedText
+                                            |> parse
+                                            |> Result.withDefault []
+                                            |> Emphasis
+                                                    { times = times
+                                                    }
+                                            |> succeed
 
                             chompUntilNextClosing opts =
                                 let
@@ -108,7 +129,7 @@ emphasisParser emphasisChar lastElement =
                                         Debug.log "chomp" opts
                                 in
                                 succeed identity
-                                    |= getChompedString (chompUntilEndOr opts.closing)
+                                    |= getChompedString (chompUntil opts.closing)
                                     |. symbol opts.closing
                                     |> andThen (check opts)
 
@@ -179,13 +200,9 @@ emphasisParser emphasisChar lastElement =
                                 if opts.checkOpening && not (isViableOpening originalCharBefore firstChar) then
                                     problem "Illegal character, cannot emphasise"
                                 else if not opts.checkOpening && isViableOpening lastCharPrevious firstChar then
-                                    let
-                                        _ =
-                                            Debug.log "🎣" {}
-                                    in
                                     oneOf
                                         [ chompUntilNextClosing chompOpts
-                                        , map (Debug.log "👀") (succeed allEmphasisedText)
+                                        , wrapUp allEmphasisedText
                                         ]
                                 else if Maybe.map isUnicodeSpace lastChar == Just True then
                                     chompUntilNextClosing chompOpts
@@ -200,7 +217,7 @@ emphasisParser emphasisChar lastElement =
                                         |> andThen
                                                 (\isViableClosing ->
                                                     if isViableClosing then
-                                                        succeed allEmphasisedText
+                                                        wrapUp allEmphasisedText
                                                     else
                                                         chompUntilNextClosing chompOpts
                                                 )
@@ -216,7 +233,7 @@ emphasisParser emphasisChar lastElement =
                                                         , end
                                                         ]
                                                     )
-                                            |> map (\_ -> allEmphasisedText)
+                                            |> andThen (\_ -> wrapUp allEmphasisedText)
 
                                         , -- 
                                           chompUntilNextClosing chompOpts
@@ -229,26 +246,31 @@ emphasisParser emphasisChar lastElement =
                                         |> andThen
                                                 (\isViableClosing ->
                                                     if isViableClosing then
-                                                        succeed allEmphasisedText
+                                                        wrapUp allEmphasisedText
                                                     else
                                                         chompUntilNextClosing chompOpts
                                                 )
                         in
-                        map
-                            (\emphasisedText ->
-                                emphasisedText
-                                    |> parse
-                                    |> Result.withDefault []
-                                    |> Emphasis
-                                            { times = times
-                                            }
-                            )
-                            (chompUntilNextClosing
-                                { checkOpening = True
-                                , closing = closing
-                                , emphasisedText = ""
-                                }
-                            )
+                        [ succeed identity
+                            -- aka. opening
+                            |. symbol closing
+                            |= lookAhead (chompUntil closing)
+                            |> map (\_ -> True)
+                            |> backtrackable
+                        , succeed False
+                        ]
+                            |> oneOf
+                            |> andThen
+                                    (\foundClosing ->
+                                        if foundClosing then
+                                            chompUntilNextClosing
+                                                { checkOpening = True
+                                                , closing = closing
+                                                , emphasisedText = ""
+                                                }
+                                        else
+                                            emphasisParser emphasisChar (subtractFromOpening + 1) lastElement
+                                    )
                     )
     else
         problem "Emphasis pre-emptive check failed"
@@ -256,12 +278,12 @@ emphasisParser emphasisChar lastElement =
 
 emphasisWithStarParser : Maybe Inline -> Parser Inline
 emphasisWithStarParser =
-    emphasisParser '*'
+    emphasisParser '*' 0
 
 
 emphasisWithUnderscoreParser : Maybe Inline -> Parser Inline
 emphasisWithUnderscoreParser =
-    emphasisParser '_'
+    emphasisParser '_' 0
 
 
 hardLineBreakParser : Parser Inline

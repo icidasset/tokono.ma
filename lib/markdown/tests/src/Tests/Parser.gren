@@ -399,4 +399,156 @@ emphasis =
                         , Text ")"
                         ]
                     )
+                , testInline
+                    """
+                    **Gomphocarpus (*Gomphocarpus physocarpus*, syn.
+                    *Asclepias physocarpa*)**
+                    """
+                    (Emphasis
+                        { times = 2
+                        }
+                        [ Text "Gomphocarpus ("
+                        , Emphasis
+                            { times = 1
+                            }
+                            [ Text "Gomphocarpus physocarpus"
+                            ]
+                        , Text ", syn.\n"
+                        , Emphasis
+                            { times = 1
+                            }
+                            [ Text "Asclepias physocarpa"
+                            ]
+                        , Text ")"
+                        ]
+                    )
+                , testInline
+                    "**foo \"*bar*\" foo**"
+                    (Emphasis
+                        { times = 2
+                        }
+                        [ Text "foo \""
+                        , Emphasis
+                            { times = 1
+                            }
+                            [ Text "bar"
+                            ]
+                        , Text "\" foo"
+                        ]
+                    )
+                , testInlines
+                    "**foo**bar"
+                    [ Emphasis
+                        { times = 2
+                        }
+                        [ Text "foo"
+                        ]
+                    , Text "bar"
+                    ]
+
+                , -- RULE 8
+                  testInline "__foo bar __" (Text "__foo bar __")
+                , testInline "__(__foo)" (Text "__(__foo)")
+
+                , -- 
+                  testInline
+                    "_(__foo__)_"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "("
+                        , Emphasis
+                            { times = 2
+                            }
+                            [ Text "foo"
+                            ]
+                        , Text ")"
+                        ]
+                    )
+
+                , -- 
+                  testInline "__foo__bar" (Text "__foo__bar")
+                , testInline "__пристаням__стремятся" (Text "__пристаням__стремятся")
+
+                , -- 
+                  testInline
+                    "__foo__bar__baz__"
+                    (Emphasis
+                        { times = 2
+                        }
+                        [ Text "foo__bar__baz"
+                        ]
+                    )
+                , testInlines
+                    "__(bar)__."
+                    [ Emphasis
+                        { times = 2
+                        }
+                        [ Text "(bar)"
+                        ]
+                    , Text "."
+                    ]
+
+                , -- RULE 9
+                  testInlines
+                    "*foo [bar](/url)*"
+                    [ Emphasis
+                        { times = 1
+                        }
+                        [ Text "foo "
+                        , Link
+                            { text = "bar"
+                            , url = "/url"
+                            }
+                        ]
+                    ]
+                , testInline
+                    "*foo\nbar*"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "foo\nbar"
+                        ]
+                    )
+                , testInline
+                    "_foo __bar__ baz_"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "foo "
+                        , Emphasis
+                            { times = 2
+                            }
+                            [ Text "bar"
+                            ]
+                        , Text " baz"
+                        ]
+                    )
+                , testInline
+                    "_foo _bar_ baz_"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Text "foo "
+                        , Emphasis
+                            { times = 1
+                            }
+                            [ Text "bar"
+                            ]
+                        , Text " baz"
+                        ]
+                    )
+                , testInline
+                    "__foo_ bar_"
+                    (Emphasis
+                        { times = 1
+                        }
+                        [ Emphasis
+                            { times = 1
+                            }
+                            [ Text "foo"
+                            ]
+                        , Text " bar"
+                        ]
+                    )
                 ]

@@ -190,10 +190,6 @@ specificAmountOf :
         , rest : Array a
         }
 specificAmountOf amount parser =
-    let
-        _ =
-            Debug.log "amount" amount
-    in
     if amount < 1 then
         problem "Can\'t parse an amount less than 1"
     else
@@ -202,11 +198,13 @@ specificAmountOf amount parser =
                 if x < 1 then
                     p
                 else
-                    helper (amount - 1) (andThen (\a -> map (\v -> Array.pushLast v a) parser) p)
+                    p
+                        |> andThen (\a -> map (\v -> Array.pushLast v a) parser)
+                        |> helper (x - 1)
         in
         succeed identity
             |= parser
-            |> map (Debug.log "🎣" >> Array.singleton)
+            |> map Array.singleton
             |> helper (amount - 1)
             |> map Array.popFirst
             |> map

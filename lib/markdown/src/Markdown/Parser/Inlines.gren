@@ -3,6 +3,7 @@ module Markdown.Parser.Inlines exposing (..)
 {-|-}
 
 import Markdown.Inline exposing ( Inline(..) )
+import Maybe.Extra as Maybe
 import Parser exposing (..)
 import Parser.Extra exposing (..)
 
@@ -66,214 +67,254 @@ parserLoop customInlineParsers inlineElements =
 
 
 emphasisParser : Char -> Int -> Maybe Inline -> Parser Inline
-emphasisParser emphasisChar subtractFromOpening lastElement =
+emphasisParser emphasisChar addToLeftFlank lastElement =
     let
-        originalCharBefore =
+        emphasisCharString =
+            String.fromArray
+                [ emphasisChar
+                ]
+
+        flankFromSome s =
+            String.fromArray (Array.pushFirst s.match s.rest)
+
+        originalPrecedingChar =
             case lastElement of
                 Just (Text t) ->
                     Array.last (String.toArray t)
 
                 _ ->
                     Nothing
-
-        preemptiveCheck =
-            if emphasisChar == '_' then
-                case originalCharBefore of
-                    Just c ->
-                        isUnicodeSpace c || isPunctuation c
-
-                    Nothing ->
-                        True
-            else
-                True
     in
-    if preemptiveCheck then
-        succeed identity
-            |= lookAhead (some (specificChar emphasisChar))
-            |> andThen
-                    (\opening ->
-                        let
-                            closing =
-                                String.fromArray (Array.pushFirst emphasisChar opening.rest)
-                        in
-                        case String.dropLeft (max 0 (Debug.log "subtractFromOpening" subtractFromOpening)) closing of
-                            "" ->
-                                problem "There\'s nothing left"
+    succeed identity
+        |= lookAhead (specificAmountOf (addToLeftFlank + 1) (specificChar emphasisChar))
+        |> map flankFromSome
+        |> andThen
+                (\flank ->
+                    let
+                        chompUntilNextClosing opts =
+                            -- let
+                            --     _ =
+                            --         Debug.log "🎣 chomp" opts
+                            -- in
+                            succeed identity
+                                |= getChompedString (chompUntil opts.rightFlank)
+                                |> andThen (check opts)
 
-                            s ->
-                                succeed s
-                    )
-            |> andThen
-                    (\closing ->
-                        let
-                            times =
-                                String.length closing
+                        check opts additionalEmphasisedText =
+                            let
+                                entireText =
+                                    opts.emphasisedText ++ additionalEmphasisedText
 
-                            wrapUp emphasisedText =
-                                case emphasisedText of
-                                    "" ->
-                                        problem "Nothing to emphasise"
+                                chars =
+                                    String.toArray entireText
 
-                                    _ ->
+                                chompOpts =
+                                    { opts
+                                        | checkOpening = False
+                                        , emphasisedText = entireText
+                                        , nestedChomp = False
+                                    }
+                            in
+                            if
+                                -- (1)
+                                opts.checkOpening
+                                    && isOpening
+                                            { precedingChar = originalPrecedingChar
+                                            , followingChar = Array.first chars
+                                            }
+                                    == False
+                            then
+                                problem "Not a viable left flank"
+                            else if opts.nestedChomp then
+                                -- (2)
+                                succeed identity
+                                    |. symbol opts.rightFlank
+                                    |> andThen
+                                            (\_ ->
+                                                chompUntilNextClosing
+                                                    { chompOpts
+                                                        | emphasisedText = chompOpts.emphasisedText ++ opts.rightFlank
+                                                        , rightFlank = flank
+                                                    }
+                                            )
+                            else
+                                -- (3)
+                                succeed identity
+                                    |= some (specificChar emphasisChar)
+                                    |> andThen
+                                            (\flankChars ->
+                                                let
+                                                    additionalFlank =
+                                                        flankFromSome flankChars
+
+                                                    appendLastEmphasis str fl =
+                                                        if String.endsWith emphasisCharString str then
+                                                            appendLastEmphasis (String.dropRight 1 str) (fl ++ emphasisCharString)
+                                                        else
+                                                            { emph = str
+                                                            , fl = fl
+                                                            }
+
+                                                    result =
+                                                        appendLastEmphasis chompOpts.emphasisedText additionalFlank
+
+                                                    encounteredFlank =
+                                                        result.fl
+
+                                                    chompOptsWithFlank =
+                                                        { chompOpts | emphasisedText = result.emph ++ encounteredFlank }
+
+                                                    chompOptsWithFlankNested =
+                                                        { chompOptsWithFlank
+                                                            | nestedChomp = True
+                                                            , rightFlank = encounteredFlank
+                                                        }
+
+                                                    lookAtClosing =
+                                                        let
+                                                            lastChar =
+                                                                Array.last (String.toArray result.emph)
+                                                        in
+                                                        succeed identity
+                                                            |= oneOf
+                                                                    [ map Just (lookAhead char)
+                                                                    , map (\_ -> Nothing) end
+                                                                    ]
+                                                            |> andThen
+                                                                    (\followingChar ->
+                                                                        if
+                                                                            isClosing
+                                                                                { precedingChar = lastChar
+                                                                                , followingChar = followingChar
+                                                                                }
+                                                                        then
+                                                                            wrapUp entireText
+                                                                        else if
+                                                                            isOpening
+                                                                                { precedingChar = lastChar
+                                                                                , followingChar = followingChar
+                                                                                }
+                                                                        then
+                                                                            chompUntilNextClosing chompOptsWithFlankNested
+                                                                        else
+                                                                            chompUntilNextClosing chompOptsWithFlank
+                                                                    )
+                                                in
+                                                if encounteredFlank == opts.rightFlank then
+                                                    lookAtClosing
+                                                else
+                                                    oneOf
+                                                        [ chompUntilNextClosing chompOptsWithFlankNested
+                                                        , chompUntilNextClosing chompOptsWithFlank
+                                                        , if additionalFlank == flank then
+                                                            lookAtClosing
+                                                          else
+                                                            problem ""
+                                                        ]
+                                            )
+
+                        -- --------- --
+                        -- LEFT SIDE --
+                        -- --------- --
+                        isLeftFlank { precedingChar, followingChar } =
+                            let
+                                conditionOne =
+                                    Maybe.unwrap True (not << isUnicodeSpace) followingChar
+
+                                conditionTwoA =
+                                    Maybe.unwrap True (not << isPunctuation) followingChar
+
+                                conditionTwoB =
+                                    Maybe.unwrap False isPunctuation followingChar && Maybe.unwrap True (\c -> isUnicodeSpace c || isPunctuation c) precedingChar
+                            in
+                            conditionOne && (conditionTwoA || conditionTwoB)
+
+                        isOpening opts =
+                            if emphasisChar == '_' then
+                                (&&)
+                                    (isLeftFlank opts)
+                                    (case opts.precedingChar of
+                                        Just c ->
+                                            isUnicodeSpace c || isPunctuation c
+
+                                        Nothing ->
+                                            True
+                                    )
+                            else
+                                isLeftFlank opts
+
+                        -- ---------- --
+                        -- RIGHT SIDE --
+                        -- ---------- --
+                        isRightFlank { precedingChar, followingChar } =
+                            let
+                                conditionOne =
+                                    Maybe.unwrap True (not << isUnicodeSpace) precedingChar
+
+                                conditionTwoA =
+                                    Maybe.unwrap True (not << isPunctuation) precedingChar
+
+                                conditionTwoB =
+                                    Maybe.unwrap False isPunctuation precedingChar && Maybe.unwrap True (\c -> isUnicodeSpace c || isPunctuation c) followingChar
+                            in
+                            conditionOne && (conditionTwoA || conditionTwoB)
+
+                        isClosing opts =
+                            if emphasisChar == '_' then
+                                -- Disallow intraword emphasis when enphasis char is underscore
+                                (&&) (isRightFlank opts) (Maybe.unwrap True (\c -> isUnicodeSpace c || isPunctuation c) opts.followingChar)
+                            else
+                                isRightFlank opts
+
+                        -- ---- --
+                        -- MISC --
+                        -- ---- --
+                        times =
+                            String.length flank
+
+                        wrapUp emphasisedText =
+                            case emphasisedText of
+                                "" ->
+                                    problem "Nothing to emphasise"
+
+                                _ ->
+                                    case
                                         emphasisedText
+                                            -- |> Debug.log "🚀 parse"
                                             |> parse
                                             |> Result.withDefault []
-                                            |> Emphasis
-                                                    { times = times
-                                                    }
-                                            |> succeed
+                                    of
+                                        [ Emphasis nestedOpts nestedContent ] ->
+                                            nestedContent
+                                                |> Emphasis
+                                                        { times = times + nestedOpts.times
+                                                        }
+                                                |> succeed
 
-                            chompUntilNextClosing opts =
-                                let
-                                    _ =
-                                        Debug.log "chomp" opts
-                                in
-                                succeed identity
-                                    |= getChompedString (chompUntil opts.closing)
-                                    |. symbol opts.closing
-                                    |> andThen (check opts)
-
-                            isViableOpening charBefore firstChar =
-                                let
-                                    isPrecededByASpacePunctuationOrNothing =
-                                        case charBefore of
-                                            Just char ->
-                                                isUnicodeSpace char || isPunctuation char
-
-                                            _ ->
-                                                True
-
-                                    isPrecededByPartialOpening =
-                                        case charBefore of
-                                            Just char ->
-                                                char == emphasisChar
-
-                                            Nothing ->
-                                                False
-                                in
-                                if isPrecededByPartialOpening then
-                                    False
-                                else if Maybe.map isUnicodeSpace firstChar == Just True then
-                                    False
-                                else if Maybe.map isPunctuation firstChar == Just True then
-                                    isPrecededByASpacePunctuationOrNothing
-                                else
-                                    True
-
-                            check opts additionalEmphasisedText =
-                                let
-                                    allEmphasisedText =
-                                        opts.emphasisedText ++ additionalEmphasisedText
-
-                                    chars =
-                                        String.toArray allEmphasisedText
-
-                                    firstChar =
-                                        if opts.checkOpening then
-                                            Array.first chars
-                                        else
-                                            Maybe.map .first (String.uncons additionalEmphasisedText)
-
-                                    lastCharPrevious =
-                                        Array.last (String.toArray (String.dropRight (String.length opts.closing) opts.emphasisedText))
-
-                                    lastChar =
-                                        Array.last chars
-
-                                    chompOpts =
-                                        { opts
-                                            | checkOpening = False
-                                            , emphasisedText = allEmphasisedText ++ opts.closing
-                                        }
-
-                                    -- _ =
-                                    --   Debug.log
-                                    --     ""
-                                    --     { emphasisedText = opts.emphasisedText
-                                    --     , additionalEmphasisedText = additionalEmphasisedText
-                                    --     , firstChar = firstChar
-                                    --     , lastCharPrevious = lastCharPrevious
-                                    --     , lastChar = lastChar
-                                    --     , isAnotherViableOpening = not opts.checkOpening && isViableOpening lastCharPrevious firstChar
-                                    --     }
-                                in
-                                if opts.checkOpening && not (isViableOpening originalCharBefore firstChar) then
-                                    problem "Illegal character, cannot emphasise"
-                                else if not opts.checkOpening && isViableOpening lastCharPrevious firstChar then
-                                    oneOf
-                                        [ chompUntilNextClosing chompOpts
-                                        , wrapUp allEmphasisedText
-                                        ]
-                                else if Maybe.map isUnicodeSpace lastChar == Just True then
-                                    chompUntilNextClosing chompOpts
-                                else if Maybe.map isPunctuation lastChar == Just True then
-                                    succeed identity
-                                        |= oneOf
-                                                [ map (\_ -> False) (lookAhead (chompIfChar emphasisChar))
-                                                , map (\_ -> True) (lookAhead (chompIf (\c -> isUnicodeSpace c || isPunctuation c)))
-                                                , map (\_ -> True) (lookAhead end)
-                                                , succeed False
-                                                ]
-                                        |> andThen
-                                                (\isViableClosing ->
-                                                    if isViableClosing then
-                                                        wrapUp allEmphasisedText
-                                                    else
-                                                        chompUntilNextClosing chompOpts
-                                                )
-                                else if String.contains "`" allEmphasisedText then
-                                    problem "Inline code has precedence"
-                                else if emphasisChar == '_' then
-                                    -- Disallow intraword
-                                    oneOf
-                                        [ succeed identity
-                                            |. lookAhead
-                                                    (oneOf
-                                                        [ chompIf (\c -> c /= '_' && (isUnicodeSpace c || isPunctuation c))
-                                                        , end
-                                                        ]
-                                                    )
-                                            |> andThen (\_ -> wrapUp allEmphasisedText)
-
-                                        , -- 
-                                          chompUntilNextClosing chompOpts
-                                        ]
-                                else
-                                    [ succeed False |. lookAhead (chompIfChar emphasisChar)
-                                    , succeed True
-                                    ]
-                                        |> oneOf
-                                        |> andThen
-                                                (\isViableClosing ->
-                                                    if isViableClosing then
-                                                        wrapUp allEmphasisedText
-                                                    else
-                                                        chompUntilNextClosing chompOpts
-                                                )
-                        in
+                                        content ->
+                                            content
+                                                |> Emphasis
+                                                        { times = times
+                                                        }
+                                                |> succeed
+                    in
+                    oneOf
                         [ succeed identity
-                            -- aka. opening
-                            |. symbol closing
-                            |= lookAhead (chompUntil closing)
-                            |> map (\_ -> True)
-                            |> backtrackable
-                        , succeed False
-                        ]
-                            |> oneOf
+                            |. symbol flank
+                            |. lookAhead (chompUntil flank)
                             |> andThen
-                                    (\foundClosing ->
-                                        if foundClosing then
-                                            chompUntilNextClosing
-                                                { checkOpening = True
-                                                , closing = closing
-                                                , emphasisedText = ""
-                                                }
-                                        else
-                                            emphasisParser emphasisChar (subtractFromOpening + 1) lastElement
+                                    (\_ ->
+                                        chompUntilNextClosing
+                                            { checkOpening = True
+                                            , rightFlank = flank
+                                            , emphasisedText = ""
+                                            , nestedChomp = False
+                                            }
                                     )
-                    )
-    else
-        problem "Emphasis pre-emptive check failed"
+                            |> backtrackable
+                        , emphasisParser emphasisChar (addToLeftFlank + 1) lastElement
+                        ]
+                )
 
 
 emphasisWithStarParser : Maybe Inline -> Parser Inline

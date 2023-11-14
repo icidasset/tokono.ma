@@ -32,8 +32,9 @@ parserLoop customInlineParsers inlineElements =
         inline =
             map
                 (\el ->
-                    inlineElements
-                        |> Array.pushLast el
+                    [ el
+                    ]
+                        |> (\a -> inlineElements ++ a)
                         |> Loop
                 )
 
@@ -44,20 +45,20 @@ parserLoop customInlineParsers inlineElements =
         [ -- Check if we reached the end
           map (\_ -> Done inlineElements) end
 
-        , --
+        , -- 
           backtrackable (inlineCodeParser inlineElements lastElement)
 
-        , --
+        , -- 
           inline (backtrackable (emphasisWithUnderscoreParser lastElement))
         , inline (backtrackable (emphasisWithStarParser lastElement))
         , inline (backtrackable hardLineBreakParser)
         , inline (backtrackable imageParser)
         , inline (backtrackable linkParser)
 
-        , --
+        , -- 
           inline (backtrackable (oneOf customInlineParsers))
 
-        , --
+        , -- 
           textLoopParser inlineElements lastElement
         ]
 
@@ -92,10 +93,6 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                 (\flank ->
                     let
                         chompUntilNextClosing opts =
-                            -- let
-                            --     _ =
-                            --         Debug.log "🎣 chomp" opts
-                            -- in
                             succeed identity
                                 |= getChompedString (chompUntil opts.rightFlank)
                                 |> andThen (check opts)
@@ -103,12 +100,7 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                         check opts additionalEmphasisedText =
                             let
                                 entireText =
-                                    Debug.log "entireText"
-                                        <| opts.emphasisedText
-                                        ++ additionalEmphasisedText
-
-                                _ =
-                                    Debug.log "opts" opts
+                                    opts.emphasisedText ++ additionalEmphasisedText
 
                                 chars =
                                     String.toArray entireText
@@ -156,15 +148,7 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                     ]
                             else
                                 let
-                                    handleClosing maybeAmountOfChars rawText =
-                                        let
-                                            -- skip =
-                                            --     Array.length (String.indices emphasisCharString rawText)
-                                            -- text =
-                                            --     rawText ++ String.repeat skip emphasisCharString
-                                            text =
-                                                Debug.log "handle" rawText
-                                        in
+                                    handleClosing maybeAmountOfChars text =
                                         succeed identity
                                             |= (case maybeAmountOfChars of
                                                     Just a ->
@@ -201,23 +185,6 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                                             leftFlankExtraction =
                                                                 extractLeftFlank rightFlankExtraction.emph opts.rightFlank
 
-                                                            _ =
-                                                                Debug.log
-                                                                    "🎣 flank"
-                                                                    { nestedChomp = opts.nestedChomp
-                                                                    , rightFlank = opts.rightFlank
-                                                                    }
-
-                                                            _ =
-                                                                Debug.log
-                                                                    ""
-                                                                    { encounteredLeftFlank = encounteredLeftFlank
-                                                                    , encounteredRightFlank = encounteredRightFlank
-                                                                    , additionalFlank = additionalFlank
-                                                                    , emphasisedText = rightFlankExtraction.emph
-                                                                    , emphasisedTextNotExtracted = chompOpts.emphasisedText
-                                                                    }
-
                                                             encounteredLeftFlank =
                                                                 leftFlankExtraction.fl
 
@@ -244,6 +211,12 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                                                 let
                                                                     lastChar =
                                                                         Array.last (String.toArray emphasisedText)
+
+                                                                    otherEmphasisCharString =
+                                                                        if emphasisChar == '*' then
+                                                                            "_"
+                                                                        else
+                                                                            "*"
                                                                 in
                                                                 succeed identity
                                                                     |= oneOf
@@ -253,19 +226,17 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                                                     |> andThen
                                                                             (\followingChar ->
                                                                                 if
-                                                                                    Debug.log "isClosing"
-                                                                                        <| isClosing
-                                                                                                { precedingChar = lastChar
-                                                                                                , followingChar = followingChar
-                                                                                                }
+                                                                                    isClosing
+                                                                                        { precedingChar = lastChar
+                                                                                        , followingChar = followingChar
+                                                                                        }
                                                                                 then
                                                                                     wrapUp entireText
                                                                                 else if
-                                                                                    Debug.log "isOpening"
-                                                                                        <| isOpening
-                                                                                                { precedingChar = lastChar
-                                                                                                , followingChar = followingChar
-                                                                                                }
+                                                                                    isOpening
+                                                                                        { precedingChar = lastChar
+                                                                                        , followingChar = followingChar
+                                                                                        }
                                                                                 then
                                                                                     chompUntilNextClosing chompOptsWithFlankNested
                                                                                 else
@@ -279,25 +250,11 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                                                 [ chompUntilNextClosing chompOptsWithFlankNested
                                                                 , chompUntilNextClosing chompOptsWithFlank
 
-                                                                , --
+                                                                , -- 
                                                                   if flank == additionalFlank then
                                                                     lookAtClosing rightFlankExtraction.emph
                                                                   else
                                                                     problem ""
-                                                                    --
-                                                                    -- succeed identity
-                                                                    --   |. oneOf
-                                                                    --           [ lookAhead chompOne
-                                                                    --           , end
-                                                                    --           ]
-                                                                    --   |> andThen
-                                                                    --           (\_ ->
-                                                                    --               let
-                                                                    --                   _ =
-                                                                    --                       Debug.log "FAILED" {}
-                                                                    --               in
-                                                                    --               problem ""
-                                                                    --           )
                                                                 ]
                                                     )
                                             |> backtrackable
@@ -327,7 +284,7 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                                 oneOf
                                     [ handleClosing Nothing entireText
 
-                                    , --
+                                    , -- 
                                       if String.startsWith emphasisCharString entireText then
                                         problem ""
                                       else if String.contains emphasisCharString entireText then
@@ -408,26 +365,25 @@ emphasisParser emphasisChar addToLeftFlank lastElement =
                             String.length flank
 
                         wrapUp emphasisedText =
-                            -- let
-                            --     _ =
-                            --         Debug.log "wrapUp" emphasisedText
-                            -- in
-                            case emphasisedText of
-                                "" ->
-                                    problem "Nothing to emphasise"
+                            if String.contains "`" emphasisedText then
+                                problem ""
+                            else
+                                case emphasisedText of
+                                    "" ->
+                                        problem "Nothing to emphasise"
 
-                                _ ->
-                                    if String.all (\c -> c == emphasisChar) emphasisedText then
-                                        problem "Invalid state"
-                                        -- else if String.startsWith emphasisCharString emphasisedText then
-                                        --     problem ""
-                                    else
+                                    _ ->
                                         let
                                             parseResult =
                                                 emphasisedText
-                                                    |> Debug.log "🚀 parse"
                                                     |> parse
                                                     |> Result.withDefault []
+
+                                            otherEmphasisCharString =
+                                                if emphasisChar == '*' then
+                                                    "_"
+                                                else
+                                                    "*"
                                         in
                                         case
                                             { parseResult = parseResult

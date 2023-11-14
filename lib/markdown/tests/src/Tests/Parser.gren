@@ -75,9 +75,8 @@ testInlines string expectedResult =
 
 inlines =
     Test.concat
-        [ -- codeSpan
-          -- , emphasis
-          emphasis
+        [ codeSpan
+        , emphasis
         ]
 
 
@@ -1252,4 +1251,20 @@ emphasis =
                 , Text " bam"
                 ]
             ]
+
+        , -- RULE 16
+          -- TODO: Couldn't get this to work.'
+          skip
+            <| testInlines
+                    "**foo **bar baz**"
+                    [ Text "**foo "
+                    , Emphasis
+                        { char = '*'
+                        , times = 2
+                        }
+                        [ Text "bar baz"
+                        ]
+                    ]
+            -- RULE 17
+            -- TODO: Not implemented yet
         ]

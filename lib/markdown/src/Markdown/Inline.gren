@@ -11,7 +11,8 @@ module Markdown.Inline exposing ( Inline(..) )
 
 type Inline
     = Emphasis
-        { times : Int
+        { char : Char
+        , times : Int
         }
         (Array Inline)
     | HardLineBreak

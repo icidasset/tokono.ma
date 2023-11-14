@@ -169,7 +169,8 @@ emphasis =
           testInline
             "*foo bar*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo bar"
                 ]
@@ -185,7 +186,8 @@ emphasis =
             "foo*bar*"
             [ Text "foo"
             , Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "bar"
                 ]
@@ -194,7 +196,8 @@ emphasis =
             "5*6*78"
             [ Text "5"
             , Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "6"
                 ]
@@ -205,7 +208,8 @@ emphasis =
           testInline
             "_foo bar_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "foo bar"
                 ]
@@ -223,7 +227,8 @@ emphasis =
             "foo-_(bar)_"
             [ Text "foo-"
             , Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "(bar)"
                 ]
@@ -248,11 +253,13 @@ emphasis =
           testInline
             "*(*foo*)*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "("
                 , Emphasis
-                    { times = 1
+                    { char = '*'
+                    , times = 1
                     }
                     [ Text "foo"
                     ]
@@ -262,7 +269,8 @@ emphasis =
         , testInlines
             "*foo*bar"
             [ Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo"
                 ]
@@ -277,11 +285,13 @@ emphasis =
           testInline
             "_(_foo_)_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "("
                 , Emphasis
-                    { times = 1
+                    { char = '_'
+                    , times = 1
                     }
                     [ Text "foo"
                     ]
@@ -297,7 +307,8 @@ emphasis =
           testInline
             "_foo_bar_baz_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "foo_bar_baz"
                 ]
@@ -305,7 +316,8 @@ emphasis =
         , testInlines
             "_(bar)_."
             [ Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "(bar)"
                 ]
@@ -316,7 +328,8 @@ emphasis =
           testInline
             "**foo bar**"
             (Emphasis
-                { times = 2
+                { char = '*'
+                , times = 2
                 }
                 [ Text "foo bar"
                 ]
@@ -331,7 +344,8 @@ emphasis =
             "foo**bar**"
             [ Text "foo"
             , Emphasis
-                { times = 2
+                { char = '*'
+                , times = 2
                 }
                 [ Text "bar"
                 ]
@@ -341,7 +355,8 @@ emphasis =
           testInline
             "__foo bar__"
             (Emphasis
-                { times = 2
+                { char = '_'
+                , times = 2
                 }
                 [ Text "foo bar"
                 ]
@@ -359,11 +374,13 @@ emphasis =
           testInline
             "__foo, __bar__, baz__"
             (Emphasis
-                { times = 2
+                { char = '_'
+                , times = 2
                 }
                 [ Text "foo, "
                 , Emphasis
-                    { times = 2
+                    { char = '_'
+                    , times = 2
                     }
                     [ Text "bar"
                     ]
@@ -374,7 +391,8 @@ emphasis =
             "foo-__(bar)__"
             [ Text "foo-"
             , Emphasis
-                { times = 2
+                { char = '_'
+                , times = 2
                 }
                 [ Text "(bar)"
                 ]
@@ -388,11 +406,13 @@ emphasis =
           testInline
             "*(**foo**)*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "("
                 , Emphasis
-                    { times = 2
+                    { char = '*'
+                    , times = 2
                     }
                     [ Text "foo"
                     ]
@@ -405,17 +425,20 @@ emphasis =
             *Asclepias physocarpa*)**
             """
             (Emphasis
-                { times = 2
+                { char = '*'
+                , times = 2
                 }
                 [ Text "Gomphocarpus ("
                 , Emphasis
-                    { times = 1
+                    { char = '*'
+                    , times = 1
                     }
                     [ Text "Gomphocarpus physocarpus"
                     ]
                 , Text ", syn.\n"
                 , Emphasis
-                    { times = 1
+                    { char = '*'
+                    , times = 1
                     }
                     [ Text "Asclepias physocarpa"
                     ]
@@ -425,11 +448,13 @@ emphasis =
         , testInline
             "**foo \"*bar*\" foo**"
             (Emphasis
-                { times = 2
+                { char = '*'
+                , times = 2
                 }
                 [ Text "foo \""
                 , Emphasis
-                    { times = 1
+                    { char = '*'
+                    , times = 1
                     }
                     [ Text "bar"
                     ]
@@ -439,7 +464,8 @@ emphasis =
         , testInlines
             "**foo**bar"
             [ Emphasis
-                { times = 2
+                { char = '*'
+                , times = 2
                 }
                 [ Text "foo"
                 ]
@@ -454,11 +480,13 @@ emphasis =
           testInline
             "_(__foo__)_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "("
                 , Emphasis
-                    { times = 2
+                    { char = '_'
+                    , times = 2
                     }
                     [ Text "foo"
                     ]
@@ -474,7 +502,8 @@ emphasis =
           testInline
             "__foo__bar__baz__"
             (Emphasis
-                { times = 2
+                { char = '_'
+                , times = 2
                 }
                 [ Text "foo__bar__baz"
                 ]
@@ -482,7 +511,8 @@ emphasis =
         , testInlines
             "__(bar)__."
             [ Emphasis
-                { times = 2
+                { char = '_'
+                , times = 2
                 }
                 [ Text "(bar)"
                 ]
@@ -493,7 +523,8 @@ emphasis =
           testInlines
             "*foo [bar](/url)*"
             [ Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo "
                 , Link
@@ -505,7 +536,8 @@ emphasis =
         , testInline
             "*foo\nbar*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo\nbar"
                 ]
@@ -513,11 +545,13 @@ emphasis =
         , testInline
             "_foo __bar__ baz_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "foo "
                 , Emphasis
-                    { times = 2
+                    { char = '_'
+                    , times = 2
                     }
                     [ Text "bar"
                     ]
@@ -527,11 +561,13 @@ emphasis =
         , testInline
             "_foo _bar_ baz_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Text "foo "
                 , Emphasis
-                    { times = 1
+                    { char = '_'
+                    , times = 1
                     }
                     [ Text "bar"
                     ]
@@ -541,10 +577,12 @@ emphasis =
         , testInline
             "__foo_ bar_"
             (Emphasis
-                { times = 1
+                { char = '_'
+                , times = 1
                 }
                 [ Emphasis
-                    { times = 1
+                    { char = '_'
+                    , times = 1
                     }
                     [ Text "foo"
                     ]
@@ -554,11 +592,13 @@ emphasis =
         , testInline
             "*foo *bar**"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo "
                 , Emphasis
-                    { times = 1
+                    { char = '*'
+                    , times = 1
                     }
                     [ Text "bar"
                     ]
@@ -567,11 +607,13 @@ emphasis =
         , testInline
             "*foo **bar** baz*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo "
                 , Emphasis
-                    { times = 2
+                    { char = '*'
+                    , times = 2
                     }
                     [ Text "bar"
                     ]
@@ -581,11 +623,13 @@ emphasis =
         , testInline
             "*foo**bar**baz*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo"
                 , Emphasis
-                    { times = 2
+                    { char = '*'
+                    , times = 2
                     }
                     [ Text "bar"
                     ]
@@ -595,7 +639,8 @@ emphasis =
         , testInline
             "*foo**bar*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo**bar"
                 ]
@@ -603,10 +648,12 @@ emphasis =
         , testInline
             "***foo** bar*"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Emphasis
-                    { times = 2
+                    { char = '*'
+                    , times = 2
                     }
                     [ Text "foo"
                     ]
@@ -616,14 +663,593 @@ emphasis =
         , testInline
             "*foo **bar***"
             (Emphasis
-                { times = 1
+                { char = '*'
+                , times = 1
                 }
                 [ Text "foo "
                 , Emphasis
-                    { times = 2
+                    { char = '*'
+                    , times = 2
                     }
                     [ Text "bar"
                     ]
                 ]
             )
+        , testInline
+            "*foo**bar***"
+            (Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo"
+                , Emphasis
+                    { char = '*'
+                    , times = 2
+                    }
+                    [ Text "bar"
+                    ]
+                ]
+            )
+        , testInlines
+            "foo***bar***baz"
+            [ Text "foo"
+            , Emphasis
+                { char = '*'
+                , times = 3
+                }
+                [ Text "bar"
+                ]
+            , Text "baz"
+            ]
+        , skip
+            <| testInlines
+                    "foo******bar*********baz"
+                    [ Text "foo"
+                    , Emphasis
+                        { char = '*'
+                        , times = 6
+                        }
+                        [ Text "bar"
+                        ]
+                    , Text "***baz"
+                    ]
+        , testInline
+            "*foo **bar *baz* bim** bop*"
+            (Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '*'
+                    , times = 2
+                    }
+                    [ Text "bar "
+                    , Emphasis
+                        { char = '*'
+                        , times = 1
+                        }
+                        [ Text "baz"
+                        ]
+                    , Text " bim"
+                    ]
+                , Text " bop"
+                ]
+            )
+
+        , -- TODO: Links should parse inlines as well
+          testInline
+            "*foo [*bar*](/url)*"
+            (Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo "
+                , Link
+                    { text = "*bar*"
+                    , url = "/url"
+                    }
+                ]
+            )
+
+        , -- 
+          testInline "** is not an empty emphasis" (Text "** is not an empty emphasis")
+        , testInline "**** is not an empty strong emphasis" (Text "**** is not an empty strong emphasis")
+
+        , -- RULE 10
+          testInline
+            "**foo [bar](/url)**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Link
+                    { text = "bar"
+                    , url = "/url"
+                    }
+                ]
+            )
+        , testInline
+            "**foo\nbar**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo\nbar"
+                ]
+            )
+        , testInline
+            "__foo _bar_ baz__"
+            (Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '_'
+                    , times = 1
+                    }
+                    [ Text "bar"
+                    ]
+                , Text " baz"
+                ]
+            )
+        , testInline
+            "__foo __bar__ baz__"
+            (Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '_'
+                    , times = 2
+                    }
+                    [ Text "bar"
+                    ]
+                , Text " baz"
+                ]
+            )
+        , testInline
+            "____foo__ bar__"
+            (Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Emphasis
+                    { char = '_'
+                    , times = 2
+                    }
+                    [ Text "foo"
+                    ]
+                , Text " bar"
+                ]
+            )
+        , testInline
+            "**foo **bar****"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '*'
+                    , times = 2
+                    }
+                    [ Text "bar"
+                    ]
+                ]
+            )
+        , testInline
+            "**foo *bar* baz**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "bar"
+                    ]
+                , Text " baz"
+                ]
+            )
+        , testInline
+            "**foo*bar*baz**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo"
+                , Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "bar"
+                    ]
+                , Text "baz"
+                ]
+            )
+        , testInline
+            "***foo* bar**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "foo"
+                    ]
+                , Text " bar"
+                ]
+            )
+        , testInline
+            "**foo *bar***"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "bar"
+                    ]
+                ]
+            )
+        , testInline
+            "**foo *bar **baz**\nbim* bop**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "bar "
+                    , Emphasis
+                        { char = '*'
+                        , times = 2
+                        }
+                        [ Text "baz"
+                        ]
+                    , Text "\nbim"
+                    ]
+                , Text " bop"
+                ]
+            )
+
+        , -- TODO: Links should parse inlines as well
+          testInline
+            "**foo [*bar*](/url)**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo "
+                , Link
+                    { text = "*bar*"
+                    , url = "/url"
+                    }
+                ]
+            )
+
+        , -- 
+          testInline "__ is not an empty emphasis" (Text "__ is not an empty emphasis")
+        , testInline "____ is not an empty strong emphasis" (Text "____ is not an empty strong emphasis")
+
+        , -- RULE 11
+          testInline "foo ***" (Text "foo ***")
+
+        , -- NOTE:
+          -- Skipped test 436 because I couldn't figure out how to properly escape the star character
+          testInlines
+            "foo *_*"
+            [ Text "foo "
+            , Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "_"
+                ]
+            ]
+
+        , -- 
+          testInline "foo *****" (Text "foo *****")
+
+        , -- NOTE:
+          -- Skipped test 439 because I couldn't figure out how to properly escape the star character
+          testInlines
+            "foo **_**"
+            [ Text "foo "
+            , Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "_"
+                ]
+            ]
+        , testInlines
+            "**foo*"
+            [ Text "*"
+            , Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "*foo**"
+            [ Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            , Text "*"
+            ]
+        , testInlines
+            "***foo**"
+            [ Text "*"
+            , Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "****foo*"
+            [ Text "***"
+            , Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "**foo***"
+            [ Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            , Text "*"
+            ]
+        , testInlines
+            "*foo****"
+            [ Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            , Text "***"
+            ]
+
+        , -- RULE 12
+          testInline "foo ___" (Text "foo ___")
+
+        , -- NOTE:
+          -- Skipped test 448 because I couldn't figure out how to properly escape the underscore character
+          testInlines
+            "foo _*_"
+            [ Text "foo "
+            , Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Text "*"
+                ]
+            ]
+
+        , -- 
+          testInline "foo _____" (Text "foo _____")
+
+        , -- NOTE:
+          -- Skipped test 451 because I couldn't figure out how to properly escape the underscore character
+          testInlines
+            "foo __*__"
+            [ Text "foo "
+            , Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "*"
+                ]
+            ]
+        , testInlines
+            "__foo_"
+            [ Text "_"
+            , Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "_foo__"
+            [ Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            , Text "_"
+            ]
+        , testInlines
+            "___foo__"
+            [ Text "_"
+            , Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "____foo_"
+            [ Text "___"
+            , Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            ]
+        , testInlines
+            "__foo___"
+            [ Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            , Text "_"
+            ]
+        , testInlines
+            "_foo____"
+            [ Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Text "foo"
+                ]
+            , Text "___"
+            ]
+
+        , -- RULE 13
+          testInline
+            "**foo**"
+            (Emphasis
+                { char = '*'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            )
+        , testInline
+            "*_foo_*"
+            (Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Emphasis
+                    { char = '_'
+                    , times = 1
+                    }
+                    [ Text "foo"
+                    ]
+                ]
+            )
+        , testInline
+            "__foo__"
+            (Emphasis
+                { char = '_'
+                , times = 2
+                }
+                [ Text "foo"
+                ]
+            )
+        , testInline
+            "_*foo*_"
+            (Emphasis
+                { char = '_'
+                , times = 1
+                }
+                [ Emphasis
+                    { char = '*'
+                    , times = 1
+                    }
+                    [ Text "foo"
+                    ]
+                ]
+            )
+        , testInline
+            "****foo****"
+            (Emphasis
+                { char = '*'
+                , times = 4
+                }
+                [ Text "foo"
+                ]
+            )
+        , testInline
+            "____foo____"
+            (Emphasis
+                { char = '_'
+                , times = 4
+                }
+                [ Text "foo"
+                ]
+            )
+        , testInline
+            "******foo******"
+            (Emphasis
+                { char = '*'
+                , times = 6
+                }
+                [ Text "foo"
+                ]
+            )
+
+        , -- RULE 14
+          testInline
+            "***foo***"
+            (Emphasis
+                { char = '*'
+                , times = 3
+                }
+                [ Text "foo"
+                ]
+            )
+        , testInline
+            "_____foo_____"
+            (Emphasis
+                { char = '_'
+                , times = 5
+                }
+                [ Text "foo"
+                ]
+            )
+
+        , -- RULE 15
+          testInlines
+            "*foo _bar* baz_"
+            [ Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo _bar"
+                ]
+            , Text " baz_"
+            ]
+        , testInlines
+            "*foo __bar *baz bim__ bam*"
+            [ Emphasis
+                { char = '*'
+                , times = 1
+                }
+                [ Text "foo "
+                , Emphasis
+                    { char = '_'
+                    , times = 2
+                    }
+                    [ Text "bar *baz bim"
+                    ]
+                , Text " bam"
+                ]
+            ]
         ]

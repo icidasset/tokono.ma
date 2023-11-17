@@ -2,7 +2,10 @@ module Markdown exposing (..)
 
 {-|-}
 
+import Markdown.Block exposing ( Block )
 import Markdown.Parser
+import Markdown.Transmutationist
+import Transmutable.Html exposing ( Html )
 
 
 jsonFrontmatter =
@@ -11,3 +14,8 @@ jsonFrontmatter =
 
 parse =
     Markdown.Parser.parse
+
+
+toHtml : Block -> Html msg
+toHtml =
+    Markdown.Transmutationist.toHtml

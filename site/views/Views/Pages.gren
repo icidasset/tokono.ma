@@ -1,6 +1,6 @@
 module Views.Pages exposing ( view )
 
-import Common.Html exposing ( Html )
+import Transmutable.Html exposing ( Html )
 import Layouts.Default
 import Messages exposing ( Msg )
 import Pages exposing ( Page, PageId(..) )

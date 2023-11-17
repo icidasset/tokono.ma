@@ -1,7 +1,7 @@
 module Views.Pages.About exposing ( view )
 
-import Common.Html as Html
-import Common.Html.Attributes as A exposing ( class )
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
 import Views.Common as Common
@@ -74,7 +74,7 @@ view =
                 ]
             , Html.text ", my third job, where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
             ]
-            -- 
+            --
         , Common.closingEmoji "🌷"
         ]
 

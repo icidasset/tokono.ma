@@ -1,9 +1,9 @@
 module Views.Common exposing (..)
 
-import Common.Html as Html exposing ( Html )
-import Common.Html.Attributes exposing ( class )
-import Common.Svg as Svg exposing ( Svg )
-import Common.Svg.Attributes as A
+import Transmutable.Html as Html exposing ( Html )
+import Transmutable.Html.Attributes exposing ( class )
+import Transmutable.Svg as Svg exposing ( Svg )
+import Transmutable.Svg.Attributes as A
 
 
 

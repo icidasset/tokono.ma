@@ -2,7 +2,7 @@ module Main exposing ( main )
 
 import Browser exposing ( UrlRequest(..) )
 import Browser.Navigation
-import Common.String as String
+import String.Extra as String
 import Json.Decode
 import Markdown
 import Messages as ViewMsg

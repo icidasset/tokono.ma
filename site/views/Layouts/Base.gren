@@ -1,7 +1,7 @@
 module Layouts.Base exposing ( layout )
 
-import Common.Html as Html exposing ( Html )
-import Common.Html.Attributes as A
+import Transmutable.Html as Html exposing ( Html )
+import Transmutable.Html.Attributes as A
 import Json.Encode
 import Pages exposing ( Page )
 import Time

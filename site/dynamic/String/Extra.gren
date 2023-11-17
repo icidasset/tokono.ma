@@ -1,4 +1,4 @@
-module Common.String exposing (..)
+module String.Extra exposing (..)
 
 
 

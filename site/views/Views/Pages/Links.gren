@@ -1,7 +1,7 @@
 module Views.Pages.Links exposing ( view )
 
-import Common.Html as Html
-import Common.Html.Attributes as A exposing ( class )
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
 import Views.Common as Common
@@ -68,7 +68,7 @@ view =
             , link "https://www.happyhues.co" "Happy Hues"
             , link "https://www.thedayscolor.com" "The Day\'s Color"
             ]
-            -- 
+            --
         , Common.closingEmoji "🌍"
         ]
 

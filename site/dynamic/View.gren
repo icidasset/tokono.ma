@@ -1,9 +1,9 @@
 module View exposing (..)
 
 import Browser exposing ( Document )
-import Common.Html
-import Common.String as String
-import Common.VirtualDom
+import Transmutable.Html
+import String.Extra as String
+import Transmutable.Html.VirtualDom
 import Pages
 import Types exposing ( Model, Msg(..) )
 import Views.Pages
@@ -34,5 +34,5 @@ view model =
             Views.Pages.view page
     in
     { title = page.title
-    , body = Array.map Common.VirtualDom.fromHtml (Array.map (Common.Html.map ViewMsg) pageView)
+    , body = Array.map Transmutable.Html.VirtualDom.toVirtualDom (Array.map (Transmutable.Html.map ViewMsg) pageView)
     }

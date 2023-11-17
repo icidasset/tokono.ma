@@ -1,7 +1,7 @@
 module Views.Pages.Notes exposing ( view )
 
-import Common.Html as Html
-import Common.Html.Attributes as A exposing ( class )
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
 import Views.Common as Common
@@ -26,7 +26,7 @@ view =
             ]
             [ Html.text "Ordered by name."
             ]
-            -- 
+            --
         , Common.closingEmoji "📓"
         ]
 

@@ -1,7 +1,7 @@
 module Views.Pages.Essays exposing ( view )
 
-import Common.Html as Html
-import Common.Html.Attributes as A exposing ( class )
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
 import Views.Common as Common
@@ -42,7 +42,7 @@ view =
             [ link "Webnative & Elm"
             , link "Why I wrote static-base"
             ]
-            -- 
+            --
         , Common.closingEmoji "✍️"
         ]
 

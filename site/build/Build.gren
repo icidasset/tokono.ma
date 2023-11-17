@@ -2,7 +2,7 @@ module Build exposing ( main )
 
 import Bytes exposing ( Bytes )
 import Bytes.Encode
-import Common.Html exposing ( Html )
+import Transmutable.Html exposing ( Html )
 import Dict
 import FileSystem
 import Layouts.Base
@@ -36,7 +36,7 @@ main =
 
 sequence : FileSystem.Permission -> Task Error (Array {})
 sequence fsPermission =
-    Task.sequence [] writePagesToDisk
+    writePagesToDisk fsPermission
 
 
 processEssays fsPermission =
@@ -53,7 +53,7 @@ processEssays fsPermission =
                     bundle
                         |> Shikensu.renameExtension "md" "html"
                         |> Shikensu.permalink "index"
-                        |> Shikensu.renderContent renderMarkdown
+                        -- |> Shikensu.renderContent renderMarkdown
                 )
         |> Task.andThen
                 ([ ".."
@@ -106,7 +106,7 @@ writePagesToDisk fsPermission =
 
 htmlBytes : Html msg -> Bytes
 htmlBytes =
-    Common.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
+    Transmutable.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
 page mod html time =
@@ -118,17 +118,17 @@ page mod html time =
     }
 
 
-renderMarkdown =
-    def.content
-        |> Maybe.andThen
-                (\content ->
-                    content
-                        |> Bytes.width
-                        |> Bytes.Decode.string
-                        |> (\decoder -> Bytes.Decode.decode decoder content)
-                )
-        |> Maybe.map
-                (\markdownString ->
-                   Markdown.parse
-                )
-        |> Maybe.map (Bytes.Encode.string >> Bytes.Encode.encode)
+-- renderMarkdown =
+--     def.content
+--         |> Maybe.andThen
+--                 (\content ->
+--                     content
+--                         |> Bytes.width
+--                         |> Bytes.Decode.string
+--                         |> (\decoder -> Bytes.Decode.decode decoder content)
+--                 )
+--         |> Maybe.map
+--                 (\markdownString ->
+--                    Markdown.parse
+--                 )
+--         |> Maybe.map (Bytes.Encode.string >> Bytes.Encode.encode)

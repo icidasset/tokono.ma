@@ -1,15 +1,15 @@
 module Layouts.Base exposing ( layout )
 
-import Transmutable.Html as Html exposing ( Html )
-import Transmutable.Html.Attributes as A
 import Json.Encode
 import Pages exposing ( Page )
 import Time
+import Transmutable.Html as Html exposing ( Html )
+import Transmutable.Html.Attributes as A
 import Views.Common exposing ( Route )
 
 
-layout : Page -> Array (Html msg) -> Time.Posix -> Html msg
-layout page pageHtml time =
+layout : Page -> Time.Posix -> Array (Html msg) -> Html msg
+layout page time pageHtml =
     let
         cacheId =
             time

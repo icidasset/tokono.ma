@@ -1,13 +1,16 @@
 module Build exposing ( main )
 
 import Bytes exposing ( Bytes )
+import Bytes.Decode
 import Bytes.Encode
-import Transmutable.Html exposing ( Html )
 import Dict
 import FileSystem
+import Json.Decode as Json
+import Json.Encode
 import Layouts.Base
-import Pages
+import Layouts.Markdown
 import Markdown
+import Pages
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
@@ -18,6 +21,7 @@ import Shikensu.Path as Path
 import Stream
 import Task exposing ( Task )
 import Time
+import Transmutable.Html exposing ( Html )
 import Views.Pages
 
 
@@ -34,12 +38,21 @@ main =
         sequence
 
 
-sequence : FileSystem.Permission -> Task Error (Array {})
+sequence : FileSystem.Permission -> Task Error {}
 sequence fsPermission =
-    writePagesToDisk fsPermission
+    Time.now
+        |> Task.andThen
+                (\time ->
+                    Task.sequence
+                        [ writePagesToDisk fsPermission time
+                        , processEssays fsPermission time
+                        ]
+                )
+        |> Task.map (\_ -> {})
 
 
-processEssays fsPermission =
+processEssays : FileSystem.Permission -> Time.Posix -> Task Error {}
+processEssays fsPermission time =
     [ ".."
     , "essays"
     ]
@@ -53,7 +66,18 @@ processEssays fsPermission =
                     bundle
                         |> Shikensu.renameExtension "md" "html"
                         |> Shikensu.permalink "index"
-                        -- |> Shikensu.renderContent renderMarkdown
+                        |> Shikensu.renderContent (renderMarkdown time)
+                        |> Shikensu.mapCompendium
+                                (\compendium ->
+                                    let
+                                        published =
+                                            onlyPublished compendium
+                                    in
+                                    bundle.compendium
+                                        |> Array.filter (\def -> Array.member def.baseName published.baseNames)
+                                        |> createMarkdownJsonRepo "essays"
+                                        |> (\def -> Array.pushLast def published.compendium)
+                                )
                 )
         |> Task.andThen
                 ([ ".."
@@ -64,10 +88,11 @@ processEssays fsPermission =
                     |> Relative
                     |> Shikensu.write
                 )
+        |> Task.map (\_ -> {})
 
 
-writePagesToDisk : FileSystem.Permission -> Task Error (Array {})
-writePagesToDisk fsPermission =
+writePagesToDisk : FileSystem.Permission -> Time.Posix -> Task Error {}
+writePagesToDisk fsPermission time =
     fsPermission
         |> Shikensu.currentWorkingDirectory
         -- Destination directory: `../dist/`
@@ -79,29 +104,81 @@ writePagesToDisk fsPermission =
                         |> Path.directory
                         |> Path.combine path
                 )
-        -- Get current time
-        |> Task.andThen
-                (\destinationDir ->
-                    Task.map
-                        (\time ->
-                            { destinationDir = destinationDir
-                            , time = time
-                            }
-                        )
-                        Time.now
-                )
         -- Write each page to disk
         |> Task.andThen
-                (\{ destinationDir, time } ->
+                (\destinationDir ->
+                    let
+                        page mod html =
+                            { baseName = "index"
+                            , content = Just (htmlBytes (Layouts.Base.layout mod time html))
+                            , directoryPath = Path.directory mod.route
+                            , extensionName = Just "html"
+                            , metadata = Dict.empty
+                            }
+                    in
                     Pages.allPages
-                        |> Array.map (\p -> page p (Views.Pages.view p) time)
+                        |> Array.map (\p -> page p (Views.Pages.view p))
                         |> Array.map (Shikensu.writeDefinition fsPermission destinationDir)
                         |> Task.sequence
                 )
+        --
+        |> Task.map (\_ -> {})
 
 
 
 -- 🛠️
+
+
+bytesToString : Bytes -> Maybe String
+bytesToString bytes =
+    bytes
+        |> Bytes.width
+        |> Bytes.Decode.string
+        |> (\decoder -> Bytes.Decode.decode decoder bytes)
+
+
+createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Shikensu.Definition
+createMarkdownJsonRepo name compendium =
+    compendium
+        |> Array.foldl
+                (\def acc ->
+                    case Maybe.andThen bytesToString def.content of
+                        Just markdownString ->
+                            Array.pushLast
+                                { key = def.baseName
+                                , value = Json.Encode.string markdownString
+                                }
+                                acc
+
+                        _ ->
+                            acc
+                )
+                []
+        |> Json.Encode.object
+        |> Json.Encode.encode 0
+        |> Bytes.Encode.string
+        |> Bytes.Encode.encode
+        |> (\json ->
+                { baseName = name
+                , content = Just json
+                , directoryPath = Path.directory []
+                , extensionName = Just "json"
+                , metadata = Dict.empty
+                }
+            )
+
+
+frontmatterDecoder =
+    Json.map3
+        (\published publishedOn title ->
+            { published = published
+            , publishedOn = publishedOn
+            , title = title
+            }
+        )
+        (Json.field "published" Json.bool)
+        (Json.field "published_on" Json.string)
+        (Json.field "title" Json.string)
 
 
 htmlBytes : Html msg -> Bytes
@@ -109,26 +186,58 @@ htmlBytes =
     Transmutable.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
-page mod html time =
-    { baseName = "index"
-    , content = Just (htmlBytes (Layouts.Base.layout mod html time))
-    , directoryPath = Path.directory mod.route
-    , extensionName = Just "html"
-    , metadata = Dict.empty
-    }
+onlyPublished =
+    Array.foldl
+        (\def acc ->
+            case def.content of
+                Just _ ->
+                    { baseNames =
+                        def.directoryPath
+                            |> Path.unwrap
+                            |> Array.last
+                            |> Maybe.withDefault def.baseName
+                            |> (\a -> Array.pushLast a acc.baseNames)
+                    , compendium = Array.pushLast def acc.compendium
+                    }
+
+                Nothing ->
+                    acc
+        )
+        { baseNames = []
+        , compendium = []
+        }
 
 
--- renderMarkdown =
---     def.content
---         |> Maybe.andThen
---                 (\content ->
---                     content
---                         |> Bytes.width
---                         |> Bytes.Decode.string
---                         |> (\decoder -> Bytes.Decode.decode decoder content)
---                 )
---         |> Maybe.map
---                 (\markdownString ->
---                    Markdown.parse
---                 )
---         |> Maybe.map (Bytes.Encode.string >> Bytes.Encode.encode)
+renderMarkdown time def =
+    def.content
+        |> Maybe.andThen bytesToString
+        |> Maybe.andThen
+                (\markdownString ->
+                    markdownString
+                        |> Markdown.parse
+                                { frontmatter = Just (Markdown.jsonFrontmatter frontmatterDecoder)
+                                }
+                        |> (\{ blocks, metadata } ->
+                                case metadata of
+                                    Just { title, published } ->
+                                        if published then
+                                            let
+                                                page =
+                                                    Pages.essay
+                                                        { baseName = def.baseName
+                                                        , title = title
+                                                        }
+                                            in
+                                            blocks
+                                                |> Array.map Markdown.toHtml
+                                                |> Layouts.Markdown.layout page
+                                                |> Layouts.Base.layout page time
+                                                |> Just
+                                        else
+                                            Nothing
+
+                                    Nothing ->
+                                        Nothing
+                            )
+                )
+        |> Maybe.map htmlBytes

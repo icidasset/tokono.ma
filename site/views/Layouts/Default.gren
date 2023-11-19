@@ -1,11 +1,11 @@
 module Layouts.Default exposing ( layout )
 
-import Transmutable.Html as Html
-import Transmutable.Html.Attributes as A exposing ( class )
-import Transmutable.Html.Events as E
 import Json.Decode
 import Messages exposing ( Msg(..) )
 import Pages
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
+import Transmutable.Html.Events as E
 import Views.Common as Common
 
 

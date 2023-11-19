@@ -1,0 +1,7 @@
+module Layouts.Markdown exposing ( layout )
+
+import Layouts.Default
+
+
+layout page =
+    Layouts.Default.layout page []

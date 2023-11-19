@@ -1,9 +1,9 @@
 module Views.Pages exposing ( view )
 
-import Transmutable.Html exposing ( Html )
 import Layouts.Default
 import Messages exposing ( Msg )
 import Pages exposing ( Page, PageId(..) )
+import Transmutable.Html exposing ( Html )
 import Views.Pages.About
 import Views.Pages.Errors.NotFound
 import Views.Pages.Essays
@@ -21,6 +21,9 @@ view page =
 
         ErrNotFound ->
             Views.Pages.Errors.NotFound.view
+
+        Essay _ ->
+            []
 
         Essays ->
             Views.Pages.Essays.view

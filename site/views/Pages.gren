@@ -18,6 +18,9 @@ type alias Page =
 type PageId
     = ErrNotFound
     | About
+    | Essay
+        { baseName : String
+        }
     | Essays
     | Index
     | Links
@@ -81,6 +84,25 @@ about =
     , title = Views.Common.titleWithSuffix "About"
     , route =
         [ "about"
+        ]
+    }
+
+
+essay :
+    { baseName : String
+    , title : String
+    }
+    -> Page
+essay { baseName, title } =
+    { id =
+        Essay
+            { baseName = baseName
+            }
+    , name = title
+    , title = Views.Common.titleWithSuffix title
+    , route =
+        [ "essay"
+        , baseName
         ]
     }
 

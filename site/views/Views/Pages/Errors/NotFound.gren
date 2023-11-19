@@ -1,9 +1,9 @@
 module Views.Pages.Errors.NotFound exposing ( view )
 
-import Transmutable.Html as Html
-import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
 
 
@@ -17,6 +17,6 @@ view =
             ]
             [ Html.text "Woops, page not found."
             ]
-            --
+            -- 
         , Common.closingEmoji "🤷"
         ]

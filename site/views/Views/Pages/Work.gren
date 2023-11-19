@@ -1,9 +1,9 @@
 module Views.Pages.Work exposing ( view )
 
-import Transmutable.Html as Html
-import Transmutable.Html.Attributes as A exposing ( class )
 import Layouts.Default
 import Pages
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
 
 
@@ -51,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            --
+            -- 
         , diffuse
         , oddsdk
         , shikensu
@@ -59,7 +59,7 @@ view =
         , circuits
         , quotes
         , checklists
-            --
+            -- 
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -377,8 +377,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-
-
+    
+    
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -392,8 +392,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-
-
+    
+    
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

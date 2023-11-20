@@ -2,7 +2,8 @@
   "title": "Why I wrote static-base",
   "category": "Code",
   "published": true,
-  "published_on": "29-07-2016"
+  "published_on": "29-07-2016",
+  "archived": true
 }
 
 __Update__: I wrote a better version of this library in Haskell, called [Shikensu](https://github.com/icidasset/shikensu).

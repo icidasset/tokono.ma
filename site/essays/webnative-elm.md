@@ -2,7 +2,8 @@
   "title": "Webnative & Elm",
   "category": "Code",
   "published": true,
-  "published_on": "07-05-2021"
+  "published_on": "07-05-2021",
+  "archived": true
 }
 
 

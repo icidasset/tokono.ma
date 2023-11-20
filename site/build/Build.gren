@@ -26,6 +26,18 @@ import Views.Pages
 
 
 
+-- 🏔️
+
+
+dist =
+    [ ".."
+    , "dist"
+    ]
+        |> Path.directory
+        |> Relative
+
+
+
 -- 🚀
 
 
@@ -64,54 +76,31 @@ processEssays fsPermission time =
         |> Task.map
                 (\bundle ->
                     bundle
+                        |> Shikensu.enclose "essays"
                         |> Shikensu.renameExtension "md" "html"
                         |> Shikensu.permalink "index"
                         |> Shikensu.mapCompendium (consumeAndRenderMarkdown time)
                         |> Shikensu.mapCompendium (createMarkdownJsonRepo "essays")
                 )
-        |> Task.andThen
-                ([ ".."
-                 , "dist"
-                 , "essays"
-                 ]
-                    |> Path.directory
-                    |> Relative
-                    |> Shikensu.write
-                )
+        |> Task.andThen (Shikensu.write dist)
         |> Task.map (\_ -> {})
 
 
 writePagesToDisk : FileSystem.Permission -> Time.Posix -> Task Error {}
 writePagesToDisk fsPermission time =
-    fsPermission
-        |> Shikensu.currentWorkingDirectory
-        -- Destination directory: `../dist/`
-        |> Task.map
-                (\path ->
-                    [ ".."
-                    , "dist"
-                    ]
-                        |> Path.directory
-                        |> Path.combine path
-                )
-        -- Write each page to disk
-        |> Task.andThen
-                (\destinationDir ->
-                    let
-                        page mod html =
-                            { baseName = "index"
-                            , content = Just (htmlBytes (Layouts.Base.layout mod time html))
-                            , directoryPath = Path.directory mod.route
-                            , extensionName = Just "html"
-                            , metadata = Dict.empty
-                            }
-                    in
-                    Pages.allPages
-                        |> Array.map (\p -> page p (Views.Pages.view p))
-                        |> Array.map (Shikensu.writeDefinition fsPermission destinationDir)
-                        |> Task.sequence
-                )
-        -- 
+    let
+        page mod html =
+            { baseName = "index"
+            , content = Just (htmlBytes (Layouts.Base.layout mod time html))
+            , directoryPath = Path.directory mod.route
+            , extensionName = Just "html"
+            , metadata = Dict.empty
+            }
+    in
+    Pages.allPages
+        |> Array.map (\p -> page p (Views.Pages.view p))
+        |> Shikensu.bundle fsPermission
+        |> Task.andThen (Shikensu.write dist)
         |> Task.map (\_ -> {})
 
 

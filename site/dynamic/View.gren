@@ -31,7 +31,11 @@ view model =
                 |> Maybe.withDefault Pages.notFound
 
         pageView =
-            Views.Pages.view page
+            Views.Pages.view
+                -- TODO
+                { essays = []
+                }
+                page
     in
     { title = page.title
     , body = Array.map Transmutable.Html.VirtualDom.toVirtualDom (Array.map (Transmutable.Html.map ViewMsg) pageView)

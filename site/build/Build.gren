@@ -10,7 +10,7 @@ import Json.Encode
 import Layouts.Base
 import Layouts.Markdown
 import Markdown
-import Pages
+import Pages exposing ( Page, TableOfContents )
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
@@ -52,18 +52,22 @@ main =
 
 sequence : FileSystem.Permission -> Task Error {}
 sequence fsPermission =
-    Time.now
-        |> Task.andThen
-                (\time ->
-                    Task.sequence
-                        [ writePagesToDisk fsPermission time
-                        , processEssays fsPermission time
-                        ]
-                )
-        |> Task.map (\_ -> {})
+    Task.andThen
+        (\time ->
+            time
+                |> processEssays fsPermission
+                |> Task.map
+                        (\essays ->
+                            { essays = essays
+                            }
+                        )
+                |> Task.andThen (writePagesToDisk fsPermission time)
+                |> Task.map (\_ -> {})
+        )
+        Time.now
 
 
-processEssays : FileSystem.Permission -> Time.Posix -> Task Error {}
+processEssays : FileSystem.Permission -> Time.Posix -> Task Error TableOfContents
 processEssays fsPermission time =
     [ ".."
     , "essays"
@@ -83,25 +87,52 @@ processEssays fsPermission time =
                         |> Shikensu.mapCompendium (createMarkdownJsonRepo "essays")
                 )
         |> Task.andThen (Shikensu.write dist)
-        |> Task.map (\_ -> {})
+        |> Task.map
+                (\bundle ->
+                    -- Build a table of contents
+                    bundle.compendium
+                        |> Array.filterMap
+                                (\def ->
+                                    if Dict.member "published" def.metadata then
+                                        Just
+                                            { page =
+                                                Pages.essay
+                                                    { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
+                                                    , title = meta "title" Json.string def.baseName def
+                                                    }
+                                            , archived = meta "archived" Json.bool False def
+                                            }
+                                    else
+                                        Nothing
+                                )
+                        |> Array.sortBy
+                                (\{page} ->
+                                    page.name
+                                )
+                )
 
 
-writePagesToDisk : FileSystem.Permission -> Time.Posix -> Task Error {}
-writePagesToDisk fsPermission time =
+writePagesToDisk :
+    FileSystem.Permission
+    -> Time.Posix
+    -> { essays : TableOfContents
+       }
+    -> Task Error TableOfContents
+writePagesToDisk fsPermission time toc =
     let
-        page mod html =
+        makeDefinition mod =
             { baseName = "index"
-            , content = Just (htmlBytes (Layouts.Base.layout mod time html))
+            , content = Just (htmlBytes (Layouts.Base.layout mod time (Views.Pages.view toc mod)))
             , directoryPath = Path.directory mod.route
             , extensionName = Just "html"
             , metadata = Dict.empty
             }
     in
     Pages.allPages
-        |> Array.map (\p -> page p (Views.Pages.view p))
+        |> Array.map makeDefinition
         |> Shikensu.bundle fsPermission
         |> Task.andThen (Shikensu.write dist)
-        |> Task.map (\_ -> {})
+        |> Task.map (\_ -> [])
 
 
 
@@ -239,3 +270,14 @@ frontmatterDecoder =
         (Json.field "published" Json.bool)
         (Json.field "published_on" Json.string)
         (Json.field "title" Json.string)
+
+
+
+-- 🛠️
+
+
+meta key decoder default definition =
+    definition.metadata
+        |> Dict.get key
+        |> Maybe.andThen (Json.decodeValue decoder >> Result.toMaybe)
+        |> Maybe.withDefault default

@@ -28,6 +28,13 @@ type PageId
     | Work
 
 
+type alias TableOfContents =
+    Array
+        { archived : Bool
+        , page : Page
+        }
+
+
 
 -- 🏔️
 
@@ -101,7 +108,7 @@ essay { baseName, title } =
     , name = title
     , title = Views.Common.titleWithSuffix title
     , route =
-        [ "essay"
+        [ "essays"
         , baseName
         ]
     }

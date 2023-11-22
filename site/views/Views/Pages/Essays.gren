@@ -1,13 +1,25 @@
 module Views.Pages.Essays exposing ( view )
 
 import Layouts.Default
-import Pages
-import Transmutable.Html as Html
+import Messages exposing ( Msg )
+import Pages exposing ( TableOfContents )
+import Transmutable.Html as Html exposing ( Html )
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
 
 
-view =
+view : TableOfContents -> Array (Html Msg)
+view essays =
+    let
+        { trues, falses } =
+            Array.partition .archived essays
+
+        archivedEssays =
+            trues
+
+        nonArchivedEssays =
+            falses
+    in
     Layouts.Default.layout
         Pages.essays
         [ class "decoration-accent-essays"
@@ -17,12 +29,7 @@ view =
             ]
             [ Html.text "A few articles  I\'ve written over the years, mostly code related."
             ]
-        , Html.ul
-            []
-            [ link "Building Blocks"
-            , link "Functional Programming & Elixir – Pt. 1, The Basics"
-            , link "Minimize Flaws Using Functional Programming"
-            ]
+        , Html.ul [] (Array.map (\{ page } -> link page) nonArchivedEssays)
         , Html.p
             [ class "italic max-w-md mt-6 text-sm"
             ]
@@ -37,22 +44,18 @@ view =
             ]
             [ Html.text "Most of this code doesn\'t work anymore or the information is outdated. Keeping it here in case it is still relevant to someone."
             ]
-        , Html.ul
-            []
-            [ link "Webnative & Elm"
-            , link "Why I wrote static-base"
-            ]
+        , Html.ul [] (Array.map (\{ page } -> link page) archivedEssays)
             -- 
         , Common.closingEmoji "✍️"
         ]
 
 
-link text =
+link page =
     Html.li
         []
         [ Html.a
-            [ A.href "#"
+            [ A.href ("../" ++ String.join "/" page.route ++ "/")
             ]
-            [ Html.text text
+            [ Html.text page.name
             ]
         ]

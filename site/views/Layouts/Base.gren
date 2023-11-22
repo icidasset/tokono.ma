@@ -61,9 +61,22 @@ layout page time pageHtml =
           , Html.node
                 "script"
                 []
-                [ Html.text "Gren.Main.init({ flags: { pageRoute: "
+                [ Html.text "const pageRoute = "
                 , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
-                , Html.text " }})"
+                , Html.text ";"
+
+                , --
+                  Html.text """
+                  const pathToRoot = pageRoute.length ? pageRoute.map(() => '..').join('/') + '/' : '';
+
+                  fetch(
+                    `${pathToRoot}essays.json`
+                  ).then(
+                    r => r.json()
+                  ).then(essays => {
+                    Gren.Main.init({ flags: { pageRoute }})
+                  });
+                  """
                 ]
           ]
             |> Array.prefix pageHtml

@@ -2,7 +2,7 @@ module Views.Pages exposing ( view )
 
 import Layouts.Default
 import Messages exposing ( Msg )
-import Pages exposing ( Page, PageId(..) )
+import Pages exposing ( Page, PageId(..), TableOfContents )
 import Transmutable.Html exposing ( Html )
 import Views.Pages.About
 import Views.Pages.Errors.NotFound
@@ -13,8 +13,12 @@ import Views.Pages.Notes
 import Views.Pages.Work
 
 
-view : Page -> Array (Html Msg)
-view page =
+view :
+    { essays : TableOfContents
+    }
+    -> Page
+    -> Array (Html Msg)
+view { essays } page =
     case page.id of
         About ->
             Views.Pages.About.view
@@ -26,7 +30,7 @@ view page =
             []
 
         Essays ->
-            Views.Pages.Essays.view
+            Views.Pages.Essays.view essays
 
         Index ->
             Views.Pages.Index.view

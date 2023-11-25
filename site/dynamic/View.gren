@@ -1,6 +1,9 @@
 module View exposing (..)
 
 import Browser exposing ( Document )
+import Dict
+import Layouts.Markdown
+import Markdown
 import Pages
 import String.Extra as String
 import Transmutable.Html
@@ -25,18 +28,57 @@ view model =
                 r ->
                     r
 
-        page =
-            Pages.allPages
-                |> Array.findFirst (\{ route } -> route == pageRoute)
-                |> Maybe.withDefault Pages.notFound
+        viewOpts =
+            { essayTableOfContents = model.essayTableOfContents
+            }
 
-        pageView =
-            Views.Pages.view
-                -- TODO
-                { essays = []
-                }
-                page
+        maybe =
+            case pageRoute of
+                [ "essays", baseName ] ->
+                    model.essays
+                        |> Dict.get baseName
+                        |> Maybe.map
+                                (\{ metadata, blocks } ->
+                                    let
+                                        p =
+                                            Pages.essay
+                                                { baseName = baseName
+                                                , title = metadata.title
+                                                }
+                                    in
+                                    { page = p
+                                    , view =
+                                        blocks
+                                            |> Array.map Markdown.toHtml
+                                            |> Layouts.Markdown.layout p
+                                    }
+                                )
+
+                _ ->
+                    Pages.allPages
+                        |> Array.findFirst (\{ route } -> route == pageRoute)
+                        |> Maybe.map
+                                (\p ->
+                                    { page = p
+                                    , view = Views.Pages.view viewOpts p
+                                    }
+                                )
+
+        result =
+            case maybe of
+                Just a ->
+                    { page = a.page
+                    , view = a.view
+                    }
+
+                Nothing ->
+                    { page = Pages.notFound
+                    , view = Views.Pages.view viewOpts Pages.notFound
+                    }
     in
-    { title = page.title
-    , body = Array.map Transmutable.Html.VirtualDom.toVirtualDom (Array.map (Transmutable.Html.map ViewMsg) pageView)
+    { title = result.page.title
+    , body =
+        result.view
+            |> Array.map (Transmutable.Html.map ViewMsg)
+            |> Array.map Transmutable.Html.VirtualDom.toVirtualDom
     }

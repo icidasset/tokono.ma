@@ -2,7 +2,12 @@ module Types exposing (..)
 
 import Browser
 import Browser.Navigation
+import Dict exposing ( Dict )
+import Essays
+import Markdown
+import Markdown.Block as Markdown
 import Messages as View
+import Pages exposing ( TableOfContents )
 import Url exposing ( Url )
 
 
@@ -11,7 +16,14 @@ import Url exposing ( Url )
 
 
 type alias Model =
-    { navKey : Browser.Navigation.Key
+    { essays :
+        Dict
+            String
+            { metadata : Essays.Metadata
+            , blocks : Array Markdown.Block
+            }
+    , essayTableOfContents : TableOfContents
+    , navKey : Browser.Navigation.Key
     , rootUrl : Url
     , url : Url
     }

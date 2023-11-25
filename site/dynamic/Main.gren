@@ -2,9 +2,12 @@ module Main exposing ( main )
 
 import Browser exposing ( UrlRequest(..) )
 import Browser.Navigation
+import Dict
+import Essays
 import Json.Decode
 import Markdown
 import Messages as ViewMsg
+import Pages
 import String.Extra as String
 import Types exposing (..)
 import Url exposing ( Url )
@@ -16,7 +19,12 @@ import View exposing ( view )
 
 
 type alias Flags =
-    { pageRoute : Array String
+    { essays :
+        Array
+            { baseName : String
+            , markdown : String
+            }
+    , pageRoute : Array String
     }
 
 
@@ -45,6 +53,47 @@ init :
        }
 init flags url key =
     let
+        essays =
+            flags.essays
+                |> Array.filterMap
+                        (\{ baseName, markdown } ->
+                            markdown
+                                |> Markdown.parse
+                                        { frontmatter = Just (Markdown.jsonFrontmatter Essays.frontmatterDecoder)
+                                        }
+                                |> (\{ metadata, blocks } ->
+                                        Maybe.map
+                                            (\m ->
+                                                { metadata = m
+                                                , blocks = blocks
+                                                }
+                                            )
+                                            metadata
+                                    )
+                                |> Maybe.map
+                                        (\v ->
+                                            { key = baseName
+                                            , value = v
+                                            }
+                                        )
+                        )
+                |> Dict.fromArray
+
+        essayTableOfContents =
+            essays
+                |> Dict.toArray
+                |> Array.map
+                        (\item ->
+                            { page =
+                                Pages.essay
+                                    { baseName = item.key
+                                    , title = item.value.metadata.title
+                                    }
+                            , archived = item.value.metadata.archived
+                            }
+                        )
+                |> Array.sortBy (.page >> .title)
+
         rootUrl =
             url.path
                 |> String.removePrefix "/"
@@ -65,7 +114,9 @@ init flags url key =
                 |> (\path -> { url | path = path })
     in
     { model =
-        { navKey = key
+        { essays = essays
+        , essayTableOfContents = essayTableOfContents
+        , navKey = key
         , rootUrl = rootUrl
         , url = url
         }

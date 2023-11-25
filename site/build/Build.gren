@@ -4,6 +4,7 @@ import Bytes exposing ( Bytes )
 import Bytes.Decode
 import Bytes.Encode
 import Dict
+import Essays
 import FileSystem
 import Json.Decode as Json
 import Json.Encode
@@ -58,7 +59,7 @@ sequence fsPermission =
                 |> processEssays fsPermission
                 |> Task.map
                         (\essays ->
-                            { essays = essays
+                            { essayTableOfContents = essays
                             }
                         )
                 |> Task.andThen (writePagesToDisk fsPermission time)
@@ -83,39 +84,36 @@ processEssays fsPermission time =
                         |> Shikensu.enclose "essays"
                         |> Shikensu.renameExtension "md" "html"
                         |> Shikensu.permalink "index"
-                        |> Shikensu.mapCompendium (consumeAndRenderMarkdown time)
+                        |> Shikensu.mapCompendium (consumeAndRenderEssays time)
                         |> Shikensu.mapCompendium (createMarkdownJsonRepo "essays")
                 )
         |> Task.andThen (Shikensu.write dist)
         |> Task.map
                 (\bundle ->
                     -- Build a table of contents
-                    bundle.compendium
-                        |> Array.filterMap
-                                (\def ->
-                                    if Dict.member "published" def.metadata then
-                                        Just
-                                            { page =
-                                                Pages.essay
-                                                    { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
-                                                    , title = meta "title" Json.string def.baseName def
-                                                    }
-                                            , archived = meta "archived" Json.bool False def
+                    Array.filterMap
+                        (\def ->
+                            -- Only use the essays, not the json repo
+                            if Dict.member "published" def.metadata then
+                                Just
+                                    { page =
+                                        Pages.essay
+                                            { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
+                                            , title = meta "title" Json.string def.baseName def
                                             }
-                                    else
-                                        Nothing
-                                )
-                        |> Array.sortBy
-                                (\{page} ->
-                                    page.name
-                                )
+                                    , archived = meta "archived" Json.bool False def
+                                    }
+                            else
+                                Nothing
+                        )
+                        bundle.compendium
                 )
 
 
 writePagesToDisk :
     FileSystem.Permission
     -> Time.Posix
-    -> { essays : TableOfContents
+    -> { essayTableOfContents : TableOfContents
        }
     -> Task Error TableOfContents
 writePagesToDisk fsPermission time toc =
@@ -156,76 +154,78 @@ htmlBytes =
 -- 🛠️ MARKDOWN
 
 
-consumeAndRenderMarkdown : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
-consumeAndRenderMarkdown time =
-    Array.filterMap
-        (\def ->
-            def.content
-                |> Maybe.andThen bytesToString
-                |> Maybe.andThen
-                        (\markdownString ->
-                            markdownString
-                                |> Markdown.parse
-                                        { frontmatter = Just (Markdown.jsonFrontmatter frontmatterDecoder)
-                                        }
-                                |> (\{ blocks, metadata } ->
-                                        Maybe.map
-                                            (\m ->
-                                                { blocks = blocks
-                                                , markdown = markdownString
-                                                , metadata = m
+consumeAndRenderEssays : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
+consumeAndRenderEssays time compendium =
+    compendium
+        |> Array.filterMap
+                (\def ->
+                    def.content
+                        |> Maybe.andThen bytesToString
+                        |> Maybe.andThen
+                                (\markdownString ->
+                                    markdownString
+                                        |> Markdown.parse
+                                                { frontmatter = Just (Markdown.jsonFrontmatter Essays.frontmatterDecoder)
                                                 }
+                                        |> (\{ blocks, metadata } ->
+                                                Maybe.map
+                                                    (\m ->
+                                                        { blocks = blocks
+                                                        , markdown = markdownString
+                                                        , metadata = m
+                                                        }
+                                                    )
+                                                    metadata
                                             )
-                                            metadata
-                                    )
-                        )
-                |> Maybe.andThen
-                        (\record ->
-                            -- Only use published essays
-                            if record.metadata.published then
-                                Just record
-                            else
-                                Nothing
-                        )
-                |> Maybe.map
-                        (\{ blocks, markdown, metadata } ->
-                            let
-                                page =
-                                    Pages.essay
-                                        { baseName = def.baseName
-                                        , title = metadata.title
-                                        }
+                                )
+                        |> Maybe.andThen
+                                (\record ->
+                                    -- Only use published essays
+                                    if record.metadata.published then
+                                        Just record
+                                    else
+                                        Nothing
+                                )
+                        |> Maybe.map
+                                (\{ blocks, markdown, metadata } ->
+                                    let
+                                        page =
+                                            Pages.essay
+                                                { baseName = def.baseName
+                                                , title = metadata.title
+                                                }
 
-                                renderedMarkdown =
-                                    blocks
-                                        |> Array.map Markdown.toHtml
-                                        |> Layouts.Markdown.layout page
-                                        |> Layouts.Base.layout page time
-                                        |> htmlBytes
-                            in
-                            { def
-                                | content = Just renderedMarkdown
-                                , metadata =
-                                    Dict.fromArray
-                                        [ { key = "archived"
-                                          , value = Json.Encode.bool metadata.archived
-                                          }
-                                        , { key = "markdown"
-                                          , value = Json.Encode.string markdown
-                                          }
-                                        , { key = "published"
-                                          , value = Json.Encode.bool metadata.published
-                                          }
-                                        , { key = "publishedOn"
-                                          , value = Json.Encode.string metadata.publishedOn
-                                          }
-                                        , { key = "title"
-                                          , value = Json.Encode.string metadata.title
-                                          }
-                                        ]
-                            }
-                        )
-        )
+                                        renderedMarkdown =
+                                            blocks
+                                                |> Array.map Markdown.toHtml
+                                                |> Layouts.Markdown.layout page
+                                                |> Layouts.Base.layout page time
+                                                |> htmlBytes
+                                    in
+                                    { def
+                                        | content = Just renderedMarkdown
+                                        , metadata =
+                                            Dict.fromArray
+                                                [ { key = "archived"
+                                                  , value = Json.Encode.bool metadata.archived
+                                                  }
+                                                , { key = "markdown"
+                                                  , value = Json.Encode.string markdown
+                                                  }
+                                                , { key = "published"
+                                                  , value = Json.Encode.bool metadata.published
+                                                  }
+                                                , { key = "publishedOn"
+                                                  , value = Json.Encode.string metadata.publishedOn
+                                                  }
+                                                , { key = "title"
+                                                  , value = Json.Encode.string metadata.title
+                                                  }
+                                                ]
+                                    }
+                                )
+                )
+        |> Array.sortBy (\def -> meta "title" Json.string def.baseName def)
 
 
 createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Array Shikensu.Definition
@@ -235,14 +235,19 @@ createMarkdownJsonRepo name compendium =
                 (\def ->
                     Maybe.map2
                         (\m baseName ->
-                            { key = baseName
-                            , value = m
-                            }
+                            Json.Encode.object
+                                [ { key = "baseName"
+                                  , value = Json.Encode.string baseName
+                                  }
+                                , { key = "markdown"
+                                  , value = m
+                                  }
+                                ]
                         )
                         (Dict.get "markdown" def.metadata)
                         (Array.last (Path.unwrap def.directoryPath))
                 )
-        |> Json.Encode.object
+        |> Json.Encode.array identity
         |> Json.Encode.encode 0
         |> Bytes.Encode.string
         |> Bytes.Encode.encode
@@ -255,21 +260,6 @@ createMarkdownJsonRepo name compendium =
                 }
             )
         |> (\def -> Array.pushLast def compendium)
-
-
-frontmatterDecoder =
-    Json.map4
-        (\maybeArchived published publishedOn title ->
-            { archived = Maybe.withDefault False maybeArchived
-            , published = published
-            , publishedOn = publishedOn
-            , title = title
-            }
-        )
-        (Json.maybe (Json.field "archived" Json.bool))
-        (Json.field "published" Json.bool)
-        (Json.field "published_on" Json.string)
-        (Json.field "title" Json.string)
 
 
 

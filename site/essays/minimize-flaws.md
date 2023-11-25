@@ -6,7 +6,7 @@
   "published_on": "26-06-2017"
 }
 
-_This is the written version of [a talk I did recently](http://flaws.icidasset.com/). How can we make our code more predictable and easier to reason about, and how can we use typed functional programming to do that._
+_This is the written version of a talk I did. How can we make our code more predictable and easier to reason about, and how can we use typed functional programming to do that._
 
 
 

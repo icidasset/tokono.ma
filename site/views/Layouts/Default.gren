@@ -42,8 +42,11 @@ layout page attributes contents =
               let
                 link linkPage =
                     let
+                        firstPartRoute =
+                          Array.first page.route
+
                         isActive =
-                            page.id == linkPage.id
+                           (firstPartRoute == Array.first linkPage.route)
                     in
                     Html.div
                         [ A.class "inline-block lg:block lg:mb-4"
@@ -72,7 +75,7 @@ layout page attributes contents =
                             [ Html.text linkPage.name
                             , if isActive then
                                 Html.span
-                                    [ class ("mark bg-accent-" ++ String.join "-" page.route)
+                                    [ class ("mark bg-accent-" ++ Maybe.withDefault "" firstPartRoute)
                                     ]
                                     []
                               else

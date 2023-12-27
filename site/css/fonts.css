@@ -36,6 +36,12 @@
 }
 
 @font-face {
+  font-family: "Nanum Pen Script";
+  font-weight: 400;
+  src: url("./fonts/nanum-pen-script-regular.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Noto Emoji";
   src:
     local("Noto Emoji"),
@@ -47,4 +53,23 @@
   src:
     local("Noto Color Emoji"),
     url("./fonts/noto-emoji-color.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair";
+  font-weight: 1 999;
+  src: url("./fonts/playfair-variable-roman.woff2") format("woff2");
+  font-variation-settings:
+    "opsz" 42,
+    "wdth" 88;
+}
+
+@font-face {
+  font-family: "Playfair";
+  font-style: italic;
+  font-weight: 1 999;
+  src: url("./fonts/playfair-variable-italic.woff2") format("woff2");
+  font-variation-settings:
+    "opsz" 42,
+    "wdth" 88;
 }

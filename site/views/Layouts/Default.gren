@@ -52,7 +52,7 @@ layout page attributes contents =
                         [ A.class "inline-block lg:block lg:mb-4"
                         ]
                         [ Html.a
-                            [ A.class "inline-block lh-crop relative"
+                            [ A.class "inline-block relative"
                             , A.target "_self"
                             , if isActive then
                                 A.class "font-medium"

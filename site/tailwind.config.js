@@ -41,7 +41,7 @@ export default {
         "young-apricot": "#fed2b2",
       },
       fontFamily: {
-        display: ["Caveat", "cursive"],
+        display: ["Nanum Pen Script", "Jost", ...defaultTheme.fontFamily.sans],
         emoji: ["Noto Emoji"],
         headings: ["Gabarito", "Jost", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", defaultTheme.fontFamily.mono],

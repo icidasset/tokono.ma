@@ -1,7 +1,13 @@
 module Layouts.Markdown exposing ( layout )
 
 import Layouts.Default
+import Transmutable.Html as Html
 
 
-layout page =
-    Layouts.Default.layout page []
+layout page contents =
+    Layouts.Default.layout page
+      [ ]
+      [ Html.article
+          []
+          contents
+      ]

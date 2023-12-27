@@ -51,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            -- 
+            --
         , diffuse
         , oddsdk
         , shikensu
@@ -59,7 +59,7 @@ view =
         , circuits
         , quotes
         , checklists
-            -- 
+            --
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -221,32 +221,15 @@ diffuse =
           }
         ]
         [ imageHolder
-            { padding = True
-            }
-            [ Html.img
-                [ A.src
-                    (Common.pathFromRoot
-                        { root = Pages.work.route
-                        }
-                        [ "images"
-                        , "work"
-                        , "diffuse.svg"
-                        ]
-                    )
-                , A.width 150
-                ]
-                []
-            ]
-        , paragraph
-            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
-            ]
-        , imageHolder
             { padding = False
             }
             [ Html.img
                 [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
                 ]
                 []
+            ]
+        , paragraph
+            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
             ]
         ]
 
@@ -377,8 +360,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-    
-    
+
+
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -392,8 +375,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-    
-    
+
+
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

@@ -34,13 +34,13 @@ main h1 strong {
 }
 
 main h2 {
-  @apply font-display mb-8 mt-20 text-2xl font-extrabold opacity-80;
+  @apply font-display mb-8 mt-20 text-2xl font-extrabold;
   @apply sm:text-3xl;
   @apply md:text-4xl;
 }
 
 main h3 {
-  @apply font-display mb-5 mt-8 text-lg font-bold opacity-80;
+  @apply font-display mb-5 mt-8 text-lg font-bold;
   @apply sm:text-xl;
   @apply md:text-2xl;
 }
@@ -68,6 +68,10 @@ ol li {
   @apply mb-3;
 }
 
+article img {
+  @apply my-6;
+}
+
 article pre {
   @apply my-6;
 }
@@ -77,16 +81,20 @@ article pre code {
   @apply dark:bg-black dark:bg-opacity-20;
 }
 
-.font-serif {
-  @apply tracking-tight;
+hr {
+  @apply bg-magnet my-12 border-0 opacity-10;
+  @apply dark:bg-cows-milk;
+  height: 1px;
 }
 
-.lh-crop::before {
-  content: "";
-  display: block;
-  height: 0;
-  width: 0;
-  margin-top: -0.75em;
+/**
+ * Playfair font overrides.
+ */
+.font-serif {
+  @apply tracking-tight;
+  font-variation-settings:
+    "opsz" 42,
+    "wdth" 88;
 }
 
 /**
@@ -126,8 +134,4 @@ a em:before {
   position: absolute;
   right: -1px;
   z-index: -1;
-}
-
-.mark {
-  bottom: 0.225em;
 }

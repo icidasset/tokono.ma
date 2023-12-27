@@ -17,7 +17,7 @@ Let's talk about this first big change, not needing a server is a huge deal. If 
 
 To be clear, there is still a server component in here, for now. I say 'for now', because Fission aims to be fully decentralised. But, the technology isn't there yet (web ecosystem), so, for now the server component will be the Fission web server. It's [open-source](https://github.com/fission-suite/fission) and you can host yourself if you want to.
 
-![](/images/writings/webnative-elm/markus-spiske-FZ2EM9aeR9o-unsplash.jpg)
+![](../../images/essays/webnative-elm/markus-spiske-FZ2EM9aeR9o-unsplash.jpg)
 
 
 ### Owning your data
@@ -36,8 +36,8 @@ I want to say this is the most important change, but less need for servers has a
 
 **You give explicit permission** to which data each app can access. This is done through the [authentication lobby](https://github.com/fission-suite/auth-lobby) (also open-source), which serves as a safe haven. You can also use your own lobby, but there's work to be done to make this a viable option.
 
-<img class="block dark:hidden" src="/images/writings/webnative-elm/fission-lobby.png" />
-<img class="hidden dark:block" src="/images/writings/webnative-elm/fission-lobby-dark.png" />
+<img class="block dark:hidden" src="../../images/essays/webnative-elm/fission-lobby.png" />
+<img class="hidden dark:block" src="../../images/essays/webnative-elm/fission-lobby-dark.png" />
 
 
 

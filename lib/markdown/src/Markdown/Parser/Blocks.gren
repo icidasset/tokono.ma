@@ -30,13 +30,26 @@ type RawBlock
         , symbol : String
         }
         (Array (Array String))
-    | RawParagraph String
+    | RawParagraph
+        { closed : Bool
+        }
+        String
     | RawThematicBreak
     | RawUnorderedList
         { leadingSpaces : Int
         , symbol : String
         }
         (Array (Array String))
+
+
+isClosed =
+    { closed = True
+    }
+
+
+isOpen =
+    { closed = False
+    }
 
 
 
@@ -135,7 +148,7 @@ parser =
                     -- 
                     -- Paragraph
                     -- 
-                    RawParagraph string ->
+                    RawParagraph _ string ->
                         let
                             inlines =
                                 string
@@ -187,11 +200,8 @@ rawBlockParser blocks =
 
         lastBlockWasFinishedParagraphOrSomethingElse =
             case Array.popLast blocks of
-                Just { last = RawParagraph par } ->
-                    if String.endsWith "\n" par then
-                        True
-                    else
-                        False
+                Just { last = RawParagraph { closed } _ } ->
+                    closed
 
                 _ ->
                     True
@@ -210,7 +220,7 @@ rawBlockParser blocks =
           map (\_ -> Done blocks) (succeed identity |. end)
 
         , -- 
-          cannotInterruptParagraph (block (backtrackable headingParser))
+          block (backtrackable (cannotInterruptParagraph headingParser))
         , block (backtrackable blockQuoteParser)
         , block (backtrackable thematicBreakParser)
 
@@ -237,33 +247,39 @@ rawBlockParser blocks =
                             |> Array.pushLast (RawIndentedCode line)
                             |> Loop
             )
-            |= backtrackable indentedCodeParser
-            |> cannotInterruptParagraph
+            |= backtrackable (cannotInterruptParagraph indentedCodeParser)
 
         , -- If all fails, then it's a paragraph.
           -- Try parsing one line at a time.
           succeed
             (\line ->
                 case Array.popLast blocks of
-                    Just { last = RawParagraph par, initial } ->
+                    Just { last = RawParagraph { closed = False } par, initial } ->
                         if String.endsWith "\n" par then
                             initial
-                                |> Array.pushLast (RawParagraph (String.dropRight 1 par))
-                                |> Array.pushLast (RawParagraph line)
+                                |> Array.pushLast (RawParagraph isClosed (String.dropRight 1 par))
+                                |> Array.pushLast (RawParagraph isOpen line)
                                 |> Loop
                         else if par == "" then
                             initial
-                                |> Array.pushLast (RawParagraph line)
+                                |> Array.pushLast (RawParagraph isOpen line)
+                                |> Loop
+                        else if line == "" then
+                            initial
+                                |> Array.pushLast (RawParagraph isClosed par)
                                 |> Loop
                         else
                             initial
-                                |> Array.pushLast (RawParagraph (par ++ "\n" ++ line))
+                                |> Array.pushLast (RawParagraph isOpen (par ++ "\n" ++ line))
                                 |> Loop
 
                     _ ->
-                        blocks
-                            |> Array.pushLast (RawParagraph line)
-                            |> Loop
+                        if line == "" then
+                            Loop blocks
+                        else
+                            blocks
+                                |> Array.pushLast (RawParagraph isOpen line)
+                                |> Loop
             )
             |. many (specificChar ' ')
             |= getChompedString (chompUntilEndOr "\n")

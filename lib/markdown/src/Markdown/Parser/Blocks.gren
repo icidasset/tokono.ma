@@ -44,8 +44,13 @@ type RawBlock
 
 
 parse : String -> Result (Array DeadEnd) (Array Block)
-parse string =
-    Parser.run parser string
+parse =
+    Parser.run parser
+
+
+parseRaw : String -> Result (Array DeadEnd) (Array RawBlock)
+parseRaw =
+    Parser.run (loop [] rawBlockParser)
 
 
 
@@ -134,6 +139,7 @@ parser =
                         let
                             inlines =
                                 string
+                                    |> String.trimRight
                                     |> Markdown.Parser.Inlines.parse
                                     |> Result.withDefault []
                         in
@@ -178,13 +184,33 @@ rawBlockParser blocks =
     let
         block =
             map (\b -> Loop (Array.pushLast b blocks))
+
+        lastBlockWasFinishedParagraphOrSomethingElse =
+            case Array.popLast blocks of
+                Just { last = RawParagraph par } ->
+                    if String.endsWith "\n" par then
+                        True
+                    else
+                        False
+
+                _ ->
+                    True
+
+        skip =
+            problem ""
+
+        cannotInterruptParagraph p =
+            if lastBlockWasFinishedParagraphOrSomethingElse then
+                p
+            else
+                skip
     in
     oneOf
         [ -- Check if we reached the end
           map (\_ -> Done blocks) (succeed identity |. end)
 
         , -- 
-          block (backtrackable headingParser)
+          cannotInterruptParagraph (block (backtrackable headingParser))
         , block (backtrackable blockQuoteParser)
         , block (backtrackable thematicBreakParser)
 
@@ -212,6 +238,7 @@ rawBlockParser blocks =
                             |> Loop
             )
             |= backtrackable indentedCodeParser
+            |> cannotInterruptParagraph
 
         , -- If all fails, then it's a paragraph.
           -- Try parsing one line at a time.
@@ -219,18 +246,31 @@ rawBlockParser blocks =
             (\line ->
                 case Array.popLast blocks of
                     Just { last = RawParagraph par, initial } ->
-                        initial
-                            |> Array.pushLast (RawParagraph (par ++ "\n" ++ line))
-                            |> Loop
+                        if String.endsWith "\n" par then
+                            initial
+                                |> Array.pushLast (RawParagraph (String.dropRight 1 par))
+                                |> Array.pushLast (RawParagraph line)
+                                |> Loop
+                        else if par == "" then
+                            initial
+                                |> Array.pushLast (RawParagraph line)
+                                |> Loop
+                        else
+                            initial
+                                |> Array.pushLast (RawParagraph (par ++ "\n" ++ line))
+                                |> Loop
 
                     _ ->
                         blocks
                             |> Array.pushLast (RawParagraph line)
                             |> Loop
             )
-            |. spaces
+            |. many (specificChar ' ')
             |= getChompedString (chompUntilEndOr "\n")
-            |. chompWhile isLineEnding
+            |. oneOf
+                    [ chompIf isLineEnding
+                    , end
+                    ]
         ]
 
 
@@ -338,7 +378,7 @@ indentedCodeParser =
     succeed identity
         |. symbol "    "
         |= getChompedString (chompUntilEndOr "\n")
-        |. chompWhile isLineEnding
+        |. chompIf isLineEnding
         |> identity
 
 
@@ -443,7 +483,7 @@ orderedListParser =
                                                     [ specificChar '.'
                                                     , specificChar ')'
                                                     ]
-                                            |. many (specificChar ' ')
+                                            |. specificChar ' '
                                             |> getChompedString
                                             |> map
                                                     (\s ->
@@ -456,7 +496,7 @@ orderedListParser =
                                     (\{ start, symbol } ->
                                         succeed identity
                                             |= getChompedString (chompUntilEndOr "\n")
-                                            |. chompWhile isLineEnding
+                                            |. chompIf isLineEnding
                                             |> map
                                                     (\line ->
                                                         { leadingSpaces = Array.length leadingSpaces
@@ -558,12 +598,12 @@ unorderedListParser =
                                     , specificChar '+'
                                     , specificChar '*'
                                     ]
-                            |. many (specificChar ' ')
+                            |. specificChar ' '
                             |> andThen
                                     (\listChar ->
                                         succeed identity
                                             |= getChompedString (chompUntilEndOr "\n")
-                                            |. chompWhile isLineEnding
+                                            |. chompIf isLineEnding
                                             |> map
                                                     (\line ->
                                                         { leadingSpaces = Array.length leadingSpaces

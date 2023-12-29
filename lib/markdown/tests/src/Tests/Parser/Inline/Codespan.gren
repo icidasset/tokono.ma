@@ -1,4 +1,4 @@
-module Tests.Parser.Inline.Codespan exposing ( tests )
+module Tests.Parser.Inline.Codespan exposing ( examples_328_to_349 )
 
 import Expect
 import Markdown
@@ -9,7 +9,7 @@ import Test exposing (..)
 import Tests.Parser.Helpers exposing (..)
 
 
-tests =
+examples_328_to_349 =
     describe
         "Code spans"
         [ testInline "`foo`" (InlineCode "foo")

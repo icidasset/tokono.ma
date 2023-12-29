@@ -1,4 +1,4 @@
-module Tests.Parser.Blocks.Paragraph exposing ( tests )
+module Tests.Parser.Blocks.Paragraph exposing ( examples_219_to_226 )
 
 import Expect
 import Markdown
@@ -9,7 +9,7 @@ import Test exposing (..)
 import Tests.Parser.Helpers exposing (..)
 
 
-tests =
+examples_219_to_226 =
     describe
         "Paragraphs"
         [ -- Example 219

@@ -45,6 +45,12 @@ main h3 {
   @apply md:text-2xl;
 }
 
+main h4 {
+  @apply font-display mb-3 mt-4 text-base font-bold;
+  @apply sm:text-lg;
+  @apply md:text-xl;
+}
+
 blockquote {
   @apply border-empress border-l-4 border-opacity-30 pl-3;
   @apply dark:border-cows-milk dark:border-opacity-30;
@@ -79,6 +85,10 @@ article pre {
 article pre code {
   @apply bg-cows-milk block overflow-auto rounded-md px-6 py-8 text-xs md:text-sm;
   @apply dark:bg-black dark:bg-opacity-20;
+}
+
+article ul {
+  list-style: disc;
 }
 
 hr {
@@ -134,4 +144,9 @@ a em:before {
   position: absolute;
   right: -1px;
   z-index: -1;
+}
+
+article p:not(.truncate) a:not(.inline-block) {
+  display: inline;
+  vertical-align: baseline;
 }

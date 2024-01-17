@@ -8,10 +8,10 @@
       "gren-lang/browser": "3.0.0",
       "gren-lang/core": "4.0.1",
       "gren-lang/url": "3.0.0",
-      "icidasset/html-gren": "2.0.0",
-      "icidasset/html-virtualdom-gren": "1.0.1",
-      "icidasset/markdown-gren": "local:../../lib/markdown/",
-      "icidasset/svg-gren": "1.0.1"
+      "icidasset/html-gren": "4.1.0",
+      "icidasset/html-virtualdom-gren": "1.0.3",
+      "icidasset/markdown-gren": "2.0.0",
+      "icidasset/svg-gren": "1.0.3"
     },
     "indirect": {
       "gren-lang/parser": "3.0.1"

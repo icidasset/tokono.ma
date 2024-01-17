@@ -1,7 +1,0 @@
-module Maybe.Extra exposing (..)
-
-
-
-unwrap : b -> (a -> b) -> Maybe a -> b
-unwrap default fn =
-    Maybe.map fn >> Maybe.withDefault default

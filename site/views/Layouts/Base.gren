@@ -65,11 +65,11 @@ layout page time pageHtml =
                 , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
                 , Html.text ";"
 
-                , -- 
+                , --
                   Html.text
                     """
                     const pathToRoot = pageRoute.length ? pageRoute.map(() => \'..\').join(\'/\') + \'/\': \'\';
-                    
+
                     fetch(
                       `${pathToRoot}essays.json`
                     ).then(
@@ -80,6 +80,7 @@ layout page time pageHtml =
                     """
                 ]
           ]
-            |> Array.prefix pageHtml
+            -- |> Array.prefix pageHtml
+            |> (\_ -> pageHtml)
             |> Html.body []
         ]

@@ -67,6 +67,10 @@
   @apply text-enchanted-lavender;
 }
 
+.decoration-accent-essays h2 {
+  @apply text-enchanted-lavender;
+}
+
 /**
  * Links
  */

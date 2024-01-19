@@ -54,10 +54,10 @@ layout page attributes contents =
                         [ Html.a
                             [ A.class "inline-block relative"
                             , A.target "_self"
-                            , if isActive then
-                                A.class "font-medium"
-                              else
-                                A.class ""
+                            -- , if isActive then
+                            --     A.class "font-medium"
+                            --   else
+                            --     A.class ""
                             , linkPage.route
                                 |> Common.pathFromRoot
                                         { root = page.route
@@ -84,7 +84,7 @@ layout page attributes contents =
                         ]
               in
               Html.nav
-                [ class "font-display font-light mt-12 space-x-4 text-xl text-right md:text-2xl lg:space-x-0 "
+                [ class "font-display mt-12 space-x-4 text-xl text-right md:text-2xl lg:space-x-0"
                 ]
                 (Array.map link Pages.pages)
             ]

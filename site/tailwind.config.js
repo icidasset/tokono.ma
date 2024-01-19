@@ -46,6 +46,7 @@ export default {
         headings: ["Gabarito", "Jost", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", defaultTheme.fontFamily.mono],
         sans: ["Jost", ...defaultTheme.fontFamily.sans],
+        serif: ["Playfair", ...defaultTheme.fontFamily.serif],
       },
     },
   },

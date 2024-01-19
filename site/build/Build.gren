@@ -198,7 +198,7 @@ consumeAndRenderEssays time compendium =
                                         renderedMarkdown =
                                             blocks
                                                 |> Array.map Markdown.toHtml
-                                                |> Layouts.Markdown.layout page
+                                                |> Layouts.Markdown.layout page "decoration-accent-essays"
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
                                     in

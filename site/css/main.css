@@ -15,8 +15,9 @@ body {
 
 /**
  * Basics
- */
+ **/
 
+/* Headers */
 main h1 {
   @apply text-magnet font-display mb-12 mt-[-0.125em] text-5xl font-bold;
   @apply dark:text-cows-milk;
@@ -34,23 +35,40 @@ main h1 strong {
 }
 
 main h2 {
-  @apply font-display mb-8 mt-20 text-2xl font-extrabold;
-  @apply sm:text-3xl;
-  @apply md:text-4xl;
+  @apply font-display mb-16 mt-32 text-3xl font-extrabold;
+  @apply sm:text-4xl;
+  @apply md:text-5xl;
 }
 
 main h3 {
-  @apply font-display mb-5 mt-8 text-lg font-bold;
+  @apply font-display mb-8 mt-16 text-xl font-bold;
+  @apply sm:text-2xl;
+  @apply md:text-3xl;
+}
+
+main h4 {
+  @apply font-display mb-4 mt-8 text-lg font-bold;
   @apply sm:text-xl;
   @apply md:text-2xl;
 }
 
-main h4 {
-  @apply font-display mb-3 mt-4 text-base font-bold;
-  @apply sm:text-lg;
-  @apply md:text-xl;
+/* Code */
+article pre {
+  @apply my-6;
 }
 
+article pre code {
+  @apply block overflow-auto rounded-md px-6 py-8 text-xs md:text-sm;
+}
+
+article code {
+  @apply bg-cows-milk rounded;
+  @apply dark:bg-black dark:bg-opacity-20;
+  font-size: 82.5%;
+  padding: 3px 4px 2px;
+}
+
+/* Other block elements */
 blockquote {
   @apply border-empress border-l-4 border-opacity-30 pl-3;
   @apply dark:border-cows-milk dark:border-opacity-30;
@@ -65,41 +83,49 @@ ol {
   @apply md:text-xl md:leading-relaxed;
 }
 
-a em {
-  @apply not-italic;
-}
-
-ul li,
-ol li {
-  @apply mb-3;
-}
-
-article img {
-  @apply my-6;
-}
-
-article pre {
-  @apply my-6;
-}
-
-article pre code {
-  @apply bg-cows-milk block overflow-auto rounded-md px-6 py-8 text-xs md:text-sm;
-  @apply dark:bg-black dark:bg-opacity-20;
-}
-
-article ul {
-  list-style: disc;
-}
-
 hr {
   @apply bg-magnet my-12 border-0 opacity-10;
   @apply dark:bg-cows-milk;
   height: 1px;
 }
 
+li {
+  @apply mb-3;
+}
+
+article ul li {
+  position: relative;
+}
+
+article ul li::before {
+  @apply -left-6;
+  background-color: #b7a59a;
+  border-radius: 100%;
+  content: "";
+  height: 0.3em;
+  line-height: 0;
+  opacity: 1;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.3em;
+}
+
+@media (prefers-color-scheme: dark) {
+  article ul li::before {
+    @apply bg-cows-milk;
+    opacity: 0.375;
+  }
+}
+
+/* Inline elements */
+article img {
+  @apply my-6;
+}
+
 /**
  * Playfair font overrides.
- */
+ **/
 .font-serif {
   @apply tracking-tight;
   font-variation-settings:
@@ -109,7 +135,11 @@ hr {
 
 /**
  * Markings & Links
- */
+ **/
+
+a em {
+  @apply not-italic;
+}
 
 p a:not(.inline-block),
 ul a:not(.inline-block),

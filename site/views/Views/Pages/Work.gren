@@ -78,7 +78,7 @@ tableOfContents =
     Html.ul
         []
         [ toc "diffuse" "Diffuse"
-        , toc "oddsdk" "Open Distributed Data SDK"
+        , toc "oddsdk" "Open Distributed Data"
         ]
 
 
@@ -237,7 +237,7 @@ diffuse =
 oddsdk =
     item
         "oddsdk"
-        "Open Distributed Data SDK"
+        "Open Distributed Data"
         [ { name = "Website"
           , text = "odd.dev"
           , url = "https://odd.dev/"

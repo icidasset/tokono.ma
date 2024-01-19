@@ -50,7 +50,7 @@ view model =
                                     , view =
                                         blocks
                                             |> Array.map Markdown.toHtml
-                                            |> Layouts.Markdown.layout p
+                                            |> Layouts.Markdown.layout p "decoration-accent-essays"
                                     }
                                 )
 

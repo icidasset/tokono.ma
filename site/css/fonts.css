@@ -73,3 +73,9 @@
     "opsz" 42,
     "wdth" 88;
 }
+
+@font-face {
+  font-family: "Reenie Beanie";
+  font-weight: 400;
+  src: url("./fonts/reenie-beanie-latin-400-normal.woff2") format("woff2");
+}

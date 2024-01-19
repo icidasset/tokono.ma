@@ -34,34 +34,36 @@ main h1 strong {
   font-weight: inherit;
 }
 
-main h2 {
+main article h2 {
   @apply font-display mb-16 mt-32 text-3xl font-extrabold;
   @apply sm:text-4xl;
   @apply md:text-5xl;
 }
 
-main h3 {
+main h2,
+main article h3 {
   @apply font-display mb-8 mt-16 text-xl font-bold;
   @apply sm:text-2xl;
   @apply md:text-3xl;
 }
 
-main h4 {
+main h3,
+main article h4 {
   @apply font-display mb-4 mt-8 text-lg font-bold;
   @apply sm:text-xl;
   @apply md:text-2xl;
 }
 
 /* Code */
-article pre {
+main pre {
   @apply my-6;
 }
 
-article pre code {
+main pre code {
   @apply block overflow-auto rounded-md px-6 py-8 text-xs md:text-sm;
 }
 
-article code {
+main code {
   @apply bg-cows-milk rounded;
   @apply dark:bg-black dark:bg-opacity-20;
   font-size: 82.5%;

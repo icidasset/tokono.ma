@@ -68,7 +68,7 @@ view =
             , link "https://www.happyhues.co" "Happy Hues"
             , link "https://www.thedayscolor.com" "The Day\'s Color"
             ]
-            -- 
+            --
         , Common.closingEmoji "🌍"
         ]
 

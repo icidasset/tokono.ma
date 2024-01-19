@@ -21,7 +21,7 @@ view =
             [ Html.span
                 [ class "font-medium"
                 ]
-                [ Html.text "Most of my work is done on web applications, but also some code libraries/packages and things related to electrical engineering."
+                [ Html.text "Most of my work is done on web applications and some code libraries/packages, but also occasionally some things related to electrical engineering."
                 ]
             ]
         , paragraph
@@ -148,7 +148,7 @@ item id title links nodes =
         |> Array.postfix
                 [ linksTable links
                 ]
-        |> Html.article
+        |> Html.div
                 [ A.id id
                 ]
 

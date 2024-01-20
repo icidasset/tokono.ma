@@ -38,11 +38,7 @@ format-gren:
 
 
 publish: build-optimised
-  #!/usr/bin/env bash
-  cid=$(pkgx npx w3 -- up ./dist/ | tail -n 1 | sed "s/⁂ https:\/\/w3s.link\/ipfs\///")
-  # https://dns-lexicon.readthedocs.io/
-  echo "Publishing $cid"
-  lexicon cloudflare --auth-token $CLOUDFLARE_AUTH_TOKEN --content $cid update --name _dnslink _dnslink.tokono.ma TXT
+  npx netlify -- deploy --site tokonoma --dir ./dist
 
 
 @serve:

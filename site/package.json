@@ -2,6 +2,7 @@
   "devDependencies": {
     "@web3-storage/w3cli": "^4.2.1",
     "gren-lang": "^0.3.0",
+    "netlify-cli": "^17.15.1",
     "tailwindcss": "^3.3.3"
   }
 }

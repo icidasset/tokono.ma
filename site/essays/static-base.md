@@ -12,10 +12,10 @@ __Update__: I wrote a better version of this library in Haskell, called [Shikens
 
 First of all, what is it anyway? It's a small functional toolset written for [node.js](https://nodejs.org/en/) to **build static websites**, and by that I mean, output html files. As it is still the fundamental part of the web, it's probably not a bad idea to consider it as a rather important piece of puzzle.
 
-<small>_Links:_</small>
-[**static-base** github repo](https://github.com/icidasset/static-base)
-[**static-base-contrib** github repo](https://github.com/icidasset/static-base-contrib)
-[**static-base-preset** github repo](https://github.com/icidasset/static-base-preset)
+*<small>Links:</small>*<br />
+**[static-base](https://github.com/icidasset/static-base)**<br />
+**[static-base-contrib](https://github.com/icidasset/static-base-contrib)**<br />
+**[static-base-preset](https://github.com/icidasset/static-base-preset)**
 
 I guess the most used, and easiest to understand, example would be a blog. You input text in a certain format, for example Markdown, and after the processing you get html. Let me explain it in more detail:
 

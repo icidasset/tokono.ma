@@ -23,6 +23,10 @@ view =
                 ]
             , Html.text " tech."
             ]
+        , Html.h2
+            []
+            [ Html.text "Work history"
+            ]
         , paragraph
             [ Html.text "I started out as a full-stack web dev at a company called "
             , Html.a
@@ -36,10 +40,10 @@ view =
                 ]
                 [ Html.text "Ruby"
                 ]
-            , Html.text " here, which was one of the first programming languages that I really liked. Also did some Go and PHP, and a bunch of JS of course."
+            , Html.text " here, which was one of the first programming languages that I really liked. Also did some Go and PHP, and a lot of JS."
             ]
         , paragraph
-            [ Html.text "After that I worked full-time remotely for "
+            [ Html.text "After that I worked remotely full-time for "
             , Html.a
                 [ A.href "https://metalab.co"
                 ]
@@ -66,7 +70,7 @@ view =
             , Html.text ", etc."
             ]
         , paragraph
-            [ Html.text "During this time I worked on a side project which would eventually get me into "
+            [ Html.text "In my spare time I worked on a side project which would eventually get me into "
             , Html.a
                 [ A.href "https://fission.codes"
                 ]
@@ -74,7 +78,7 @@ view =
                 ]
             , Html.text ", my third job, where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
             ]
-            -- 
+            --
         , Common.closingEmoji "🌷"
         ]
 

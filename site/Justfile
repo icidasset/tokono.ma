@@ -5,8 +5,8 @@ default: build
   just serve & just watch
 
 
-build: build-folder build-css build-static-gren build-dynamic-gren
-build-optimised: build-folder build-css build-static-gren build-dynamic-gren-optimised
+build: build-folder build-css build-static-gren # build-dynamic-gren
+build-optimised: build-folder build-css build-static-gren # build-dynamic-gren-optimised
 
 
 build-folder:

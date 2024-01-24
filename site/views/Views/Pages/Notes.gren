@@ -1,13 +1,14 @@
 module Views.Pages.Notes exposing ( view )
 
 import Layouts.Default
-import Pages
-import Transmutable.Html as Html
+import Pages exposing ( TableOfContents )
+import Transmutable.Html as Html exposing ( Html )
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
+import Messages exposing ( Msg )
 
-
-view =
+view : TableOfContents -> Array (Html Msg)
+view notes =
     Layouts.Default.layout
         Pages.notes
         [ class "decoration-accent-notes"
@@ -17,26 +18,23 @@ view =
             ]
             [ Html.text "Notes about things that interest me."
             ]
-        , Html.ul
-            []
-            [ link "Health & fitness"
-            ]
+        ,  Html.ul [] (Array.map (\{ page } -> link page) notes)
         , Html.p
             [ class "italic max-w-md mt-6 text-sm"
             ]
             [ Html.text "Ordered by name."
             ]
-            -- 
+            --
         , Common.closingEmoji "📓"
         ]
 
 
-link text =
+link page =
     Html.li
         []
         [ Html.a
-            [ A.href "#"
+            [ A.href ("../" ++ String.join "/" page.route ++ "/")
             ]
-            [ Html.text text
+            [ Html.text page.name
             ]
         ]

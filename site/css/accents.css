@@ -117,6 +117,10 @@
   @apply text-wondrous-wisteria;
 }
 
+.decoration-accent-notes h2 {
+  @apply text-wondrous-wisteria;
+}
+
 /**
  * Work
  */

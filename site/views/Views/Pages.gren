@@ -15,10 +15,11 @@ import Views.Pages.Work
 
 view :
     { essayTableOfContents : TableOfContents
+    , notesTableOfContents : TableOfContents
     }
     -> Page
     -> Array (Html Msg)
-view { essayTableOfContents } page =
+view { essayTableOfContents, notesTableOfContents } page =
     case page.id of
         About ->
             Views.Pages.About.view
@@ -39,7 +40,10 @@ view { essayTableOfContents } page =
             Views.Pages.Links.view
 
         Notes ->
-            Views.Pages.Notes.view
+            Views.Pages.Notes.view notesTableOfContents
+
+        Note _ ->
+            []
 
         Work ->
             Views.Pages.Work.view

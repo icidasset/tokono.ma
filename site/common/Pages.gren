@@ -24,6 +24,9 @@ type PageId
     | Essays
     | Index
     | Links
+    | Note
+        { baseName : String
+        }
     | Notes
     | Work
 
@@ -132,6 +135,25 @@ links =
     , title = Views.Common.titleWithSuffix "Links"
     , route =
         [ "links"
+        ]
+    }
+
+
+note :
+    { baseName : String
+    , title : String
+    }
+    -> Page
+note { baseName, title } =
+    { id =
+        Note
+            { baseName = baseName
+            }
+    , name = title
+    , title = Views.Common.titleWithSuffix title
+    , route =
+        [ "notes"
+        , baseName
         ]
     }
 

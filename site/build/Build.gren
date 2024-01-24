@@ -16,7 +16,7 @@ import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
 import Shikensu.Definition as Shikensu
-import Shikensu.Error exposing ( Error )
+import Shikensu.Error exposing ( Error(..) )
 import Shikensu.Focus as Shikensu exposing ( Focus(..) )
 import Shikensu.Path as Path
 import Stream
@@ -55,65 +55,74 @@ sequence : FileSystem.Permission -> Task Error {}
 sequence fsPermission =
     Task.andThen
         (\time ->
-            time
-                |> processEssays fsPermission
-                |> Task.map
-                        (\essays ->
-                            { essayTableOfContents = essays
-                            }
+            [ processMarkdown "essays" essayHandler Pages.essay fsPermission time
+            , processMarkdown "notes" notesHandler Pages.note fsPermission time
+            ]
+                |> Task.sequence
+                |> Task.andThen
+                        (\results ->
+                            case results of
+                              [essays, notes] ->
+                                Task.succeed
+                                { essayTableOfContents = essays
+                                , notesTableOfContents = notes
+                                }
+                              _ ->
+                                Task.fail (ErrorMessage "Faulty markdown processing result")
                         )
+
+
                 |> Task.andThen (writePagesToDisk fsPermission time)
                 |> Task.map (\_ -> {})
         )
         Time.now
 
 
-processEssays : FileSystem.Permission -> Time.Posix -> Task Error TableOfContents
-processEssays fsPermission time =
-    [ ".."
-    , "essays"
-    ]
-        |> Path.directory
-        |> Relative
-        |> Shikensu.list fsPermission
-        |> Task.map (Shikensu.withExtension "md")
-        |> Task.andThen Shikensu.read
-        |> Task.map
-                (\bundle ->
-                    bundle
-                        |> Shikensu.enclose "essays"
-                        |> Shikensu.renameExtension "md" "html"
-                        |> Shikensu.permalink "index"
-                        |> Shikensu.mapCompendium (consumeAndRenderEssays time)
-                        |> Shikensu.mapCompendium (createMarkdownJsonRepo "essays")
-                )
-        |> Task.andThen (Shikensu.write dist)
-        |> Task.map
-                (\bundle ->
-                    -- Build a table of contents
-                    Array.filterMap
-                        (\def ->
-                            -- Only use the essays, not the json repo
-                            if Dict.member "published" def.metadata then
-                                Just
-                                    { page =
-                                        Pages.essay
-                                            { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
-                                            , title = meta "title" Json.string def.baseName def
-                                            }
-                                    , archived = meta "archived" Json.bool False def
-                                    }
-                            else
-                                Nothing
-                        )
-                        bundle.compendium
-                )
+processMarkdown : String
+  -> (Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition)
+  -> ({ baseName : String, title : String } -> Page)
+  -> FileSystem.Permission -> Time.Posix -> Task Error TableOfContents
+processMarkdown dir handler pageCreator fsPermission time =
+  [ "..", dir ]
+    |> Path.directory
+    |> Relative
+    |> Shikensu.list fsPermission
+    |> Task.map (Shikensu.withExtension "md")
+    |> Task.andThen Shikensu.read
+    |> Task.map
+            (\bundle ->
+                bundle
+                    |> Shikensu.enclose dir
+                    |> Shikensu.renameExtension "md" "html"
+                    |> Shikensu.mapCompendium (handler time)
+                    |> Shikensu.permalink "index"
+
+            )
+    |> Task.andThen (Shikensu.write dist)
+    |> Task.map
+            (\bundle ->
+                -- Build a table of contents
+                Array.map
+                    (\def ->
+                        { page =
+                            pageCreator
+                                { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
+                                , title = meta "title" Json.string def.baseName def
+                                }
+                        , archived = meta "archived" Json.bool False def
+                        }
+                    )
+                    bundle.compendium
+            )
+
+
 
 
 writePagesToDisk :
     FileSystem.Permission
     -> Time.Posix
     -> { essayTableOfContents : TableOfContents
+       , notesTableOfContents : TableOfContents
        }
     -> Task Error TableOfContents
 writePagesToDisk fsPermission time toc =
@@ -154,8 +163,8 @@ htmlBytes =
 -- 🛠️ MARKDOWN
 
 
-consumeAndRenderEssays : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
-consumeAndRenderEssays time compendium =
+essayHandler : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
+essayHandler time compendium =
     compendium
         |> Array.filterMap
                 (\def ->
@@ -220,6 +229,58 @@ consumeAndRenderEssays time compendium =
                                                   }
                                                 , { key = "title"
                                                   , value = Json.Encode.string metadata.title
+                                                  }
+                                                ]
+                                    }
+                                )
+                )
+        |> Array.sortBy (\def -> meta "title" Json.string def.baseName def)
+
+
+notesHandler : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
+notesHandler time compendium =
+    compendium
+        |> Array.filterMap
+                (\def ->
+                    def.content
+                        |> Maybe.andThen bytesToString
+                        |> Maybe.map
+                                (\markdownString ->
+                                    markdownString
+                                        |> Markdown.parse
+                                                { frontmatter = Nothing
+                                                }
+                                        |> (\{ blocks } ->
+                                                { blocks = blocks
+                                                , markdown = markdownString
+                                                }
+                                            )
+                                )
+                        |> Maybe.map
+                                (\{ blocks, markdown } ->
+                                    let
+                                        page =
+                                            Pages.note
+                                                { baseName = def.baseName
+                                                , title = def.baseName
+                                                }
+
+                                        renderedMarkdown =
+                                            blocks
+                                                |> Array.map Markdown.toHtml
+                                                |> Layouts.Markdown.layout page "decoration-accent-notes"
+                                                |> Layouts.Base.layout page time
+                                                |> htmlBytes
+                                    in
+                                    { def
+                                        | content = Just renderedMarkdown
+                                        , metadata =
+                                            Dict.fromArray
+                                                [ { key = "markdown"
+                                                  , value = Json.Encode.string markdown
+                                                  }
+                                                , { key = "title"
+                                                  , value = Json.Encode.string def.baseName
                                                   }
                                                 ]
                                     }

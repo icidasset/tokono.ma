@@ -24,7 +24,7 @@ view =
             [ Common.ikebana
             ]
         , Html.nav
-            [ class "font-display px-2 text-2xl space-x-4 sm:space-x-12 md:space-x-24 md:text-3xl"
+            [ class "font-display px-2 text-2xl space-x-5 sm:space-x-12 md:space-x-24 md:text-3xl"
             ]
             (Array.map
                 (\page ->

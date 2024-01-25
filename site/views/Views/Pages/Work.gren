@@ -320,7 +320,7 @@ quotes =
           }
         ]
         [ paragraph
-            [ Html.text "A tiny app that shows a random quote from a given collection. This app will be made local-first somewhere in the near future."
+            [ Html.text "A tiny app that shows a random quote from a given collection. This app will be made local-first somewhere in the future."
             ]
         ]
 
@@ -339,7 +339,7 @@ shikensu =
           }
         ]
         [ paragraph
-            [ Html.text "I was tired of always keeping up with the latest static site generators, so instead I built a library that\'s one level down of a static-site generator. It\'s sort of a static-site generator in library format, you write code to generate your website. For example, say you have a folder of markdown articles and you want to generate HTML pages for each of them. You tell Shikensu, through code, to look at your folder that contains the markdown. Then Shikensu scans the entire folder structure and you end up with a data structure that can be manipulated and then optionally written back to disk to, for example, get your HTML pages. You would then instruct Shikensu in code to render the markdown, change the extensions, permalink the pages, etc."
+            [ Html.text "I was tired of always keeping up with the latest static site generators, so instead I built a library that\'s one level down of a static-site generator. It\'s sort of a static-site generator in library format, you write code to generate your website. For example, say you have a folder of markdown articles and you want to generate HTML pages for each of them. You tell Shikensu, through code, to look at your folder that contains the markdown. Then Shikensu scans the entire folder structure and you end up with a data structure that can be manipulated and then optionally written back to disk to, for example, get your HTML pages. You would then instruct Shikensu in code to render markdown, change the extension, wrap the file in a folder, etc."
             ]
         , paragraph
             [ Html.text "Through the years I\'ve written various iterations of this, but the basic idea is still the same. The latest iteration is written in Gren (Elm fork/dialect). The one before that was written in Haskell."

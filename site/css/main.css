@@ -44,20 +44,20 @@ main h1 strong {
 }
 
 main article h2 {
-  @apply font-display mb-12 mt-24 text-4xl font-extrabold;
+  @apply font-headings mb-12 mt-24 text-4xl font-extrabold;
   @apply md:mb-16 md:mt-32 md:text-5xl;
 }
 
 main h2,
 main article h3 {
-  @apply font-display mb-6 mt-12 text-2xl font-bold;
-  @apply md:mb-8 md:mt-16 md:text-3xl;
+  @apply font-headings mb-6 mt-12 text-xl font-bold;
+  @apply md:mb-8 md:mt-16 md:text-2xl;
 }
 
 main h3,
 main article h4 {
-  @apply font-display mb-3 mt-6 text-xl font-bold;
-  @apply md:mb-4 md:mt-8 md:text-2xl;
+  @apply font-headings mb-3 mt-6 text-lg font-bold;
+  @apply md:mb-4 md:mt-8 md:text-xl;
 }
 
 /* Code */

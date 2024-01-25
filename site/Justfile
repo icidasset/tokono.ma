@@ -44,7 +44,7 @@ gather-notes:
 
 
 publish: build-optimised
-  npx netlify -- deploy --site tokonoma --dir ./dist
+  npx netlify -- deploy --site tokonoma --dir ./dist --prod
 
 
 @serve:

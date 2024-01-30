@@ -8,7 +8,7 @@ import Transmutable.Html.Attributes as A
 import Views.Common exposing ( Route )
 
 
-layout : Page -> Time.Posix -> Array (Html msg) -> Html msg
+layout : Page -> Time.Posix -> Array (Html msg) -> Array (Html msg)
 layout page time pageHtml =
     let
         cacheId =
@@ -16,8 +16,10 @@ layout page time pageHtml =
                 |> Time.posixToMillis
                 |> String.fromInt
     in
-    Html.html
-        []
+    [ Html.doctype
+    , Html.html
+        [ A.lang "en"
+        ]
         [ -- -------------------------------------
           -- HEAD
           -- -------------------------------------
@@ -32,6 +34,10 @@ layout page time pageHtml =
             , Html.meta
                 [ A.name "viewport"
                 , A.content "width=device-width, initial-scale=1"
+                ]
+            , Html.meta
+                [ A.name "description"
+                , A.content "Steven Vandevelde\'s personal website 😶‍🌫️"
                 ]
             , Html.link
                 [ A.href
@@ -65,11 +71,11 @@ layout page time pageHtml =
                 , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
                 , Html.text ";"
 
-                , --
+                , -- 
                   Html.text
                     """
                     const pathToRoot = pageRoute.length ? pageRoute.map(() => \'..\').join(\'/\') + \'/\': \'\';
-
+                    
                     fetch(
                       `${pathToRoot}essays.json`
                     ).then(
@@ -84,3 +90,4 @@ layout page time pageHtml =
             |> (\_ -> pageHtml)
             |> Html.body []
         ]
+    ]

@@ -8,9 +8,22 @@
 @tailwind utilities;
 
 body {
-  @apply bg-french-porcelain text-magnet font-sans;
+  @apply bg-french-porcelain text-magnet font-sans; /* text-black-panther */
   @apply dark:bg-carbon-fiber dark:text-cows-milk;
   text-rendering: geometricPrecision;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  body {
+    color: #1c1c1c;
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  body {
+    color: #fffdf9;
+  }
 }
 
 /**
@@ -28,8 +41,7 @@ ol {
 
 /* Headers */
 main h1 {
-  @apply text-magnet font-display mb-12 mt-[-0.125em] text-5xl font-bold;
-  @apply dark:text-cows-milk;
+  @apply font-display mb-12 mt-[-0.125em] text-5xl font-bold;
   @apply sm:text-6xl;
   @apply md:text-7xl;
   line-height: 0.95;

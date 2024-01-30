@@ -9,7 +9,7 @@
       "gren-lang/node": "3.0.1",
       "icidasset/shikensu-gren": "5.0.0",
       "icidasset/html-gren": "4.1.0",
-      "icidasset/markdown-gren": "2.0.0",
+      "icidasset/markdown-gren": "3.0.0",
       "icidasset/svg-gren": "1.0.3"
     },
     "indirect": {

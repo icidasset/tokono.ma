@@ -11,6 +11,7 @@ import Json.Encode
 import Layouts.Base
 import Layouts.Markdown
 import Markdown
+import Markdown.Transmutationist
 import Pages exposing ( Page, TableOfContents )
 import Shikensu
 import Shikensu.Bundle as Shikensu
@@ -62,60 +63,65 @@ sequence fsPermission =
                 |> Task.andThen
                         (\results ->
                             case results of
-                              [essays, notes] ->
-                                Task.succeed
-                                { essayTableOfContents = essays
-                                , notesTableOfContents = notes
-                                }
-                              _ ->
-                                Task.fail (ErrorMessage "Faulty markdown processing result")
+                                [ essays, notes ] ->
+                                    Task.succeed
+                                        { essayTableOfContents = essays
+                                        , notesTableOfContents = notes
+                                        }
+
+                                _ ->
+                                    Task.fail (ErrorMessage "Faulty markdown processing result")
                         )
-
-
                 |> Task.andThen (writePagesToDisk fsPermission time)
                 |> Task.map (\_ -> {})
         )
         Time.now
 
 
-processMarkdown : String
-  -> (Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition)
-  -> ({ baseName : String, title : String } -> Page)
-  -> FileSystem.Permission -> Time.Posix -> Task Error TableOfContents
+processMarkdown :
+    String
+    -> (Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition)
+    -> ({ baseName : String
+        , title : String
+        }
+        -> Page
+       )
+    -> FileSystem.Permission
+    -> Time.Posix
+    -> Task Error TableOfContents
 processMarkdown dir handler pageCreator fsPermission time =
-  [ "..", dir ]
-    |> Path.directory
-    |> Relative
-    |> Shikensu.list fsPermission
-    |> Task.map (Shikensu.withExtension "md")
-    |> Task.andThen Shikensu.read
-    |> Task.map
-            (\bundle ->
-                bundle
-                    |> Shikensu.enclose dir
-                    |> Shikensu.renameExtension "md" "html"
-                    |> Shikensu.mapCompendium (handler time)
-                    |> Shikensu.permalink "index"
-
-            )
-    |> Task.andThen (Shikensu.write dist)
-    |> Task.map
-            (\bundle ->
-                -- Build a table of contents
-                Array.map
-                    (\def ->
-                        { page =
-                            pageCreator
-                                { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
-                                , title = meta "title" Json.string def.baseName def
-                                }
-                        , archived = meta "archived" Json.bool False def
-                        }
-                    )
-                    bundle.compendium
-            )
-
-
+    [ ".."
+    , dir
+    ]
+        |> Path.directory
+        |> Relative
+        |> Shikensu.list fsPermission
+        |> Task.map (Shikensu.withExtension "md")
+        |> Task.andThen Shikensu.read
+        |> Task.map
+                (\bundle ->
+                    bundle
+                        |> Shikensu.enclose dir
+                        |> Shikensu.renameExtension "md" "html"
+                        |> Shikensu.mapCompendium (handler time)
+                        |> Shikensu.permalink "index"
+                )
+        |> Task.andThen (Shikensu.write dist)
+        |> Task.map
+                (\bundle ->
+                    -- Build a table of contents
+                    Array.map
+                        (\def ->
+                            { page =
+                                pageCreator
+                                    { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
+                                    , title = meta "title" Json.string def.baseName def
+                                    }
+                            , archived = meta "archived" Json.bool False def
+                            }
+                        )
+                        bundle.compendium
+                )
 
 
 writePagesToDisk :
@@ -154,9 +160,9 @@ bytesToString bytes =
         |> (\decoder -> Bytes.Decode.decode decoder bytes)
 
 
-htmlBytes : Html msg -> Bytes
+htmlBytes : Array (Html msg) -> Bytes
 htmlBytes =
-    Transmutable.Html.toString >> Bytes.Encode.string >> Bytes.Encode.encode
+    Transmutable.Html.arrayToString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
 
@@ -206,7 +212,7 @@ essayHandler time compendium =
 
                                         renderedMarkdown =
                                             blocks
-                                                |> Array.map Markdown.toHtml
+                                                |> Array.map markdownToHtml
                                                 |> Layouts.Markdown.layout page "decoration-accent-essays"
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
@@ -267,7 +273,7 @@ notesHandler time compendium =
 
                                         renderedMarkdown =
                                             blocks
-                                                |> Array.map Markdown.toHtml
+                                                |> Array.map markdownToHtml
                                                 |> Layouts.Markdown.layout page "decoration-accent-notes"
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
@@ -332,3 +338,9 @@ meta key decoder default definition =
         |> Dict.get key
         |> Maybe.andThen (Json.decodeValue decoder >> Result.toMaybe)
         |> Maybe.withDefault default
+
+
+markdownToHtml =
+    Markdown.Transmutationist.toHtmlWithOptions
+        { imageLoadingStrategy = Markdown.Transmutationist.Lazy
+        }

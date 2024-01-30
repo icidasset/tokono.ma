@@ -18,7 +18,18 @@
 }
 
 .text-accent-about {
-  @apply text-lichen contrast-more:text-perrywinkle;
+  @apply text-lichen;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-about {
+    background-color: #2e4e38;
+  }
+
+  .text-accent-about {
+    color: #2e4e38;
+  }
 }
 
 /**
@@ -42,6 +53,17 @@
 
 .text-accent-error {
   @apply text-chewing-gum;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-error {
+    background-color: #902520;
+  }
+
+  .text-accent-error {
+    color: #902520;
+  }
 }
 
 /**
@@ -71,6 +93,17 @@
   @apply text-enchanted-lavender;
 }
 
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-essays {
+    background-color: #4f248a;
+  }
+
+  .text-accent-essays {
+    color: #4f248a;
+  }
+}
+
 /**
  * Links
  */
@@ -92,6 +125,17 @@
 
 .text-accent-links {
   @apply text-honey-bee;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-links {
+    background-color: #b37706;
+  }
+
+  .text-accent-links {
+    color: #b37706;
+  }
 }
 
 /**
@@ -121,6 +165,17 @@
   @apply text-wondrous-wisteria;
 }
 
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-notes {
+    background-color: #141f9c;
+  }
+
+  .text-accent-notes {
+    color: #141f9c;
+  }
+}
+
 /**
  * Work
  */
@@ -142,4 +197,15 @@
 
 .text-accent-work {
   @apply text-chai-latte;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-work {
+    background-color: #b44d02;
+  }
+
+  .text-accent-work {
+    color: #b44d02;
+  }
 }

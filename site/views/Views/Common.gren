@@ -1,7 +1,7 @@
 module Views.Common exposing (..)
 
 import Transmutable.Html as Html exposing ( Html )
-import Transmutable.Html.Attributes exposing ( class )
+import Transmutable.Html.Attributes exposing ( class, attribute )
 import Transmutable.Svg as Svg exposing ( Svg )
 import Transmutable.Svg.Attributes as A
 
@@ -45,6 +45,7 @@ titleWithSuffix t =
 closingEmoji emoji =
     Html.div
         [ class "font-emoji mt-16 opacity-50 text-2xl"
+        , attribute "aria-hidden" "true"
         ]
         [ Html.text emoji
         ]

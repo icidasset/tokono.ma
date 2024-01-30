@@ -1,11 +1,12 @@
 module Views.Pages.Notes exposing ( view )
 
 import Layouts.Default
+import Messages exposing ( Msg )
 import Pages exposing ( TableOfContents )
 import Transmutable.Html as Html exposing ( Html )
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
-import Messages exposing ( Msg )
+
 
 view : TableOfContents -> Array (Html Msg)
 view notes =
@@ -18,13 +19,13 @@ view notes =
             ]
             [ Html.text "Notes about things that interest me."
             ]
-        ,  Html.ul [] (Array.map (\{ page } -> link page) notes)
+        , Html.ul [] (Array.map (\{ page } -> link page) notes)
         , Html.p
             [ class "italic max-w-md mt-6 text-sm"
             ]
             [ Html.text "Ordered by name."
             ]
-            --
+            -- 
         , Common.closingEmoji "📓"
         ]
 

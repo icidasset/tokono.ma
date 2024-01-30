@@ -198,6 +198,7 @@ circuits =
                         , "circuits.webp"
                         ]
                     )
+                , A.attribute "loading" "lazy"
                 ]
                 []
             ]
@@ -225,6 +226,7 @@ diffuse =
             }
             [ Html.img
                 [ A.src "https://icidasset-public.s3.amazonaws.com/diffuse-v3.jpg"
+                , A.attribute "loading" "lazy"
                 ]
                 []
             ]
@@ -273,6 +275,7 @@ oddsdk =
                         ]
                     )
                 , A.width 90
+                , A.attribute "loading" "lazy"
                 ]
                 []
             ]
@@ -405,6 +408,7 @@ waves =
                         , "waves.webp"
                         ]
                     )
+                    , A.attribute "loading" "lazy"
                 ]
                 []
             ]

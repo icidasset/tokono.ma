@@ -24,6 +24,7 @@ layout page attributes contents =
                 ]
                 [ Html.a
                     [ A.class "block mb-8 w-[98px]"
+                    , A.attribute "aria-label" "Index"
                     , A.href
                         (Common.pathFromRoot
                             { root = page.route
@@ -43,10 +44,10 @@ layout page attributes contents =
                 link linkPage =
                     let
                         firstPartRoute =
-                          Array.first page.route
+                            Array.first page.route
 
                         isActive =
-                           (firstPartRoute == Array.first linkPage.route)
+                            firstPartRoute == Array.first linkPage.route
                     in
                     Html.div
                         [ A.class "inline-block lg:block lg:mb-4"
@@ -54,10 +55,10 @@ layout page attributes contents =
                         [ Html.a
                             [ A.class "inline-block relative"
                             , A.target "_self"
-                            -- , if isActive then
-                            --     A.class "font-medium"
-                            --   else
-                            --     A.class ""
+                                -- , if isActive then
+                                --     A.class "font-medium"
+                                --   else
+                                --     A.class ""
                             , linkPage.route
                                 |> Common.pathFromRoot
                                         { root = page.route

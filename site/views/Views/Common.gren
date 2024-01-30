@@ -74,7 +74,7 @@ ikebana =
 
 tokonoma =
     Html.div
-        [ class "font-bold font-headings mt-1 pt-px opacity-40 text-sm uppercase tracking-widest"
+        [ class "font-bold font-headings mt-1 pt-px opacity-40 text-sm uppercase tracking-widest contrast-more:opacity-80"
         ]
         [ Html.text "tokono.ma"
         ]

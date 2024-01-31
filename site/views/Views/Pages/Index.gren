@@ -49,8 +49,8 @@ view =
                 Pages.pages
             )
 
-        , --
-         Html.div
+        , -- 
+          Html.div
             [ class "font-medium mt-10 sm:mt-16 opacity-40 text-sm contrast-more:opacity-80"
             ]
             [ Html.text "A synopsis of my work and writings."

@@ -14,11 +14,11 @@ view =
         [ Html.h1
             [ class "text-accent-links"
             ]
-            [ Html.text "Links to some things related to myself, but also a bunch of other stuff."
+            [ Html.text "Odds and ends, bits and pieces, miscellany."
             ]
         , Html.h2
             []
-            [ Html.text "Socials"
+            [ Html.text "My socials"
             ]
         , linkGroup
             [ linkWithEmoji "🏞️" "https://bsky.app/profile/tokono.ma" "Bluesky"
@@ -38,15 +38,15 @@ view =
             ]
         , Html.h2
             []
-            [ Html.text "Not related to me"
+            [ Html.text "Sites & Apps"
             ]
         , Html.p
             []
-            [ Html.text "Websites & applications that I use."
+            [ Html.text "Various websites & applications that I use."
             ]
         , Html.h3
             []
-            [ Html.text "Web Apps"
+            [ Html.text "Various"
             ]
         , linkGroup
             [ linkWithEmoji "🔐" "https://cryptii.com" "Cryptii"

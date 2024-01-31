@@ -11,8 +11,9 @@ build-optimised: build-folder build-css build-static-gren # build-dynamic-gren-o
 
 build-folder:
   rm -rf dist
-  mkdir -p dist
+  mkdir -p dist/notes/Embeds/
   cp -R ./static/* ./dist/
+  cp -R ./notes/Embeds/* ./dist/notes/Embeds/
 
 
 build-css:

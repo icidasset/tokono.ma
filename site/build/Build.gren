@@ -11,6 +11,8 @@ import Json.Encode
 import Layouts.Base
 import Layouts.Markdown
 import Markdown
+import Markdown.Block as Markdown exposing (..)
+import Markdown.Inline as Markdown exposing (..)
 import Markdown.Transmutationist
 import Pages exposing ( Page, TableOfContents )
 import Shikensu
@@ -257,7 +259,7 @@ notesHandler time compendium =
                                                 { frontmatter = Nothing
                                                 }
                                         |> (\{ blocks } ->
-                                                { blocks = blocks
+                                                { blocks = postProcessNotesMarkdown blocks
                                                 , markdown = markdownString
                                                 }
                                             )
@@ -293,6 +295,59 @@ notesHandler time compendium =
                                 )
                 )
         |> Array.sortBy (\def -> meta "title" Json.string def.baseName def)
+
+
+postProcessNotesMarkdown : Array Markdown.Block -> Array Markdown.Block
+postProcessNotesMarkdown =
+    let
+        inlineHandler inline =
+            case inline of
+                Image { alt, url } ->
+                    Image
+                        { alt = alt
+                        , url =
+                            if String.startsWith "Embeds/" url then
+                                "../" ++ url
+                            else
+                                url
+                        }
+
+                i ->
+                    i
+    in
+    Array.map
+        (\block ->
+            case block of
+                BlockQuote blocks ->
+                    BlockQuote (postProcessNotesMarkdown blocks)
+
+                Heading opts inlines ->
+                    Heading opts (Array.map inlineHandler inlines)
+
+                HtmlBlockNode opts blocks ->
+                    HtmlBlockNode opts (postProcessNotesMarkdown blocks)
+
+                Inline inline ->
+                    Inline (inlineHandler inline)
+
+                OrderedLooseList opts itemsWithBlocks ->
+                    OrderedLooseList opts (Array.map postProcessNotesMarkdown itemsWithBlocks)
+
+                OrderedTightList opts itemsWithInlines ->
+                    OrderedTightList opts (Array.map (Array.map inlineHandler) itemsWithInlines)
+
+                Paragraph inlines ->
+                    Paragraph (Array.map inlineHandler inlines)
+
+                UnorderedLooseList itemsWithBlocks ->
+                    UnorderedLooseList (Array.map postProcessNotesMarkdown itemsWithBlocks)
+
+                UnorderedTightList itemsWithInlines ->
+                    UnorderedTightList (Array.map (Array.map inlineHandler) itemsWithInlines)
+
+                b ->
+                    b
+        )
 
 
 createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Array Shikensu.Definition

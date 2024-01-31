@@ -17,7 +17,7 @@ view notes =
         [ Html.h1
             [ class "text-accent-notes"
             ]
-            [ Html.text "Notes about things that interest me."
+            [ Html.text "Notes about personal interests."
             ]
         , Html.ul [] (Array.map (\{ page } -> link page) notes)
         , Html.p

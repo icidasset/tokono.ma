@@ -25,12 +25,17 @@ layout page attributes contents =
                 [ Html.a
                     [ A.class "block mb-8 w-[98px]"
                     , A.attribute "aria-label" "Index"
-                    , A.href
-                        (Common.pathFromRoot
-                            { root = page.route
-                            }
-                            Pages.index.route
-                        )
+                    , case page.route of
+                        [ "404" ] ->
+                            A.href "/"
+
+                        _ ->
+                            A.href
+                                (Common.pathFromRoot
+                                    { root = page.route
+                                    }
+                                    Pages.index.route
+                                )
                     ]
                     [ Common.ikebana
                     ]

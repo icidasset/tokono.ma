@@ -9,8 +9,13 @@ layout page decorationClass contents =
     Layouts.Default.layout
         page
         []
-        [ Html.article
-            [ class decorationClass
-            ]
-            contents
+        [ [ Html.h1
+                []
+                [ Html.text page.name
+                ]
+          ]
+            |> (\a -> a ++ contents)
+            |> Html.article
+                    [ class decorationClass
+                    ]
         ]

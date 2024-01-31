@@ -54,7 +54,9 @@ pages =
 
 allPages : Array Page
 allPages =
-    Array.pushFirst index pages
+    pages
+        |> Array.pushFirst index
+        |> Array.pushFirst notFound
 
 
 
@@ -66,7 +68,9 @@ notFound =
     { id = ErrNotFound
     , name = "404"
     , title = Views.Common.title
-    , route = []
+    , route =
+        [ "404"
+        ]
     }
 
 

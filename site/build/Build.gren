@@ -302,12 +302,24 @@ postProcessNotesMarkdown =
     let
         inlineHandler inline =
             case inline of
+                -- Fix path to embedded images
                 Image { alt, url } ->
                     Image
                         { alt = alt
                         , url =
                             if String.startsWith "Embeds/" url then
                                 "../" ++ url
+                            else
+                                url
+                        }
+
+                -- Fix links to embedded notes
+                Link { text, url } ->
+                    Link
+                        { text = text
+                        , url =
+                            if String.endsWith ".md" url && String.startsWith "http" url == False then
+                                "../" ++ String.dropRight 3 url
                             else
                                 url
                         }

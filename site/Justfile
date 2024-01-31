@@ -50,7 +50,7 @@ publish: build-optimised
 
 @serve:
   echo "Serving static files on http://localhost:5001"
-  dufs --port 5001 --render-spa ./dist/
+  static-web-server --port 5001 --root ./dist/ --page404 404/index.html
 
 
 watch:

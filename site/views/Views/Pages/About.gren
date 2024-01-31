@@ -28,28 +28,28 @@ view =
             [ Html.text "Work history"
             ]
         , paragraph
-            [ Html.text "I started out as a full-stack web dev at a company called "
+            [ Html.text "I started out in 2011 as a full-stack web dev at a company called "
             , Html.a
                 [ A.href "https://mrhenry.be"
                 ]
                 [ Html.text "Mr. Henry"
                 ]
-            , Html.text " where I implemented various unique and special web designs, ranging from eccentric artistic websites to generating typefaces in a HTML canvas. I also worked with "
+            , Html.text " where I implemented various unique and special web designs, ranging from eccentric artistic websites to generating typefaces in a HTML canvas. They had a custom CMS behind these websites written in "
             , Html.a
                 [ A.href "https://www.ruby-lang.org"
                 ]
                 [ Html.text "Ruby"
                 ]
-            , Html.text " here, which was one of the first programming languages that I really liked. Also did some Go and PHP, and a lot of JS."
+            , Html.text ", which is one of the first programming languages that I really liked. Also did some Go and PHP there, and a lot of JS."
             ]
         , paragraph
-            [ Html.text "After that I worked remotely full-time for "
+            [ Html.text "Several years later I ended up working remotely full-time for "
             , Html.a
                 [ A.href "https://metalab.co"
                 ]
                 [ Html.text "MetaLab"
                 ]
-            , Html.text ", based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages, such as "
+            , Html.text ", a product design and development studio based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages, such as "
             , Html.a
                 [ A.href "https://elixir-lang.org"
                 ]
@@ -61,22 +61,28 @@ view =
                 ]
                 [ Html.text "Elm"
                 ]
-            , Html.text ", "
+            , Html.text " and "
             , Html.a
                 [ A.href "https://www.haskell.org"
                 ]
                 [ Html.text "Haskell"
                 ]
-            , Html.text ", etc."
+            , Html.text "."
             ]
         , paragraph
-            [ Html.text "In my spare time I worked on a side project which would eventually get me into "
+            [ Html.text "During all this time I worked on a "
+            , Html.a
+                [ A.href "../work/#diffuse"
+                ]
+                [ Html.text "side project"
+                ]
+            , Html.text " which would eventually get me into "
             , Html.a
                 [ A.href "https://fission.codes"
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ", my third job, where I worked on/with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
+            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
             ]
             -- 
         , Common.closingEmoji "🌷"

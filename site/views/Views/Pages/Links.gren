@@ -38,6 +38,14 @@ view =
             ]
         , Html.h2
             []
+            [ Html.text "Stats you probably don\'t care about"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🎧" "https://www.last.fm/user/alteridealism" "Music I\'ve listened to"
+            , linkWithEmoji "🍿" "https://letterboxd.com/icidasset/" "Movies I\'ve watched"
+            ]
+        , Html.h2
+            []
             [ Html.text "Sites & Apps"
             ]
         , Html.p
@@ -46,20 +54,10 @@ view =
             ]
         , Html.h3
             []
-            [ Html.text "Various"
-            ]
-        , linkGroup
-            [ linkWithEmoji "🔐" "https://cryptii.com" "Cryptii"
-            , linkWithEmoji "🖼️" "https://edit.photo" "Photo editor"
-            , linkWithEmoji "🖌️" "https://www.tldraw.com" "TLDraw"
-            , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
-            ]
-        , Html.h3
-            []
             [ Html.text "Colors"
             ]
         , linkGroup
-            [ link "https://hue.tools" "Tweak colors"
+            [ link "https://hue.tools" "Tweak colors w/ hue.tools"
             , link "https://convertacolor.com" "Color conversion"
             , link "https://picular.co" "Google, but for colors"
             , link "https://randoma11y.com" "Get random, accessible color combinations"
@@ -68,8 +66,20 @@ view =
             , link "https://www.happyhues.co" "Happy Hues"
             , link "https://www.thedayscolor.com" "The Day\'s Color"
             ]
-            -- 
-        , Common.closingEmoji "🌍"
+        , Html.h3
+            []
+            [ Html.text "Other"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🔐" "https://cryptii.com" "Cryptii"
+            , linkWithEmoji "🏷️" "https://dnsrecords.io" "List DNS records"
+            , linkWithEmoji "🖼️" "https://edit.photo" "Photo editor"
+            , linkWithEmoji "🖌️" "https://www.tldraw.com" "TLDraw"
+            , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
+            ]
+
+        , -- 
+          Common.closingEmoji "🌍"
         ]
 
 

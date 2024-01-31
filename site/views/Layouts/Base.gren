@@ -40,13 +40,22 @@ layout page time pageHtml =
                 , A.content "Steven Vandevelde\'s personal website 😶‍🌫️"
                 ]
             , Html.link
-                [ A.href
-                    (Views.Common.pathFromRoot
-                        { root = page.route
-                        }
-                        [ "stylesheet.css?v=" ++ cacheId
-                        ]
-                    )
+                [ let
+                    stylesheetHref =
+                        "stylesheet.css?v=" ++ cacheId
+                  in
+                  case page.route of
+                    [ "404" ] ->
+                        A.href ("/" ++ stylesheetHref)
+
+                    _ ->
+                        A.href
+                            (Views.Common.pathFromRoot
+                                { root = page.route
+                                }
+                                [ stylesheetHref
+                                ]
+                            )
                 , A.rel "stylesheet"
                 ]
             ]

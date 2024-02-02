@@ -89,10 +89,6 @@
   @apply text-enchanted-lavender;
 }
 
-.decoration-accent-essays h2 {
-  @apply text-enchanted-lavender;
-}
-
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-essays {
@@ -158,10 +154,6 @@
 }
 
 .text-accent-notes {
-  @apply text-wondrous-wisteria;
-}
-
-.decoration-accent-notes h2 {
   @apply text-wondrous-wisteria;
 }
 

@@ -215,7 +215,7 @@ essayHandler time compendium =
                                         renderedMarkdown =
                                             blocks
                                                 |> Array.map markdownToHtml
-                                                |> Layouts.Markdown.layout page "decoration-accent-essays"
+                                                |> Layouts.Markdown.layout page "essays"
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
                                     in
@@ -276,7 +276,7 @@ notesHandler time compendium =
                                         renderedMarkdown =
                                             blocks
                                                 |> Array.map markdownToHtml
-                                                |> Layouts.Markdown.layout page "decoration-accent-notes"
+                                                |> Layouts.Markdown.layout page "notes"
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
                                     in

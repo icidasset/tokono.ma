@@ -19,11 +19,8 @@ import View exposing ( view )
 
 
 type alias Flags =
-    { essays :
-        Array
-            { baseName : String
-            , markdown : String
-            }
+    { essays : Array MarkdownItem
+    , notes : Array MarkdownItem
     , pageRoute : Array String
     }
 
@@ -54,45 +51,10 @@ init :
 init flags url key =
     let
         essays =
-            flags.essays
-                |> Array.filterMap
-                        (\{ baseName, markdown } ->
-                            markdown
-                                |> Markdown.parse
-                                        { frontmatter = Just (Markdown.jsonFrontmatter Essays.frontmatterDecoder)
-                                        }
-                                |> (\{ metadata, blocks } ->
-                                        Maybe.map
-                                            (\m ->
-                                                { metadata = m
-                                                , blocks = blocks
-                                                }
-                                            )
-                                            metadata
-                                    )
-                                |> Maybe.map
-                                        (\v ->
-                                            { key = baseName
-                                            , value = v
-                                            }
-                                        )
-                        )
-                |> Dict.fromArray
+            collectMarkdown flags.essays Pages.essay
 
-        essayTableOfContents =
-            essays
-                |> Dict.toArray
-                |> Array.map
-                        (\item ->
-                            { page =
-                                Pages.essay
-                                    { baseName = item.key
-                                    , title = item.value.metadata.title
-                                    }
-                            , archived = item.value.metadata.archived
-                            }
-                        )
-                |> Array.sortBy (.page >> .title)
+        notes =
+            collectMarkdown flags.notes Pages.note
 
         rootUrl =
             url.path
@@ -115,12 +77,43 @@ init flags url key =
     in
     { model =
         { essays = essays
-        , essayTableOfContents = essayTableOfContents
         , navKey = key
+        , notes = notes
         , rootUrl = rootUrl
         , url = url
         }
     , command = Cmd.none
+    }
+
+
+collectMarkdown flagCollection pageCreator =
+    let
+        collection =
+            flagCollection
+                |> Array.map
+                        (\params ->
+                            { key = params.baseName
+                            , value = params
+                            }
+                        )
+                |> Dict.fromArray
+
+        tableOfContents =
+            flagCollection
+                |> Array.map
+                        (\params ->
+                            { page =
+                                pageCreator
+                                    { baseName = params.baseName
+                                    , title = params.title
+                                    }
+                            , archived = params.archived
+                            }
+                        )
+                |> Array.sortBy (.page >> .title)
+    in
+    { collection = collection
+    , tableOfContents = tableOfContents
     }
 
 

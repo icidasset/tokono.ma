@@ -2,6 +2,7 @@ module View exposing (..)
 
 import Browser exposing ( Document )
 import Dict
+import Json.Decode
 import Layouts.Markdown
 import Markdown
 import Pages
@@ -9,6 +10,7 @@ import String.Extra as String
 import Transmutable.Html
 import Transmutable.Html.VirtualDom
 import Types exposing ( Model, Msg(..) )
+import Url
 import Views.Pages
 
 
@@ -29,28 +31,51 @@ view model =
                     r
 
         viewOpts =
-            { essayTableOfContents = model.essayTableOfContents
+            { essayTableOfContents = model.essays.tableOfContents
+            , notesTableOfContents = model.notes.tableOfContents
             }
 
         maybe =
             case pageRoute of
                 [ "essays", baseName ] ->
-                    model.essays
+                    model.essays.collection
                         |> Dict.get baseName
                         |> Maybe.map
-                                (\{ metadata, blocks } ->
+                                (\{ blocks, title } ->
                                     let
                                         p =
                                             Pages.essay
                                                 { baseName = baseName
-                                                , title = metadata.title
+                                                , title = title
                                                 }
                                     in
                                     { page = p
                                     , view =
                                         blocks
+                                            |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
                                             |> Array.map Markdown.toHtml
                                             |> Layouts.Markdown.layout p "essays"
+                                    }
+                                )
+
+                [ "notes", baseName ] ->
+                    model.notes.collection
+                        |> Dict.get (Maybe.withDefault baseName (Url.percentDecode baseName))
+                        |> Maybe.map
+                                (\{ blocks, title } ->
+                                    let
+                                        p =
+                                            Pages.note
+                                                { baseName = baseName
+                                                , title = title
+                                                }
+                                    in
+                                    { page = p
+                                    , view =
+                                        blocks
+                                            |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
+                                            |> Array.map Markdown.toHtml
+                                            |> Layouts.Markdown.layout p "notes"
                                     }
                                 )
 

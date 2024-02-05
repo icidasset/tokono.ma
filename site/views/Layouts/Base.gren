@@ -85,18 +85,18 @@ layout page time pageHtml =
                     """
                     const pathToRoot = pageRoute.length ? pageRoute.map(() => \'..\').join(\'/\') + \'/\': \'\';
                     
-                    fetch(
-                      `${pathToRoot}essays.json`
-                    ).then(
-                      r => r.json()
-                    ).then(essays => {
-                      Gren.Main.init({ flags: { essays, pageRoute }})
-                    });
+                    async function init() {
+                      const essays = await fetch(`${pathToRoot}essays.json`).then(r => r.json())
+                      const notes = await fetch(`${pathToRoot}notes.json`).then(r => r.json())
+                    
+                      Gren.Main.init({ flags: { essays, notes, pageRoute }})
+                    }
+                    
+                    init()
                     """
                 ]
           ]
-            -- |> Array.prefix pageHtml
-            |> (\_ -> pageHtml)
+            |> Array.prefix pageHtml
             |> Html.body []
         ]
     ]

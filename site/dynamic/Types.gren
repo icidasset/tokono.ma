@@ -4,6 +4,7 @@ import Browser
 import Browser.Navigation
 import Dict exposing ( Dict )
 import Essays
+import Json.Decode as Json
 import Markdown
 import Markdown.Block as Markdown
 import Messages as View
@@ -17,15 +18,24 @@ import Url exposing ( Url )
 
 type alias Model =
     { essays :
-        Dict
-            String
-            { metadata : Essays.Metadata
-            , blocks : Array Markdown.Block
-            }
-    , essayTableOfContents : TableOfContents
+        { collection : Dict String MarkdownItem
+        , tableOfContents : TableOfContents
+        }
+    , notes :
+        { collection : Dict String MarkdownItem
+        , tableOfContents : TableOfContents
+        }
     , navKey : Browser.Navigation.Key
     , rootUrl : Url
     , url : Url
+    }
+
+
+type alias MarkdownItem =
+    { archived : Bool
+    , baseName : String
+    , blocks : Array Json.Value
+    , title : String
     }
 
 

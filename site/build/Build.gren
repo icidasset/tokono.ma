@@ -109,6 +109,20 @@ processMarkdown dir handler pageCreator fsPermission time =
                         |> Shikensu.permalink "index"
                 )
         |> Task.andThen (Shikensu.write dist)
+        |> Task.andThen
+                (\bundle ->
+                    bundle.compendium
+                        |> createMarkdownJsonRepo dir
+                        |> (\def ->
+                                { bundle
+                                    | compendium =
+                                        [ def
+                                        ]
+                                }
+                            )
+                        |> Shikensu.write dist
+                        |> Task.map (\_ -> bundle)
+                )
         |> Task.map
                 (\bundle ->
                     -- Build a table of contents
@@ -226,6 +240,9 @@ essayHandler time compendium =
                                                 [ { key = "archived"
                                                   , value = Json.Encode.bool metadata.archived
                                                   }
+                                                , { key = "blocks"
+                                                  , value = Json.Encode.array Markdown.Transmutationist.toJson blocks
+                                                  }
                                                 , { key = "markdown"
                                                   , value = Json.Encode.string markdown
                                                   }
@@ -284,7 +301,10 @@ notesHandler time compendium =
                                         | content = Just renderedMarkdown
                                         , metadata =
                                             Dict.fromArray
-                                                [ { key = "markdown"
+                                                [ { key = "blocks"
+                                                  , value = Json.Encode.array Markdown.Transmutationist.toJson blocks
+                                                  }
+                                                , { key = "markdown"
                                                   , value = Json.Encode.string markdown
                                                   }
                                                 , { key = "title"
@@ -362,23 +382,33 @@ postProcessNotesMarkdown =
         )
 
 
-createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Array Shikensu.Definition
+createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Shikensu.Definition
 createMarkdownJsonRepo name compendium =
     compendium
         |> Array.filterMap
                 (\def ->
-                    Maybe.map2
-                        (\m baseName ->
+                    Maybe.map3
+                        (\blocks title baseName ->
                             Json.Encode.object
-                                [ { key = "baseName"
+                                [ { key = "archived"
+                                  , value =
+                                        def.metadata
+                                            |> Dict.get "archived"
+                                            |> Maybe.withDefault (Json.Encode.bool False)
+                                  }
+                                , { key = "baseName"
                                   , value = Json.Encode.string baseName
                                   }
-                                , { key = "markdown"
-                                  , value = m
+                                , { key = "blocks"
+                                  , value = blocks
+                                  }
+                                , { key = "title"
+                                  , value = title
                                   }
                                 ]
                         )
-                        (Dict.get "markdown" def.metadata)
+                        (Dict.get "blocks" def.metadata)
+                        (Dict.get "title" def.metadata)
                         (Array.last (Path.unwrap def.directoryPath))
                 )
         |> Json.Encode.array identity
@@ -393,7 +423,6 @@ createMarkdownJsonRepo name compendium =
                 , metadata = Dict.empty
                 }
             )
-        |> (\def -> Array.pushLast def compendium)
 
 
 

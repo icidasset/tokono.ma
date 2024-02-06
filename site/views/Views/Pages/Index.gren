@@ -28,9 +28,16 @@ view =
             ]
             (Array.map
                 (\page ->
+                    let
+                        routeSlashed =
+                            String.join "/" page.route
+
+                        routeDashed =
+                            String.join "-" page.route
+                    in
                     Html.a
                         [ class "inline-block relative"
-                        , A.href (String.join "/" page.route ++ "/")
+                        , A.href (routeSlashed ++ "/")
                         , E.preventDefaultOn
                             "click"
                             (Json.Decode.succeed
@@ -41,7 +48,7 @@ view =
                         ]
                         [ Html.text page.name
                         , Html.span
-                            [ class ("mark opacity-50 bg-accent-" ++ String.join "-" page.route)
+                            [ class ("mark opacity-50 bg-accent-" ++ routeDashed)
                             ]
                             []
                         ]

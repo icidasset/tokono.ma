@@ -1,6 +1,7 @@
 .DS_Store
 .env
 .gren
+.netlify
 app
 node_modules
 dist

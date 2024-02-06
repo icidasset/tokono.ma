@@ -36,6 +36,10 @@ layout page time pageHtml =
                 , A.content "width=device-width, initial-scale=1"
                 ]
             , Html.meta
+                [ A.name "view-transition"
+                , A.content "same-origin"
+                ]
+            , Html.meta
                 [ A.name "description"
                 , A.content "Steven Vandevelde\'s personal website 😶‍🌫️"
                 ]
@@ -97,6 +101,7 @@ layout page time pageHtml =
                 ]
           ]
             |> Array.prefix pageHtml
+            |> (\_ -> pageHtml)
             |> Html.body []
         ]
     ]

@@ -60,10 +60,6 @@ layout page attributes contents =
                         [ Html.a
                             [ A.class "inline-block relative"
                             , A.target "_self"
-                                -- , if isActive then
-                                --     A.class "font-medium"
-                                --   else
-                                --     A.class ""
                             , linkPage.route
                                 |> Common.pathFromRoot
                                         { root = page.route

@@ -9,6 +9,7 @@
   font-family: "Caveat";
   font-weight: 1 999;
   src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
+  font-display: swap;
 } */
 
 @font-face {
@@ -44,6 +45,7 @@
   font-family: "Nanum Pen Script";
   font-weight: 400;
   src: url("./fonts/nanum-pen-script-regular.woff2") format("woff2");
+  font-display: swap;
 }
 
 @font-face {
@@ -51,7 +53,9 @@
   src:
     local("Noto Emoji"),
     url("./fonts/noto-emoji-variable_wght.woff2") format("woff2");
-  font-display: swap;
+
+  /* Not setting the font-display property to lower the priority of loading this font. */
+  /* font-display: swap; */
 }
 
 /* @font-face {

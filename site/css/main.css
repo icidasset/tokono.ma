@@ -166,6 +166,10 @@ article strong {
   font-style: italic;
 }
 
+.font-emoji {
+  font-variant-emoji: text;
+}
+
 .font-serif {
   @apply tracking-tight;
   font-variation-settings:

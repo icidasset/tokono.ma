@@ -5,12 +5,12 @@
   font-display: swap;
 } */
 
-/* @font-face {
+@font-face {
   font-family: "Caveat";
   font-weight: 1 999;
   src: url("./fonts/caveat-variable_wght.woff2") format("woff2");
   font-display: swap;
-} */
+}
 
 @font-face {
   font-family: "Fira Code";
@@ -42,11 +42,19 @@
 }
 
 @font-face {
+  font-family: "Garamon(d/t)";
+  font-style: italic;
+  font-weight: 400;
+  src: url("./fonts/garamondt-italic.woff2") format("woff2");
+  font-display: swap;
+}
+
+/* @font-face {
   font-family: "Nanum Pen Script";
   font-weight: 400;
   src: url("./fonts/nanum-pen-script-regular.woff2") format("woff2");
   font-display: swap;
-}
+} */
 
 @font-face {
   font-family: "Noto Emoji";

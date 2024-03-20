@@ -86,7 +86,7 @@ layout page attributes contents =
                         ]
               in
               Html.nav
-                [ class "font-display mt-12 space-x-4 text-xl text-right md:text-2xl lg:space-x-0"
+                [ class "font-display mt-12 space-x-4 text-lg text-right md:text-xl lg:space-x-0"
                 ]
                 (Array.map link Pages.pages)
             ]

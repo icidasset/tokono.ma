@@ -41,7 +41,7 @@ ol {
 
 /* Headers */
 main h1 {
-  @apply font-display mb-12 mt-[-0.125em] text-5xl font-bold subpixel-antialiased;
+  @apply font-display mb-12 mt-[-0.125em] text-5xl subpixel-antialiased;
   @apply sm:text-6xl;
   @apply md:text-7xl;
   line-height: 0.95;
@@ -159,8 +159,13 @@ article strong {
 }
 
 /**
- * Playfair font overrides.
+ * Font overrides.
  **/
+
+.font-display {
+  font-style: italic;
+}
+
 .font-serif {
   @apply tracking-tight;
   font-variation-settings:

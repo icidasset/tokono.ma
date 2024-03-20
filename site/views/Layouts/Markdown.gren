@@ -10,18 +10,19 @@ layout page accentClass publishedOn contents =
         page
         []
         [ [ case publishedOn of
-              Just date ->
-                Html.div
-                  [ class "font-semibold mb-8 md:mb-12 opacity-40 text-xs md:text-sm tracking-wide"]
-                  [ date
-                      |> String.split "-"
-                      |> Array.reverse
-                      |> String.join " / "
-                      |> Html.text
-                  ]
-              Nothing ->
-                Html.text ""
+                Just date ->
+                    Html.div
+                        [ class "font-semibold mb-8 md:mb-12 opacity-40 text-xs md:text-sm tracking-wide"
+                        ]
+                        [ date
+                            |> String.split "-"
+                            |> Array.reverse
+                            |> String.join " / "
+                            |> Html.text
+                        ]
 
+                Nothing ->
+                    Html.text ""
           , Html.h1
                 [ class ("text-accent-" ++ accentClass)
                 ]

@@ -51,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            --
+            -- 
         , diffuse
         , oddsdk
         , shikensu
@@ -59,7 +59,7 @@ view =
         , circuits
         , quotes
         , checklists
-            --
+            -- 
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -308,9 +308,10 @@ oddsdk =
                 ]
             , Html.text ", which is something that came out of ODD. Along with these "
             , Html.a
-                [A.href "https://github.com/icidasset/radical-edward?tab=readme-ov-file#radical-edward"
+                [ A.href "https://github.com/icidasset/radical-edward?tab=readme-ov-file#radical-edward"
                 ]
-                [ Html.text "packages" ]
+                [ Html.text "packages"
+                ]
             , Html.text "."
             ]
         ]
@@ -370,8 +371,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-
-
+    
+    
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -385,8 +386,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-
-
+    
+    
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

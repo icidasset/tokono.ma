@@ -29,6 +29,7 @@ view =
                 ]
             , Html.text " tech."
             ]
+
         , -- WORK HISTORY
           Html.h2
             []
@@ -95,7 +96,7 @@ view =
         , -- TODO: Add more info
           Html.text ""
 
-        , --
+        , -- 
           Common.closingEmoji "🌷"
         ]
 

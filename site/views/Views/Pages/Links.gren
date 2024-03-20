@@ -18,7 +18,7 @@ view =
             ]
         , Html.h2
             []
-            [ Html.text "My socials"
+            [ Html.text "Social profiles"
             ]
         , linkGroup
             [ linkWithEmoji "🏞️" "https://bsky.app/profile/tokono.ma" "Bluesky"
@@ -28,7 +28,7 @@ view =
             ]
         , Html.h2
             []
-            [ Html.text "My apps"
+            [ Html.text "Apps I\'ve built"
             ]
         , linkGroup
             [ linkWithEmoji "🎵" "https://diffuse.sh" "Diffuse"
@@ -36,15 +36,24 @@ view =
             , linkWithEmoji "📚" "https://quotes.fission.app/" "Quotes"
             , linkWithEmoji "✔︎" "https://checklists.citric.id" "Checklists"
             ]
-        , Html.h2
+
+        , -- COMMUNITY
+          Html.h2
             []
-            [ Html.text "Stats you probably don\'t care about"
+            [ Html.text "Community"
+            ]
+        , Html.p
+            []
+            [ Html.text "Local community endeavours I support."
             ]
         , linkGroup
-            [ linkWithEmoji "🎧" "https://www.last.fm/user/alteridealism" "Music I\'ve listened to"
-            , linkWithEmoji "🍿" "https://letterboxd.com/icidasset/" "Movies I\'ve watched"
+            [ link "https://biobes.be" "BES coöperatieve buurtwinkel"
+            , link "https://www.boerolivier.be" "Boer Olivier"
+            , link "https://vleesvanons.nl" "Vlees van Ons"
             ]
-        , Html.h2
+
+        , -- SITES & APPS
+          Html.h2
             []
             [ Html.text "Sites & Apps"
             ]
@@ -68,17 +77,34 @@ view =
             ]
         , Html.h3
             []
+            [ Html.text "Cryptography"
+            ]
+        , linkGroup
+            [ link "https://cryptii.com" "Cryptii"
+            , link "https://ciphereditor.com" "Cipher Editor"
+            ]
+        , Html.h3
+            []
             [ Html.text "Other"
             ]
         , linkGroup
-            [ linkWithEmoji "🔐" "https://cryptii.com" "Cryptii"
-            , linkWithEmoji "🏷️" "https://dnsrecords.io" "List DNS records"
+            [ linkWithEmoji "🏷️" "https://dnsrecords.io" "List DNS records"
             , linkWithEmoji "🖼️" "https://edit.photo" "Photo editor"
             , linkWithEmoji "🖌️" "https://www.tldraw.com" "TLDraw"
             , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
             ]
 
-        , --
+        , -- STATS
+          Html.h2
+            []
+            [ Html.text "Stats you probably don\'t care about"
+            ]
+        , linkGroup
+            [ linkWithEmoji "🎧" "https://www.last.fm/user/alteridealism" "Music I\'ve listened to"
+            , linkWithEmoji "🍿" "https://letterboxd.com/icidasset/" "Movies I\'ve watched"
+            ]
+
+        , -- 
           Common.closingEmoji "🌍"
         ]
 

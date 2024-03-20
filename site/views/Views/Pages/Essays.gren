@@ -80,7 +80,7 @@ groupByYear essays =
                                 (\{ page } ->
                                   link
                                     (Html.small
-                                      [ class "mr-2 text-xs" ]
+                                      [ class "mr-2 opacity-60 text-xs" ]
                                       [ Html.text key ]
                                     )
 

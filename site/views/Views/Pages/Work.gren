@@ -21,7 +21,7 @@ view =
             [ Html.span
                 [ class "font-medium"
                 ]
-                [ Html.text "Most of my work is done on web applications and various code libraries/packages, but also occasionally some other things."
+                [ Html.text "Web applications + computer code."
                 ]
             ]
         , paragraph
@@ -248,10 +248,6 @@ oddsdk =
           , text = "github.com/icidasset/ts-odd"
           , url = "https://github.com/icidasset/ts-odd"
           }
-        , { name = "Quotes (app)"
-          , text = "github.com/icidasset/quotes"
-          , url = "https://github.com/icidasset/quotes"
-          }
         , { name = "Herknen (app)"
           , text = "github.com/icidasset/herknen"
           , url = "https://github.com/icidasset/herknen"
@@ -292,19 +288,30 @@ oddsdk =
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ". Still an avid user of the protocols used in this: "
-            , Html.a
-                [ A.href "https://ucan.xyz"
-                ]
-                [ Html.text "UCAN"
-                ]
-            , Html.text ", "
+            , Html.text ". I  still work on projects related to this that use the same protocols "
             , Html.a
                 [ A.href "https://github.com/wnfs-wg"
                 ]
                 [ Html.text "WNFS"
                 ]
-            , Html.text ", etc."
+            , Html.text " & "
+            , Html.a
+                [ A.href "https://ucan.xyz"
+                ]
+                [ Html.text "UCAN"
+                ]
+            , Html.text ". One is a library that wraps the Rust/WASM implementation of WNFS, called "
+            , Html.a
+                [ A.href "https://github.com/wnfs-wg/nest"
+                ]
+                [ Html.text "Nest"
+                ]
+            , Html.text ", which is something that came out of ODD. Along with these "
+            , Html.a
+                [A.href "https://github.com/icidasset/radical-edward?tab=readme-ov-file#radical-edward"
+                ]
+                [ Html.text "packages" ]
+            , Html.text "."
             ]
         ]
 

@@ -35,6 +35,8 @@ type alias MarkdownItem =
     { archived : Bool
     , baseName : String
     , blocks : Array Json.Value
+    , published : Maybe Bool
+    , publishedOn : Maybe String
     , title : String
     }
 

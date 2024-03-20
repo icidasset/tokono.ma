@@ -21,7 +21,7 @@ view =
             [ Html.span
                 [ class "font-medium"
                 ]
-                [ Html.text "Most of my work is done on web applications and some code libraries/packages, but also occasionally some things related to electrical engineering."
+                [ Html.text "Most of my work is done on web applications and various code libraries/packages, but also occasionally some other things."
                 ]
             ]
         , paragraph
@@ -51,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            -- 
+            --
         , diffuse
         , oddsdk
         , shikensu
@@ -59,7 +59,7 @@ view =
         , circuits
         , quotes
         , checklists
-            -- 
+            --
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -292,7 +292,7 @@ oddsdk =
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ". Still an avid user of this system and the protocols consisting of it ("
+            , Html.text ". Still an avid user of the protocols used in this: "
             , Html.a
                 [ A.href "https://ucan.xyz"
                 ]
@@ -304,7 +304,7 @@ oddsdk =
                 ]
                 [ Html.text "WNFS"
                 ]
-            , Html.text ", etc)."
+            , Html.text ", etc."
             ]
         ]
 
@@ -363,8 +363,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-    
-    
+
+
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -378,8 +378,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-    
-    
+
+
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

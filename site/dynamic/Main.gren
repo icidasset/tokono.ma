@@ -108,6 +108,8 @@ collectMarkdown flagCollection pageCreator =
                                     , title = params.title
                                     }
                             , archived = params.archived
+                            , published = params.published
+                            , publishedOn = params.publishedOn
                             }
                         )
                 |> Array.sortBy (.page >> .title)

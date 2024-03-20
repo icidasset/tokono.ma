@@ -41,7 +41,7 @@ view model =
                     model.essays.collection
                         |> Dict.get baseName
                         |> Maybe.map
-                                (\{ blocks, title } ->
+                                (\{ blocks, title, publishedOn } ->
                                     let
                                         p =
                                             Pages.essay
@@ -54,7 +54,7 @@ view model =
                                         blocks
                                             |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
                                             |> Array.map Markdown.toHtml
-                                            |> Layouts.Markdown.layout p "essays"
+                                            |> Layouts.Markdown.layout p "essays" publishedOn
                                     }
                                 )
 
@@ -62,7 +62,7 @@ view model =
                     model.notes.collection
                         |> Dict.get (Maybe.withDefault baseName (Url.percentDecode baseName))
                         |> Maybe.map
-                                (\{ blocks, title } ->
+                                (\{ blocks, title, publishedOn } ->
                                     let
                                         p =
                                             Pages.note
@@ -75,7 +75,7 @@ view model =
                                         blocks
                                             |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
                                             |> Array.map Markdown.toHtml
-                                            |> Layouts.Markdown.layout p "notes"
+                                            |> Layouts.Markdown.layout p "notes" publishedOn
                                     }
                                 )
 

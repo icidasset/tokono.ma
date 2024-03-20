@@ -1,5 +1,6 @@
 module Views.Pages.Essays exposing ( view )
 
+import Dict
 import Layouts.Default
 import Messages exposing ( Msg )
 import Pages exposing ( TableOfContents )
@@ -29,13 +30,13 @@ view essays =
             ]
             [ Html.text "A few articles  I\'ve written over the years, mostly code related."
             ]
-        , Html.ul [] (Array.map (\{ page } -> link page) nonArchivedEssays)
-        , Html.p
-            [ class "italic max-w-md mt-6 text-sm"
-            ]
-            [ Html.text "Ordered by name."
-            ]
-        , Html.h3
+
+        , -- List
+          groupByYear nonArchivedEssays
+
+
+        , -- Archive
+        Html.h3
             []
             [ Html.text "Archive"
             ]
@@ -44,16 +45,58 @@ view essays =
             ]
             [ Html.text "Most of this code doesn\'t work anymore or the information is outdated. Keeping it here in case it is still relevant to someone."
             ]
-        , Html.ul [] (Array.map (\{ page } -> link page) archivedEssays)
-            -- 
+        , groupByYear archivedEssays
+            --
         , Common.closingEmoji "✍️"
         ]
 
 
-link page =
+groupByYear essays =
+    essays
+            |> Array.foldl
+                    (\essay acc ->
+                        let
+                            year =
+                                Maybe.withDefault "default" (Maybe.andThen (String.split "-" >> Array.last) essay.publishedOn)
+
+                            arr =
+                                Maybe.withDefault [] (Dict.get year acc)
+                        in
+                        Dict.insert year (Array.pushLast essay arr) acc
+                    )
+                    Dict.empty
+            |> Dict.toArray
+            |> Array.sortBy (.key >> String.toInt >> Maybe.withDefault 0)
+            |> Array.reverse
+            |> Array.map
+                    (\{ key, value } ->
+                        case key of
+                            "default" ->
+                                []
+
+                            _ ->
+
+                                Array.map
+                                (\{ page } ->
+                                  link
+                                    (Html.small
+                                      [ class "mr-2 text-xs" ]
+                                      [ Html.text key ]
+                                    )
+
+                                    page
+                                )
+                                value
+                    )
+            |> Array.flatten
+            |> Html.ul []
+
+
+link prefix page =
     Html.li
         []
-        [ Html.a
+        [ prefix
+        , Html.a
             [ A.href ("../" ++ String.join "/" page.route ++ "/")
             ]
             [ Html.text page.name

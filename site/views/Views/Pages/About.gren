@@ -17,13 +17,20 @@ view =
             ]
             [ Html.text "A web engineer with a passion for "
             , Html.a
+                [ A.href "https://en.wikipedia.org/wiki/Distributed_computing"
+                ]
+                [ Html.text "distributed"
+                ]
+            , Html.text " & "
+            , Html.a
                 [ A.href "https://www.inkandswitch.com/local-first/"
                 ]
                 [ Html.text "local-first"
                 ]
             , Html.text " tech."
             ]
-        , Html.h2
+        , -- WORK HISTORY
+          Html.h2
             []
             [ Html.text "Work history"
             ]
@@ -82,10 +89,14 @@ view =
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
+            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
             ]
-            -- 
-        , Common.closingEmoji "🌷"
+
+        , -- TODO: Add more info
+          Html.text ""
+
+        , --
+          Common.closingEmoji "🌷"
         ]
 
 

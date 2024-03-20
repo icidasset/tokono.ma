@@ -134,6 +134,8 @@ processMarkdown dir handler pageCreator fsPermission time =
                                     , title = meta "title" Json.string def.baseName def
                                     }
                             , archived = meta "archived" Json.bool False def
+                            , published = metaMaybe "published" Json.bool def
+                            , publishedOn = metaMaybe "publishedOn" Json.string def
                             }
                         )
                         bundle.compendium
@@ -229,7 +231,7 @@ essayHandler time compendium =
                                         renderedMarkdown =
                                             blocks
                                                 |> Array.map markdownToHtml
-                                                |> Layouts.Markdown.layout page "essays"
+                                                |> Layouts.Markdown.layout page "essays" (Just metadata.publishedOn)
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
                                     in
@@ -293,7 +295,7 @@ notesHandler time compendium =
                                         renderedMarkdown =
                                             blocks
                                                 |> Array.map markdownToHtml
-                                                |> Layouts.Markdown.layout page "notes"
+                                                |> Layouts.Markdown.layout page "notes" Nothing
                                                 |> Layouts.Base.layout page time
                                                 |> htmlBytes
                                     in
@@ -402,6 +404,18 @@ createMarkdownJsonRepo name compendium =
                                 , { key = "blocks"
                                   , value = blocks
                                   }
+                                , { key = "published"
+                                  , value =
+                                        def.metadata
+                                            |> Dict.get "published"
+                                            |> Maybe.withDefault Json.Encode.null
+                                  }
+                                , { key = "publishedOn"
+                                  , value =
+                                        def.metadata
+                                            |> Dict.get "publishedOn"
+                                            |> Maybe.withDefault Json.Encode.null
+                                  }
                                 , { key = "title"
                                   , value = title
                                   }
@@ -430,10 +444,13 @@ createMarkdownJsonRepo name compendium =
 
 
 meta key decoder default definition =
+    Maybe.withDefault default (metaMaybe key decoder definition)
+
+
+metaMaybe key decoder definition =
     definition.metadata
         |> Dict.get key
         |> Maybe.andThen (Json.decodeValue decoder >> Result.toMaybe)
-        |> Maybe.withDefault default
 
 
 markdownToHtml =

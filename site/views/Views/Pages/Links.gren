@@ -14,7 +14,7 @@ view =
         [ Html.h1
             [ class "text-accent-links"
             ]
-            [ Html.text "Odds and ends, bits and pieces, miscellany."
+            [ Html.text "My web directory."
             ]
         , Html.h2
             []
@@ -78,7 +78,7 @@ view =
             , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
             ]
 
-        , -- 
+        , --
           Common.closingEmoji "🌍"
         ]
 

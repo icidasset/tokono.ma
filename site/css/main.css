@@ -224,3 +224,28 @@ article p:not(.truncate) a:not(.inline-block) {
   display: inline;
   vertical-align: baseline;
 }
+
+/**
+ * Details + Summary
+ */
+details summary {
+  cursor: pointer;
+  display: inline-block;
+}
+
+details summary h2 {
+  @apply mb-0 mt-2;
+}
+
+details summary h2:before {
+  @apply font-emoji inline-block mr-3;
+  content: "📁";
+}
+
+details[open] summary h2:before {
+  content: "📂";
+}
+
+details[open] summary + * {
+  @apply mt-5;
+}

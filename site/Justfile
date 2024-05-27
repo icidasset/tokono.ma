@@ -54,4 +54,4 @@ publish: build-optimised
 
 
 watch:
-  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css -- just build
+  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css --watch ./data -- just build

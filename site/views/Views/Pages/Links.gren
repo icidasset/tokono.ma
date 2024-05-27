@@ -1,13 +1,28 @@
 module Views.Pages.Links exposing ( view )
 
 import Layouts.Default
+import Links exposing ( links )
 import Pages
 import Transmutable.Html as Html
 import Transmutable.Html.Attributes as A exposing ( class )
-import Views.Common as Common
+import Views.Common as Common exposing ( emojiText )
+import Dict
 
 
 view =
+    let
+        amountOfCats =
+            Array.length links
+
+        amountOfLinks =
+            Array.foldl
+              (\{value} acc ->
+                acc + Array.length value
+              )
+              0
+
+              links
+    in
     Layouts.Default.layout
         Pages.links
         []
@@ -16,97 +31,56 @@ view =
             ]
             [ Html.text "My web directory."
             ]
-        , Html.h2
+
+        , --
+          Html.p
             []
-            [ Html.text "Social profiles"
-            ]
-        , linkGroup
-            [ linkWithEmoji "🏞️" "https://bsky.app/profile/tokono.ma" "Bluesky"
-            , linkWithEmoji "🐱" "https://github.com/icidasset" "Github"
-            , linkWithEmoji "🦣" "https://mastodon.xyz/@icidasset" "Mastodon"
-            , linkWithEmoji "🪐" "https://www.bungie.net/7/en/User/Profile/3/4611686018475379626?bgn=icidasset" "Destiny"
-            ]
-        , Html.h2
-            []
-            [ Html.text "Apps I\'ve built"
-            ]
-        , linkGroup
-            [ linkWithEmoji "🎵" "https://diffuse.sh" "Diffuse"
-            , linkWithEmoji "📝" "https://herknen.fission.app/" "Herknen"
-            , linkWithEmoji "📚" "https://quotes.fission.app/" "Quotes"
-            , linkWithEmoji "✔︎" "https://checklists.citric.id" "Checklists"
+            [ Html.text "Find links by using your browser\'s \"find in page\" functionality (eg. ⌘ + F)"
+            , Html.br [] []
+            , Html.small
+                []
+                [ Html.text (String.fromInt amountOfCats)
+                , emojiText " 🐈"
+                , Html.text " with "
+                , Html.text (String.fromInt amountOfLinks)
+                , emojiText " 🔗"
+                ]
             ]
 
-        , -- COMMUNITY
-          Html.h2
-            []
-            [ Html.text "Community"
-            ]
-        , Html.p
-            []
-            [ Html.text "Local community endeavours I support."
-            ]
-        , linkGroup
-            [ link "https://biobes.be" "BES coöperatieve buurtwinkel"
-            , link "https://www.boerolivier.be" "Boer Olivier"
-            , link "https://vleesvanons.nl" "Vlees van Ons"
-            ]
+        , --
+          links
+            |> Array.map
+                    (\{ key, value } ->
+                        Html.details
+                            []
+                            [ Html.summary
+                                []
+                                [ Html.h2
+                                    []
+                                    [ Html.text key
+                                    ]
+                                ]
+                            , value
+                                |> Array.map
+                                        (\{ title, url, emoji } ->
+                                            case emoji of
+                                                Just e ->
+                                                    linkWithEmoji e url title
 
-        , -- SITES & APPS
-          Html.h2
-            []
-            [ Html.text "Sites & Apps"
-            ]
-        , Html.p
-            []
-            [ Html.text "Various websites & applications that I use."
-            ]
-        , Html.h3
-            []
-            [ Html.text "Colors"
-            ]
-        , linkGroup
-            [ link "https://hue.tools" "Tweak colors w/ hue.tools"
-            , link "https://convertacolor.com" "Color conversion"
-            , link "https://picular.co" "Google, but for colors"
-            , link "https://randoma11y.com" "Get random, accessible color combinations"
-            , link "https://farbvelo.elastiq.ch" "Random color explorer"
-            , link "https://meodai.github.io/poline/" "Enigmatic color palette generator"
-            , link "https://www.happyhues.co" "Happy Hues"
-            , link "https://www.thedayscolor.com" "The Day\'s Color"
-            ]
-        , Html.h3
-            []
-            [ Html.text "Cryptography"
-            ]
-        , linkGroup
-            [ link "https://cryptii.com" "Cryptii"
-            , link "https://ciphereditor.com" "Cipher Editor"
-            ]
-        , Html.h3
-            []
-            [ Html.text "Other"
-            ]
-        , linkGroup
-            [ linkWithEmoji "🏷️" "https://dnsrecords.io" "List DNS records"
-            , linkWithEmoji "🖼️" "https://edit.photo" "Photo editor"
-            , linkWithEmoji "🖌️" "https://www.tldraw.com" "TLDraw"
-            , linkWithEmoji "✏️" "https://excalidraw.com" "Whiteboard tool"
-            ]
+                                                Nothing ->
+                                                    link url title
+                                        )
+                                |> linkGroup
+                            ]
+                    )
+            |> Html.div []
 
-        , -- STATS
-          Html.h2
-            []
-            [ Html.text "Stats you probably don\'t care about"
-            ]
-        , linkGroup
-            [ linkWithEmoji "🎧" "https://www.last.fm/user/alteridealism" "Music I\'ve listened to"
-            , linkWithEmoji "🍿" "https://letterboxd.com/icidasset/" "Movies I\'ve watched"
-            ]
-
-        , -- 
-          Common.closingEmoji "🌍"
+            , --
+              Common.closingEmoji "🌍"
         ]
+
+
+-- 🛠️
 
 
 linkGroup =

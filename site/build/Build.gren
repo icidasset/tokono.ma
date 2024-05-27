@@ -151,10 +151,10 @@ writePagesToDisk :
     -> Task Error TableOfContents
 writePagesToDisk fsPermission time toc =
     let
-        makeDefinition mod =
+        makeDefinition page =
             { baseName = "index"
-            , content = Just (htmlBytes (Layouts.Base.layout mod time (Views.Pages.view toc mod)))
-            , directoryPath = Path.directory mod.route
+            , content = Just (htmlBytes (Layouts.Base.layout page time (Views.Pages.view toc page)))
+            , directoryPath = Path.directory page.route
             , extensionName = Just "html"
             , metadata = Dict.empty
             }

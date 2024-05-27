@@ -1,7 +1,7 @@
 {
   "type": "application",
   "platform": "browser",
-  "source-directories": [".", "../common", "../views"],
+  "source-directories": [".", "../common", "../data", "../views"],
   "gren-version": "0.3.0",
   "dependencies": {
     "direct": {

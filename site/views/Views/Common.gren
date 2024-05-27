@@ -51,6 +51,14 @@ closingEmoji emoji =
         ]
 
 
+emojiText text =
+    Html.span
+        [ class "font-emoji"
+        ]
+        [ Html.text text
+        ]
+
+
 fadedHeaderText text =
     Html.span
         [ class "opacity-70"

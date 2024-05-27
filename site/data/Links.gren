@@ -1,4 +1,5 @@
 module Links exposing (..)
+
 import Dict
 
 
@@ -10,7 +11,6 @@ links =
         , z "📚" "Quotes" "https://quotes.fission.app/"
         , z "✔︎" "Checklists" "https://checklists.citric.id"
         ]
-
     , cat
         "(My) Community"
         [ x "BES coöperatieve buurtwinkel" "https://biobes.be"
@@ -18,7 +18,7 @@ links =
         , x "Vlees van Ons" "https://vleesvanons.nl"
         ]
 
-    , --
+    , -- 
       cat
         "(My) Social Profiles"
         [ z "🏞️" "Bluesky" "https://bsky.app/profile/tokono.ma"
@@ -27,35 +27,34 @@ links =
         , z "🦣" "Mastodon" "https://mastodon.xyz/@icidasset"
         ]
 
-        , --
-          cat
-            "Color tools"
-            [ x "Tweak colors w/ hue.tools" "https://hue.tools"
-            , x "Color conversion" "https://convertacolor.com"
-            , x "Color search engine" "https://picular.co"
-            , x "Get random, accessible color combinations" "https://randoma11y.com"
-            , x "Random color explorer" "https://farbvelo.elastiq.ch"
-            , x "Enigmatic color palette generator" "https://meodai.github.io/poline/"
-            , x "Happy Hues" "https://www.happyhues.co"
-            , x "The Day\'s Color" "https://www.thedayscolor.com"
-            ]
+    , -- 
+      cat
+        "Color tools"
+        [ x "Tweak colors w/ hue.tools" "https://hue.tools"
+        , x "Color conversion" "https://convertacolor.com"
+        , x "Color search engine" "https://picular.co"
+        , x "Get random, accessible color combinations" "https://randoma11y.com"
+        , x "Random color explorer" "https://farbvelo.elastiq.ch"
+        , x "Enigmatic color palette generator" "https://meodai.github.io/poline/"
+        , x "Happy Hues" "https://www.happyhues.co"
+        , x "The Day\'s Color" "https://www.thedayscolor.com"
+        ]
 
-        , --
-          cat
-            "Cryptography"
-            [ x "Cryptii" "https://cryptii.com"
-            , x "Cipher Editor" "https://ciphereditor.com"
-            ]
+    , -- 
+      cat
+        "Cryptography"
+        [ x "Cryptii" "https://cryptii.com"
+        , x "Cipher Editor" "https://ciphereditor.com"
+        ]
 
-        , --
-          cat
-            "Miscellaneous software"
-            [
-            z "🏷️"  "List DNS records" "https://dnsrecords.io"
-            , z "🖼️" "Photo editor" "https://edit.photo"
-            , z "🖌️" "TLDraw" "https://www.tldraw.com"
-            , z "✏️" "Excalidraw" "https://excalidraw.com"
-            ]
+    , -- 
+      cat
+        "Miscellaneous software"
+        [ z "🏷️" "List DNS records" "https://dnsrecords.io"
+        , z "🖼️" "Photo editor" "https://edit.photo"
+        , z "🖌️" "TLDraw" "https://www.tldraw.com"
+        , z "✏️" "Excalidraw" "https://excalidraw.com"
+        ]
     ]
 
 

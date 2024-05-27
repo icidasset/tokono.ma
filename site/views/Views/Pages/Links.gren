@@ -1,12 +1,12 @@
 module Views.Pages.Links exposing ( view )
 
+import Dict
 import Layouts.Default
 import Links exposing ( links )
 import Pages
 import Transmutable.Html as Html
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common exposing ( emojiText )
-import Dict
 
 
 view =
@@ -15,13 +15,7 @@ view =
             Array.length links
 
         amountOfLinks =
-            Array.foldl
-              (\{value} acc ->
-                acc + Array.length value
-              )
-              0
-
-              links
+            Array.foldl (\{ value } acc -> acc + Array.length value) 0 links
     in
     Layouts.Default.layout
         Pages.links
@@ -32,10 +26,13 @@ view =
             [ Html.text "My web directory."
             ]
 
-        , --
+        , -- 
           Html.p
             []
-            [ Html.text "Find links by using your browser\'s \"find in page\" functionality (eg. ⌘ + F)"
+            [ Html.small
+                []
+                [ Html.text "Find links by using your browser\'s \"find in page\" functionality (eg. ⌘ + F)"
+                ]
             , Html.br [] []
             , Html.small
                 []
@@ -47,7 +44,7 @@ view =
                 ]
             ]
 
-        , --
+        , -- 
           links
             |> Array.map
                     (\{ key, value } ->
@@ -75,9 +72,10 @@ view =
                     )
             |> Html.div []
 
-            , --
-              Common.closingEmoji "🌍"
+        , -- 
+          Common.closingEmoji "🌍"
         ]
+
 
 
 -- 🛠️

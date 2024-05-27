@@ -12,7 +12,7 @@ links =
         , z "✔︎" "Checklists" "https://checklists.citric.id"
         ]
     , cat
-        "(My) Community"
+        "(My) Local Community"
         [ x "BES coöperatieve buurtwinkel" "https://biobes.be"
         , x "Boer Olivier" "https://www.boerolivier.be"
         , x "Vlees van Ons" "https://vleesvanons.nl"

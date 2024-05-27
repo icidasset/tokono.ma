@@ -7,6 +7,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@view-transition {
+  navigation: auto;
+}
+
 body {
   @apply bg-french-porcelain text-magnet font-sans antialiased; /* text-black-panther */
   @apply dark:bg-carbon-fiber dark:text-cows-milk;

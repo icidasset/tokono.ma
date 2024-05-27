@@ -1,3 +1,2 @@
-# tokono.ma
-
-🚧 Work in progress
+**My personal website**  
+https://tokono.ma/

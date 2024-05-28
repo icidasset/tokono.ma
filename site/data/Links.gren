@@ -18,7 +18,7 @@ links =
         , x "Vlees van Ons" "https://vleesvanons.nl"
         ]
 
-    , -- 
+    , --
       cat
         "(My) Social Profiles"
         [ z "🏞️" "Bluesky" "https://bsky.app/profile/tokono.ma"
@@ -27,7 +27,7 @@ links =
         , z "🦣" "Mastodon" "https://mastodon.xyz/@icidasset"
         ]
 
-    , -- 
+    , --
       cat
         "Color tools"
         [ x "Tweak colors w/ hue.tools" "https://hue.tools"
@@ -40,20 +40,45 @@ links =
         , x "The Day\'s Color" "https://www.thedayscolor.com"
         ]
 
-    , -- 
+    , --
       cat
         "Cryptography"
         [ x "Cryptii" "https://cryptii.com"
-        , x "Cipher Editor" "https://ciphereditor.com"
+        , x "Cipher editor" "https://ciphereditor.com"
         ]
 
-    , -- 
+    , --
+      cat
+        "Knowledge base"
+        [ x "Climate science" "https://climateprimer.mit.edu/"
+        , x "Internet Archive" "https://archive.org/"
+        , x "JSTOR & Artstor (open data)" "https://about.jstor.org/oa-and-free/"
+        , x "OpenAlex" "https://openalex.org/"
+        , x "Phantom Islands" "https://www.andrewpekler.com/phantom-islands/"
+        , x "Regenerative agriculture" "https://farmersfootprint.us/regenerative-agriculture/"
+        ]
+
+    , --
+      cat
+        "Language"
+        [ x "Urban dictionary (multilingual)" "https://untranslatable.co/"
+        , x "Urban dictionary (OG)" "https://www.urbandictionary.com/"
+        , x "WaniKani, learn Kanji" "https://www.wanikani.com/"
+        ]
+
+    , --
       cat
         "Miscellaneous software"
         [ z "🏷️" "List DNS records" "https://dnsrecords.io"
         , z "🖼️" "Photo editor" "https://edit.photo"
         , z "🖌️" "TLDraw" "https://www.tldraw.com"
         , z "✏️" "Excalidraw" "https://excalidraw.com"
+        ]
+
+    , --
+      cat
+        "Music"
+        [ x "Music similarity search engine" "https://cosine.club/"
         ]
     ]
 

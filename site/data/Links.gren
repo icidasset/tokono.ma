@@ -51,6 +51,7 @@ links =
       cat
         "Knowledge base"
         [ x "Climate science" "https://climateprimer.mit.edu/"
+        , x "Damaged Earth Catalog" "https://damaged.bleu255.com/"
         , x "Internet Archive" "https://archive.org/"
         , x "JSTOR & Artstor (open data)" "https://about.jstor.org/oa-and-free/"
         , x "OpenAlex" "https://openalex.org/"
@@ -78,7 +79,16 @@ links =
     , --
       cat
         "Music"
-        [ x "Music similarity search engine" "https://cosine.club/"
+        [ x "Bandcamp (directly support musicians, business)" "https://bandcamp.com/"
+        , x "Mirlo (directly support musicians, co-op)" "https://mirlo.space/"
+        , x "Music similarity search engine" "https://cosine.club/"
+        ]
+
+    , --
+      cat
+        "Software development"
+        [ x "Codeberg (Git collab, non-profit org)" "https://codeberg.org/"
+        , x "Manifesto for a Humane Web" "https://humanewebmanifesto.com/"
         ]
     ]
 

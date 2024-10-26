@@ -175,7 +175,7 @@ article strong {
 }
 
 .font-emoji {
-  font-variant-emoji: text;
+  /* font-variant-emoji: text; */
 }
 
 .font-serif {

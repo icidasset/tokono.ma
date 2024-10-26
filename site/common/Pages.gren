@@ -49,8 +49,8 @@ pages : Array Page
 pages =
     [ work
     , links
-    , essays
-    , notes
+        -- , essays
+        -- , notes
     , about
     ]
 

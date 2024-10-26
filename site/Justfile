@@ -17,31 +17,25 @@ build-folder:
 
 
 build-css:
-  pkgx npx tailwindcss -- --config=tailwind.config.js --input=./css/main.css --output=./dist/stylesheet.css --minify
+  npx tailwindcss -- --config=tailwind.config.js --input=./css/main.css --output=./dist/stylesheet.css --minify
 
 
 build-static-gren:
-  cd build && gren make Build.gren
-  cd build && pkgx node app
+  cd build && npx gren make Build.gren
+  cd build && node app
   rm build/app
 
 
 build-dynamic-gren:
-  cd dynamic && gren make Main.gren --output=../dist/site.js
+  cd dynamic && npx gren make Main.gren --output=../dist/site.js
 
 
 build-dynamic-gren-optimised:
-  cd dynamic && gren make Main.gren --output=../dist/site.js
+  cd dynamic && npx gren make Main.gren --output=../dist/site.js
 
 
 format-gren:
-  cd build && gren format ../ --yes
-
-
-gather-notes:
-  rm -rf ./notes/
-  mkdir notes
-  obsidian-export "/Users/steven/Library/Mobile Documents/iCloud~md~obsidian/Documents/Writings" --start-at "/Users/steven/Library/Mobile Documents/iCloud~md~obsidian/Documents/Writings/Notes on" --only-tags public "./notes/" --frontmatter never
+  cd build && npx gren format ../ --yes
 
 
 publish: build-optimised
@@ -54,4 +48,4 @@ publish: build-optimised
 
 
 watch:
-  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css --watch ./data -- just build
+  watchexec --postpone --watch ./views --watch ./dynamic --watch ./css --watch ./data --watch ./common -- just build

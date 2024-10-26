@@ -1,0 +1,13 @@
+{
+  "languages": {
+    "Gren": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "site/node_modules/.bin/gren",
+          "arguments": ["format", "--stdin"]
+        }
+      }
+    }
+  }
+}

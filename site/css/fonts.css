@@ -58,9 +58,7 @@
 
 @font-face {
   font-family: "Noto Emoji";
-  src:
-    local("Noto Emoji"),
-    url("./fonts/noto-emoji-variable_wght.woff2") format("woff2");
+  src: url("./fonts/noto-emoji-variable_wght.woff2") format("woff2");
 
   /* Not setting the font-display property to lower the priority of loading this font. */
   /* font-display: swap; */

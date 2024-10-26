@@ -18,7 +18,7 @@ links =
         , x "Vlees van Ons" "https://vleesvanons.nl"
         ]
 
-    , --
+    , -- 
       cat
         "(My) Social Profiles"
         [ z "🏞️" "Bluesky" "https://bsky.app/profile/tokono.ma"
@@ -27,7 +27,7 @@ links =
         , z "🦣" "Mastodon" "https://mastodon.xyz/@icidasset"
         ]
 
-    , --
+    , -- 
       cat
         "Color tools"
         [ x "Tweak colors w/ hue.tools" "https://hue.tools"
@@ -40,26 +40,28 @@ links =
         , x "The Day\'s Color" "https://www.thedayscolor.com"
         ]
 
-    , --
+    , -- 
       cat
         "Cryptography"
         [ x "Cryptii" "https://cryptii.com"
         , x "Cipher editor" "https://ciphereditor.com"
         ]
 
-    , --
+    , -- 
       cat
         "Knowledge base"
         [ x "Climate science" "https://climateprimer.mit.edu/"
         , x "Damaged Earth Catalog" "https://damaged.bleu255.com/"
+        , x "Free & Liberated Ebooks" "https://standardebooks.org/"
         , x "Internet Archive" "https://archive.org/"
         , x "JSTOR & Artstor (open data)" "https://about.jstor.org/oa-and-free/"
         , x "OpenAlex" "https://openalex.org/"
         , x "Phantom Islands" "https://www.andrewpekler.com/phantom-islands/"
         , x "Regenerative agriculture" "https://farmersfootprint.us/regenerative-agriculture/"
+        , x "Search public domain content" "https://public.work/"
         ]
 
-    , --
+    , -- 
       cat
         "Language"
         [ x "Urban dictionary (multilingual)" "https://untranslatable.co/"
@@ -67,7 +69,7 @@ links =
         , x "WaniKani, learn Kanji" "https://www.wanikani.com/"
         ]
 
-    , --
+    , -- 
       cat
         "Miscellaneous software"
         [ z "🏷️" "List DNS records" "https://dnsrecords.io"
@@ -76,15 +78,16 @@ links =
         , z "✏️" "Excalidraw" "https://excalidraw.com"
         ]
 
-    , --
+    , -- 
       cat
         "Music"
-        [ x "Bandcamp (directly support musicians, business)" "https://bandcamp.com/"
+        [ x "Ampwall (directly support musicians, public-benefit company)" "https://ampwall.com/"
+        , x "jam.coop (directly support musicians, co-op)" "https://jam.coop/"
         , x "Mirlo (directly support musicians, co-op)" "https://mirlo.space/"
         , x "Music similarity search engine" "https://cosine.club/"
         ]
 
-    , --
+    , -- 
       cat
         "Software development"
         [ x "Codeberg (Git collab, non-profit org)" "https://codeberg.org/"

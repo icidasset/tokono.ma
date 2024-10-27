@@ -66,6 +66,25 @@ layout page time pageHtml =
                             )
                 , A.rel "stylesheet"
                 ]
+            , Html.link
+                [ let
+                    cssHref =
+                        "fonts/noto-color-emoji/index.css?v=" ++ cacheId
+                  in
+                  case page.route of
+                    [ "404" ] ->
+                        A.href ("/" ++ cssHref)
+
+                    _ ->
+                        A.href
+                            (Views.Common.pathFromRoot
+                                { root = page.route
+                                }
+                                [ cssHref
+                                ]
+                            )
+                , A.rel "stylesheet"
+                ]
             ]
             -- ---------------------------------------
             -- BODY

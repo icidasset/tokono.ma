@@ -7,9 +7,7 @@ links =
     [ cat
         "(My) Apps"
         [ z "🎵" "Diffuse" "https://diffuse.sh"
-        , z "📝" "Herknen" "https://herknen.fission.app/"
-        , z "📚" "Quotes" "https://quotes.fission.app/"
-        , z "✔︎" "Checklists" "https://checklists.citric.id"
+        , z "✔︎" "Checklists" "https://checklists.tokono.ma"
         ]
     , cat
         "(My) Local Community"

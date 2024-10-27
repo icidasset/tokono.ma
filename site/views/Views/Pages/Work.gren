@@ -162,8 +162,8 @@ checklists =
         "checklists"
         "Checklists"
         [ { name = "Application"
-          , text = "checklists.citric.id"
-          , url = "https://checklists.citric.id/"
+          , text = "checklists.tokono.ma"
+          , url = "https://checklists.tokono.ma/"
           }
         , { name = "Code"
           , text = "github.com/icidasset/checklists"
@@ -181,8 +181,8 @@ circuits =
         "circuits"
         "Circuits"
         [ { name = "Website"
-          , text = "circuits.citric.id"
-          , url = "https://circuits.citric.id/"
+          , text = "circuits.tokono.ma"
+          , url = "https://circuits.tokono.ma/"
           }
         ]
         [ imageHolder
@@ -399,8 +399,8 @@ waves =
         "waves"
         "Waves"
         [ { name = "Application"
-          , text = "waves.citric.id"
-          , url = "https://waves.citric.id/"
+          , text = "waves.tokono.ma"
+          , url = "https://waves.tokono.ma/"
           }
         ]
         [ imageHolder

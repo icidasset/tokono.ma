@@ -56,13 +56,15 @@
   font-display: swap;
 } */
 
-@font-face {
-  font-family: "Noto Emoji";
-  src: url("./fonts/noto-emoji-variable_wght.woff2") format("woff2");
+/* @font-face {
+  font-family: "Noto Color Emoji";
+  src:
+    url("./fonts/Noto-COLRv1-noflags.woff2") format(woff2) tech(color-COLRv1),
+    url("./fonts/NotoColorEmoji-noflags.woff2") format(woff2) tech(color-SVG); */
 
-  /* Not setting the font-display property to lower the priority of loading this font. */
-  /* font-display: swap; */
-}
+/* Not setting the font-display property to lower the priority of loading this font. */
+/* font-display: swap; */
+/* } */
 
 /* @font-face {
   font-family: "Playfair";

@@ -43,7 +43,7 @@ export default {
       },
       fontFamily: {
         display: ["'Garamon(d/t)'", "Jost", ...defaultTheme.fontFamily.sans],
-        emoji: ["Noto Emoji"],
+        emoji: ["Noto Color Emoji"],
         headings: ["Gabarito", "Jost", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", defaultTheme.fontFamily.mono],
         sans: ["Jost", ...defaultTheme.fontFamily.sans],

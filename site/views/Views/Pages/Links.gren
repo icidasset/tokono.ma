@@ -26,7 +26,7 @@ view =
             [ Html.text "My web directory."
             ]
 
-        , --
+        , -- 
           Html.p
             []
             [ Html.small
@@ -44,7 +44,7 @@ view =
                 ]
             ]
 
-        , --
+        , -- 
           links
             |> Array.map
                     (\{ key, value } ->
@@ -72,8 +72,8 @@ view =
                     )
             |> Html.div []
 
-        , --
-          Common.closingEmoji "🌍"
+        , -- 
+          Common.closingEmoji "✨"
         ]
 
 

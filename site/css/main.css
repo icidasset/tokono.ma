@@ -176,6 +176,7 @@ article strong {
 
 .font-emoji {
   /* font-variant-emoji: text; */
+  filter: grayscale(90%);
 }
 
 .font-serif {

@@ -57,8 +57,8 @@ view =
         , shikensu
         , waves
         , circuits
-        , quotes
-        , checklists
+            -- , quotes
+            -- , checklists
             -- 
         , Common.closingEmoji "🛠️️"
         ]
@@ -220,6 +220,14 @@ diffuse =
           , text = "github.com/icidasset/diffuse"
           , url = "https://github.com/icidasset/diffuse"
           }
+        , { name = "Code"
+          , text = "tangled.org/@tokono.ma/diffuse"
+          , url = "https://tangled.org/@tokono.ma/diffuse/"
+          }
+        , { name = "Experiment"
+          , text = "applets.diffuse.sh"
+          , url = "https://applets.diffuse.sh"
+          }
         ]
         [ imageHolder
             { padding = False
@@ -232,6 +240,21 @@ diffuse =
             ]
         , paragraph
             [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
+            ]
+        , paragraph
+            [ Html.text "Currently I\'m exploring various approaches to making this app, and various other software, more "
+            , Html.a
+                [ A.href "https://www.inkandswitch.com/essay/malleable-software/"
+                ]
+                [ Html.text "malleable"
+                ]
+            , Html.text ". I\'d like it to be an open ecosystem of "
+            , Html.a
+                [ A.href "https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements"
+                ]
+                [ Html.text "custom elements"
+                ]
+            , Html.text " (web components) that can be easily put together on both the user and developer level to shape one\'s own preferred digital music listening and browsing experience."
             ]
         ]
 

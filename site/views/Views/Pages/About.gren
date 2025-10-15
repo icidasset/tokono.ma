@@ -48,7 +48,13 @@ view =
                 ]
                 [ Html.text "Ruby"
                 ]
-            , Html.text ", which is one of the first programming languages that I really liked. Also did some Go and PHP there, and a lot of JS."
+            , Html.text ", which is one of the first programming languages that I loved. I will forever treasure "
+            , Html.a
+                [ A.href "https://poignant.guide"
+                ]
+                [ Html.text "Why\'s Poignant Guide"
+                ]
+            , Html.text "."
             ]
         , paragraph
             [ Html.text "Several years later I ended up working remotely full-time for "
@@ -57,25 +63,7 @@ view =
                 ]
                 [ Html.text "MetaLab"
                 ]
-            , Html.text ", a product design and development studio based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages, such as "
-            , Html.a
-                [ A.href "https://elixir-lang.org"
-                ]
-                [ Html.text "Elixir"
-                ]
-            , Html.text ", "
-            , Html.a
-                [ A.href "https://elm-lang.org"
-                ]
-                [ Html.text "Elm"
-                ]
-            , Html.text " and "
-            , Html.a
-                [ A.href "https://www.haskell.org"
-                ]
-                [ Html.text "Haskell"
-                ]
-            , Html.text "."
+            , Html.text ", a product design and development studio based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages and got introduced to functional programming."
             ]
         , paragraph
             [ Html.text "During all this time I worked on a "
@@ -90,11 +78,11 @@ view =
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This taught me a lot about cryptography, security and the various protocols that make up the web."
+            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This was my introduction to cryptography, software security and various low-level protocols that make up the web."
             ]
-
-        , -- TODO: Add more info
-          Html.text ""
+        , paragraph
+            [ Html.text "Sadly Fission ran out of funding. Since then I\'ve been working freelance on various projects in the same scene, helping the web and software become more distributed and better for the people."
+            ]
 
         , -- 
           Common.closingEmoji "🌷"

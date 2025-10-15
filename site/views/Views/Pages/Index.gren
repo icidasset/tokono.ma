@@ -62,7 +62,7 @@ view =
             ]
             [ Html.text "A synopsis of my work and writings."
             , Html.br [] []
-            , Html.text "Steven Vandevelde © 2024"
+            , Html.text "Steven Vandevelde © 2025"
             ]
         ]
     ]

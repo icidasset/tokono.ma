@@ -22,7 +22,8 @@ links =
         [ z "🏞️" "Bluesky" "https://bsky.app/profile/tokono.ma"
         , z "🪐" "Destiny" "https://www.bungie.net/7/en/User/Profile/3/4611686018475379626?bgn=icidasset"
         , z "🐱" "Github" "https://github.com/icidasset"
-        , z "🦣" "Mastodon" "https://mastodon.xyz/@icidasset"
+        , z "🦣" "Mastodon" "https://fedi.tokono.ma/@steven"
+        , z "🪢" "Tangled" "https://tangled.sh/@tokono.ma"
         ]
 
     , -- 
@@ -90,6 +91,7 @@ links =
         "Software development"
         [ x "Codeberg (Git collab, non-profit org)" "https://codeberg.org/"
         , x "Manifesto for a Humane Web" "https://humanewebmanifesto.com/"
+        , x "Tangled" "https://tangled.sh"
         ]
     ]
 

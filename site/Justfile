@@ -10,12 +10,13 @@ build-optimised: build-folder build-css build-static-gren build-dynamic-gren-opt
 
 
 build-folder:
+  mkdir -p ./notes/
   rm -rf dist
   mkdir -p dist/notes/Embeds/
   mkdir -p dist/fonts/noto-color-emoji/
   cp -R ./static/* ./dist/
   cp -R ./node_modules/@infolektuell/noto-color-emoji/* ./dist/fonts/noto-color-emoji/
-  cp -R ./notes/Embeds/* ./dist/notes/Embeds/
+  # cp -R ./notes/Embeds/* ./dist/notes/Embeds/
 
 
 build-css:

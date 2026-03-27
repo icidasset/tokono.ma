@@ -31,7 +31,7 @@ view =
             []
             [ Html.small
                 []
-                [ Html.text "Find links by using your browser\'s \"find in page\" functionality (eg. ⌘ + F, Chromium-based browsers only)"
+                [ Html.text "Find links by using your browser\'s \"find in page\" functionality (eg. ⌘ + F)"
                 ]
             , Html.br [] []
             , Html.small

@@ -5,6 +5,7 @@ import Messages exposing ( Msg )
 import Pages exposing ( Page, PageId(..), TableOfContents )
 import Transmutable.Html exposing ( Html )
 import Views.Pages.About
+import Views.Pages.Contact
 import Views.Pages.Errors.NotFound
 import Views.Pages.Essays
 import Views.Pages.Index
@@ -23,6 +24,9 @@ view { essayTableOfContents, notesTableOfContents } page =
     case page.id of
         About ->
             Views.Pages.About.view
+
+        Contact ->
+            Views.Pages.Contact.view
 
         ErrNotFound ->
             Views.Pages.Errors.NotFound.view

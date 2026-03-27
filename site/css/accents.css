@@ -33,6 +33,40 @@
 }
 
 /**
+ * Contact
+ */
+
+.bg-accent-contact {
+  @apply bg-enchanted-lavender;
+}
+
+.decoration-accent-contact {
+  @apply decoration-enchanted-lavender;
+}
+
+.decoration-accent-contact p a:not(.inline-block):before,
+.decoration-accent-contact ul a:not(.inline-block):before,
+.decoration-accent-contact ol a:not(.inline-block):before,
+.decoration-accent-contact a em:before {
+  @apply bg-enchanted-lavender;
+}
+
+.text-accent-contact {
+  @apply text-enchanted-lavender;
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-contact {
+    background-color: #4f248a;
+  }
+
+  .text-accent-contact {
+    color: #4f248a;
+  }
+}
+
+/**
  * Error
  */
 
@@ -71,32 +105,32 @@
  */
 
 .bg-accent-essays {
-  @apply bg-enchanted-lavender;
+  @apply bg-wondrous-wisteria;
 }
 
 .decoration-accent-essays {
-  @apply decoration-enchanted-lavender;
+  @apply decoration-wondrous-wisteria;
 }
 
 .decoration-accent-essays p a:not(.inline-block):before,
 .decoration-accent-essays ul a:not(.inline-block):before,
 .decoration-accent-essays ol a:not(.inline-block):before,
 .decoration-accent-essays a em:before {
-  @apply bg-enchanted-lavender;
+  @apply bg-wondrous-wisteria;
 }
 
 .text-accent-essays {
-  @apply text-enchanted-lavender;
+  @apply text-wondrous-wisteria;
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-essays {
-    background-color: #4f248a;
+    background-color: #141f9c;
   }
 
   .text-accent-essays {
-    color: #4f248a;
+    color: #141f9c;
   }
 }
 
@@ -131,40 +165,6 @@
 
   .text-accent-links {
     color: #b37706;
-  }
-}
-
-/**
- * Notes
- */
-
-.bg-accent-notes {
-  @apply bg-wondrous-wisteria;
-}
-
-.decoration-accent-notes {
-  @apply decoration-wondrous-wisteria;
-}
-
-.decoration-accent-notes p a:not(.inline-block):before,
-.decoration-accent-notes ul a:not(.inline-block):before,
-.decoration-accent-notes ol a:not(.inline-block):before,
-.decoration-accent-notes a em:before {
-  @apply bg-wondrous-wisteria;
-}
-
-.text-accent-notes {
-  @apply text-wondrous-wisteria;
-}
-
-/* High contrast */
-@media (prefers-contrast: more) and (prefers-color-scheme: light) {
-  .bg-accent-notes {
-    background-color: #141f9c;
-  }
-
-  .text-accent-notes {
-    color: #141f9c;
   }
 }
 

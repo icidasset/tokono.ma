@@ -25,7 +25,7 @@ view =
                 ]
             ]
         , paragraph
-            [ Html.text "I\'ve written about some of my work here, in order of how I important I find the project or how much I worked on it. First one is a music player named "
+            [ Html.text "I\'ve written about some of my work here, in order of how I important I find the project or how much I worked on it. First one is an audio workspace named "
             , Html.a
                 [ A.href "#diffuse"
                 ]
@@ -212,9 +212,9 @@ diffuse =
     item
         "diffuse"
         "Diffuse"
-        [ { name = "Application"
-          , text = "diffuse.sh"
-          , url = "https://diffuse.sh"
+        [ { name = "Software"
+          , text = "elements.diffuse.sh"
+          , url = "https://elements.diffuse.sh"
           }
         , { name = "Code"
           , text = "github.com/icidasset/diffuse"
@@ -223,10 +223,6 @@ diffuse =
         , { name = "Code"
           , text = "tangled.org/@tokono.ma/diffuse"
           , url = "https://tangled.org/@tokono.ma/diffuse/"
-          }
-        , { name = "Experiment"
-          , text = "applets.diffuse.sh"
-          , url = "https://applets.diffuse.sh"
           }
         ]
         [ imageHolder
@@ -239,22 +235,28 @@ diffuse =
                 []
             ]
         , paragraph
-            [ Html.text "I\'ve been working on this personal project on and off since 2012. Started out when some of my favourite music got removed from Spotify. Decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my app. Since then it\'s evolved into a decentralised local-first app. It\'s got two layers of data storage, (1) the user-data layer with your favourites, playlists, etc, and (2) the music layer. Both layers can have separate remote storages, for example, user data on Dropbox and music on Amazon S3."
-            ]
-        , paragraph
-            [ Html.text "Currently I\'m exploring various approaches to making this app, and various other software, more "
+            [ Html.text "I\'ve been working on this personal project on and off since 2012. It started out when some of my favourite music got removed from Spotify. I decided then and there that I\'d start buying music and build my own music player. I uploaded my bought music to Amazon S3 and connected it to my Ruby on Rails app. Since then it\'s evolved into "
             , Html.a
                 [ A.href "https://www.inkandswitch.com/essay/malleable-software/"
                 ]
                 [ Html.text "malleable"
                 ]
-            , Html.text ". I\'d like it to be an open ecosystem of "
+            , Html.text " cooperative "
+            , Html.a
+                [ A.href "https://www.inkandswitch.com/essay/local-first/"
+                ]
+                [ Html.text "local-first"
+                ]
+            , Html.text " software (currently in alpha) using "
             , Html.a
                 [ A.href "https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements"
                 ]
                 [ Html.text "custom elements"
                 ]
-            , Html.text " (web components) that can be easily put together on both the user and developer level to shape one\'s own preferred digital music listening and browsing experience."
+            , Html.text " as the foundation."
+            ]
+        , paragraph
+            [ Html.text "Everyone has different requirements when it comes to software. Instead of building a monolithic app which has all the possible features and configuration options, we flip this picture upside down and let the user pick the features they want according to their needs. Diffuse also lets you choose the interface. Basically the only things that are mostly consistent are the data structures and web components it\'s built on. It\'s also cooperative because you can change the code of any feature or interface in the software itself, and you can share that with other people."
             ]
         ]
 
@@ -263,11 +265,7 @@ oddsdk =
     item
         "oddsdk"
         "Open Distributed Data"
-        [ { name = "Website"
-          , text = "odd.dev"
-          , url = "https://odd.dev/"
-          }
-        , { name = "Code (fork)"
+        [ { name = "Code (fork)"
           , text = "github.com/icidasset/ts-odd"
           , url = "https://github.com/icidasset/ts-odd"
           }
@@ -307,7 +305,7 @@ oddsdk =
         , paragraph
             [ Html.text "This is the main project I worked on during my time at "
             , Html.a
-                [ A.href "https://fission.codes"
+                [ A.href "https://github.com/fission-codes"
                 ]
                 [ Html.text "Fission"
                 ]

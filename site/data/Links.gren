@@ -5,25 +5,17 @@ import Dict
 
 links =
     [ cat
-        "(My) Apps"
-        [ z "🎵" "Diffuse" "https://diffuse.sh"
-        , z "✔︎" "Checklists" "https://checklists.tokono.ma"
-        ]
-    , cat
-        "(My) Local Community"
-        [ x "BES coöperatieve buurtwinkel" "https://biobes.be"
-        , x "Boer Olivier" "https://www.boerolivier.be"
-        , x "Vlees van Ons" "https://vleesvanons.nl"
+        "(My) Socials"
+        [ z "🦋" "Bluesky" "https://bsky.app/profile/tokono.ma"
+        , z "🐱" "Github" "https://github.com/icidasset"
+        , z "🐑" "Tangled" "https://tangled.sh/@tokono.ma"
         ]
 
     , -- 
       cat
-        "(My) Social Profiles"
-        [ z "🏞️" "Bluesky" "https://bsky.app/profile/tokono.ma"
-        , z "🪐" "Destiny" "https://www.bungie.net/7/en/User/Profile/3/4611686018475379626?bgn=icidasset"
-        , z "🐱" "Github" "https://github.com/icidasset"
-        , z "🦣" "Mastodon" "https://fedi.tokono.ma/@steven"
-        , z "🪢" "Tangled" "https://tangled.sh/@tokono.ma"
+        "(My) Software"
+        [ z "🎵" "Diffuse" "https://elements.diffuse.sh"
+        , z "✔︎" "Checklists" "https://checklists.tokono.ma"
         ]
 
     , -- 
@@ -70,6 +62,14 @@ links =
 
     , -- 
       cat
+        "Local Community"
+        [ x "BES coöperatieve buurtwinkel" "https://biobes.be"
+        , x "Boer Olivier" "https://www.boerolivier.be"
+        , x "Vlees van Ons" "https://vleesvanons.nl"
+        ]
+
+    , -- 
+      cat
         "Miscellaneous software"
         [ z "🏷️" "List DNS records" "https://dnsrecords.io"
         , z "🖼️" "Photo editor" "https://edit.photo"
@@ -80,10 +80,10 @@ links =
     , -- 
       cat
         "Music"
-        [ x "Ampwall (directly support musicians, public-benefit company)" "https://ampwall.com/"
-        , x "jam.coop (directly support musicians, co-op)" "https://jam.coop/"
-        , x "Mirlo (directly support musicians, co-op)" "https://mirlo.space/"
+        [ x "Mirlo" "https://mirlo.space/"
         , x "Music similarity search engine" "https://cosine.club/"
+        , x "Subvert.fm" "https://subvert.fm/"
+        , x "Unstream" "https://unstream.stream/"
         ]
 
     , -- 

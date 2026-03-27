@@ -21,6 +21,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+[id] {
+  @apply scroll-mt-6;
+}
+
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   body {

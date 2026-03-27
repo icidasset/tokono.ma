@@ -21,7 +21,7 @@ view =
             [ Html.span
                 [ class "font-medium"
                 ]
-                [ Html.text "Web applications + computer code."
+                [ Html.text "Web software + computer code."
                 ]
             ]
         , paragraph

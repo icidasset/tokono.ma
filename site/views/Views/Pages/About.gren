@@ -48,7 +48,7 @@ view =
                 ]
                 [ Html.text "Ruby"
                 ]
-            , Html.text ", which is one of the first programming languages that I loved. I will forever treasure "
+            , Html.text ", which is one of the first programming languages that I loved. I\'ll forever treasure "
             , Html.a
                 [ A.href "https://poignant.guide"
                 ]
@@ -57,7 +57,7 @@ view =
             , Html.text "."
             ]
         , paragraph
-            [ Html.text "Several years later I ended up working remotely full-time for "
+            [ Html.text "Several years later I ended up working remotely for "
             , Html.a
                 [ A.href "https://metalab.co"
                 ]
@@ -66,7 +66,7 @@ view =
             , Html.text ", a product design and development studio based in Canada. There I started working mostly on web applications, learning a lot about user interfaces and user experience design. During this time I also learned a bunch of new programming languages and got introduced to functional programming."
             ]
         , paragraph
-            [ Html.text "During all this time I worked on a "
+            [ Html.text "That entire time I also worked on a "
             , Html.a
                 [ A.href "../work/#diffuse"
                 ]
@@ -81,7 +81,7 @@ view =
             , Html.text ", my third job, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This was my introduction to cryptography, software security and various low-level protocols that make up the web."
             ]
         , paragraph
-            [ Html.text "Sadly Fission ran out of funding. Since then I\'ve been working freelance on various projects in the same scene, helping the web and software become more distributed and better for the people."
+            [ Html.text "Sadly Fission ran out of funding. Since then I\'ve been working freelance on various projects in the same scene, helping the web and software become more distributed, malleable and better for the people."
             ]
 
         , -- 

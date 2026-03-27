@@ -46,7 +46,7 @@ view essays =
             ]
         , groupByYear archivedEssays
             -- 
-        , Common.closingEmoji "✍️"
+        , Common.closingEmoji "📓"
         ]
 
 

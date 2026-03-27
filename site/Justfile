@@ -42,7 +42,7 @@ format-gren:
 
 
 publish: build-optimised
-  npx netlify deploy --site tokonoma --dir ./dist --prod
+  npx netlify deploy --site 93a21551-d840-4310-9fd1-d36feec068eb --dir ./dist --prod
 
 
 @serve:

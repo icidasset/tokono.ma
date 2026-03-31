@@ -165,6 +165,15 @@ article img {
   @apply my-6;
 }
 
+body:not(.no-js) img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+
+  &.has-loaded {
+    opacity: 1;
+  }
+}
+
 article b,
 article strong {
   font-weight: 600;

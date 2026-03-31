@@ -60,6 +60,7 @@ view =
             , Html.img
                 [ A.src "../images/contact-2.png"
                 , A.alt "Photo of tokono.ma"
+                , A.attribute "loading" "lazy"
                 ]
                 []
             ]

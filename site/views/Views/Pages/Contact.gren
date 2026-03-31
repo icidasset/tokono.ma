@@ -17,11 +17,9 @@ view =
             ]
             [ Html.text "Get in touch"
             ]
-            -- , Html.h2
-            --   []
-            --   [ Html.text "Work history"
-            --   ]
-        , Html.p
+
+        , -- 
+          Html.p
             []
             [ Html.text "Reach me using "
             , Html.a
@@ -42,6 +40,28 @@ view =
                 [ Html.text "bluesky"
                 ]
             , Html.text " profile."
+            ]
+
+        , -- 
+          Html.node
+            "picture"
+            [ A.class "block max-w-lg w-full"
+            ]
+            [ Html.source
+                [ A.attribute "srcset" "../images/contact-2.png"
+                , A.media "(prefers-color-scheme: light)"
+                ]
+                []
+            , Html.source
+                [ A.attribute "srcset" "../images/contact-dark-2.png"
+                , A.media "(prefers-color-scheme: dark)"
+                ]
+                []
+            , Html.img
+                [ A.src "../images/contact-2.png"
+                , A.alt "Photo of tokono.ma"
+                ]
+                []
             ]
 
         , -- 

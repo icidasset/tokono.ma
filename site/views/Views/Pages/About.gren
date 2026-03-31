@@ -48,7 +48,8 @@ view =
                 ]
                 [ Html.text "Ruby"
                 ]
-            , Html.text ", which is one of the first programming languages that I loved. I\'ll forever treasure "
+            , Html.text ", which is one of the first programming languages that I loved. "
+            , Html.text "I\'ll forever treasure "
             , Html.a
                 [ A.href "https://poignant.guide"
                 ]
@@ -59,7 +60,7 @@ view =
         , paragraph
             [ Html.text "Several years later I ended up working remotely for "
             , Html.a
-                [ A.href "https://metalab.co"
+                [ A.href "https://metalab.com"
                 ]
                 [ Html.text "MetaLab"
                 ]
@@ -74,11 +75,11 @@ view =
                 ]
             , Html.text " which would eventually get me into "
             , Html.a
-                [ A.href "https://fission.codes"
+                [ A.href "https://github.com/fission-codes"
                 ]
                 [ Html.text "Fission"
                 ]
-            , Html.text ", my third job, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This was my introduction to cryptography, software security and various low-level protocols that make up the web."
+            , Html.text ", my third gig, where I worked with new protocols to help establish a local-first & distributed/decentralised web with more user agency. This was my introduction to cryptography, software security and various low-level protocols that make up the web."
             ]
         , paragraph
             [ Html.text "Sadly Fission ran out of funding. Since then I\'ve been working freelance on various projects in the same scene, helping the web and software become more distributed, malleable and better for the people."

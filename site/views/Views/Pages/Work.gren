@@ -25,7 +25,7 @@ view =
                 ]
             ]
         , paragraph
-            [ Html.text "I\'ve written about some of my work here, in order of how I important I find the project or how much I worked on it. First one is an audio workspace named "
+            [ Html.text "I\'ve written about some of my public work here, in order of how I important I find the project or how much I worked on it. First one is an audio workspace named "
             , Html.a
                 [ A.href "#diffuse"
                 ]
@@ -51,7 +51,7 @@ view =
                 ]
             , Html.text ", and more …"
             ]
-            -- 
+            --
         , diffuse
         , oddsdk
         , shikensu
@@ -59,7 +59,7 @@ view =
         , circuits
             -- , quotes
             -- , checklists
-            -- 
+            --
         , Common.closingEmoji "🛠️️"
         ]
 
@@ -392,8 +392,8 @@ shikensuCode =
     main =
         -- 🚀
         Shikensu.program sequence CurrentDirectory
-    
-    
+
+
     sequence : Shikensu.Task -> Shikensu.Task
     sequence task =
         task
@@ -407,8 +407,8 @@ shikensuCode =
                             |> Shikensu.renderContent renderMarkdown
                     )
             |> Task.andThen (Shikensu.write destination)
-    
-    
+
+
     destination : Shikensu.Focus
     destination =
         Relative (Path.directory [ "build" ])

@@ -201,3 +201,38 @@
     color: #b44d02;
   }
 }
+
+/**
+ * [HIDDEN] Resume
+ */
+
+.bg-accent-resume {
+  @apply bg-paradise-island;
+}
+
+.decoration-accent-resume {
+  @apply decoration-paradise-island;
+}
+
+.decoration-accent-resume p a:not(.inline-block):before,
+.decoration-accent-resume ul a:not(.inline-block):before,
+.decoration-accent-resume ol a:not(.inline-block):before,
+.decoration-accent-resume a em:before {
+  @apply bg-paradise-island;
+}
+
+.text-accent-resume {
+  @apply text-paradise-island;
+}
+
+/* High contrast */
+
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-resume {
+    background-color: #0b6f57;
+  }
+
+  .text-accent-resume {
+    color: #0b6f57;
+  }
+}

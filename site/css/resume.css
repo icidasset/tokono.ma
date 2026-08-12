@@ -1,0 +1,74 @@
+#sifa-resume .resume__head {
+  @apply mb-12;
+}
+
+#sifa-resume .resume__name {
+  @apply font-display mb-1 text-3xl subpixel-antialiased;
+  @apply sm:text-4xl;
+}
+
+#sifa-resume .resume__location {
+  @apply opacity-70 text-sm;
+}
+
+/*
+ * Section headings (`main h2`), paragraphs (`p`), and lists (`ul`, `li`)
+ * intentionally rely on the site's default styles in main.css — no
+ * font-size or margin overrides here. The rules below only add the layout
+ * that those defaults don't provide.
+ */
+
+.resume__item-main {
+  @apply flex flex-wrap items-baseline justify-between;
+}
+
+/* Left-aligned inline row (used by language items). */
+.resume__item-inline {
+  @apply -mb-5 flex flex-wrap items-baseline gap-1;
+}
+
+/* A bit more breathing room than the base `li` margin (mb-3). */
+#sifa-resume .resume__item {
+  @apply mb-6;
+}
+
+.resume__item-title {
+  @apply font-semibold mb-2;
+}
+
+.resume__item-meta {
+  @apply block opacity-70 text-sm;
+}
+
+.resume__item-dates {
+  @apply block mt-1 opacity-60 text-sm;
+}
+
+.resume__item-desc {
+  @apply opacity-80;
+}
+
+.resume__skills {
+  @apply list-none flex flex-wrap gap-3 mb-6 max-w-xl;
+}
+
+.resume__skill {
+  @apply bg-cows-milk mb-0 px-2 py-1 rounded-md text-sm;
+  @apply dark:bg-white dark:bg-opacity-10;
+}
+
+.resume__skill::before {
+  content: none;
+}
+
+.resume__link {
+  @apply inline-block relative;
+}
+
+.resume__link::before {
+  @apply bg-paradise-island;
+}
+
+.resume__error {
+  @apply text-paradise-island;
+}

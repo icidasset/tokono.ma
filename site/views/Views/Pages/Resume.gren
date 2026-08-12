@@ -1,0 +1,42 @@
+module Views.Pages.Resume exposing ( view )
+
+import Layouts.Default
+import Pages
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
+import Views.Common as Common
+
+
+view =
+    Layouts.Default.layout
+        Pages.resume
+        [ class "decoration-accent-resume"
+        ]
+        [ Html.h1
+            [ class "text-accent-resume"
+            ]
+            [ Html.text "Resume"
+            ]
+
+        , Html.div
+            [ A.id "sifa-resume"
+            , A.class "mt-12"
+            ]
+            [ Html.p
+                [ class "text-sm"
+                ]
+                [ Html.text "Loading AT Protocol data, just a moment ..."
+                ]
+            ]
+
+        , Html.node
+            "script"
+            [ Common.pathFromRoot
+                { root = Pages.resume.route
+                }
+                [ "resume.js"
+                ]
+                |> A.src
+            ]
+            []
+        ]

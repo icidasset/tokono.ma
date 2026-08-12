@@ -46,8 +46,8 @@ publish: build-optimised
 
 
 @serve:
-  echo "Serving static files on http://localhost:5001"
-  static-web-server --port 5001 --root ./dist/ --page404 404/index.html
+  echo "Serving static files on http://localhost:5101"
+  static-web-server --port 5101 --root ./dist/ --page404 404/index.html
 
 
 watch:

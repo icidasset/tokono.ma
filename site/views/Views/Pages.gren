@@ -11,6 +11,7 @@ import Views.Pages.Essays
 import Views.Pages.Index
 import Views.Pages.Links
 import Views.Pages.Notes
+import Views.Pages.Resume
 import Views.Pages.Work
 
 
@@ -48,6 +49,9 @@ view { essayTableOfContents, notesTableOfContents } page =
 
         Note _ ->
             []
+
+        Resume ->
+            Views.Pages.Resume.view
 
         Work ->
             Views.Pages.Work.view

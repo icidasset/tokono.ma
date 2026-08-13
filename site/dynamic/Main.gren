@@ -63,7 +63,7 @@ init flags url key =
                 |> String.split "/"
                 |> Array.dropLast (Array.length flags.pageRoute)
                 |> (\path ->
-                        case path of
+                        when path is
                             [] ->
                                 ""
 
@@ -89,14 +89,10 @@ init flags url key =
 collectMarkdown flagCollection pageCreator =
     let
         collection =
-            flagCollection
-                |> Array.map
-                        (\params ->
-                            { key = params.baseName
-                            , value = params
-                            }
-                        )
-                |> Dict.fromArray
+            Array.foldl
+                (\params dict -> Dict.set params.baseName params dict)
+                Dict.empty
+                flagCollection
 
         tableOfContents =
             flagCollection
@@ -130,7 +126,7 @@ update :
        , command : Cmd Msg
        }
 update msg model =
-    case msg of
+    when msg is
         ViewMsg (ViewMsg.NavigateToPage page) ->
             let
                 url =

@@ -139,13 +139,13 @@ linksTable links =
 
 item id title links nodes =
     nodes
-        |> Array.prefix
+        |> Array.prepend
                 [ Html.h2
                     []
                     [ Html.text title
                     ]
                 ]
-        |> Array.postfix
+        |> Array.append
                 [ linksTable links
                 ]
         |> Html.div

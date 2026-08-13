@@ -1,11 +1,10 @@
 module Build exposing ( main )
 
 import Bytes exposing ( Bytes )
-import Bytes.Decode
-import Bytes.Encode
-import Dict
+import Dict exposing ( Dict )
 import Essays
 import FileSystem
+import FileSystem.Path as Path
 import Json.Decode as Json
 import Json.Encode
 import Layouts.Base
@@ -20,9 +19,6 @@ import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
 import Shikensu.Definition as Shikensu
 import Shikensu.Error exposing ( Error(..) )
-import Shikensu.Focus as Shikensu exposing ( Focus(..) )
-import Shikensu.Path as Path
-import Stream
 import Task exposing ( Task )
 import Time
 import Transmutable.Html exposing ( Html )
@@ -33,12 +29,9 @@ import Views.Pages
 -- 🏔️
 
 
+dist : Path.Path
 dist =
-    [ ".."
-    , "dist"
-    ]
-        |> Path.directory
-        |> Relative
+    Path.fromPosixString "../dist"
 
 
 
@@ -48,8 +41,8 @@ dist =
 main : Shikensu.Program
 main =
     Shikensu.perform
-        { onSuccess = \env _ -> Stream.sendLine env.stdout "🧪 Sequence completed"
-        , onError = \env err -> Stream.sendLine env.stderr ("🚨 " ++ Shikensu.Error.toString err)
+        { onSuccess = \env _ -> Task.succeed {}
+        , onError = \env err -> Task.succeed {}
         }
         sequence
 
@@ -64,7 +57,7 @@ sequence fsPermission =
                 |> Task.sequence
                 |> Task.andThen
                         (\results ->
-                            case results of
+                            when results is
                                 [ essays, notes ] ->
                                     Task.succeed
                                         { essayTableOfContents = essays
@@ -92,11 +85,7 @@ processMarkdown :
     -> Time.Posix
     -> Task Error TableOfContents
 processMarkdown dir handler pageCreator fsPermission time =
-    [ ".."
-    , dir
-    ]
-        |> Path.directory
-        |> Relative
+    Path.fromPosixString ("../" ++ dir)
         |> Shikensu.list fsPermission
         |> Task.map (Shikensu.withExtension "md")
         |> Task.andThen Shikensu.read
@@ -130,8 +119,8 @@ processMarkdown dir handler pageCreator fsPermission time =
                         (\def ->
                             { page =
                                 pageCreator
-                                    { baseName = Maybe.withDefault def.baseName (Array.last (Path.unwrap def.directoryPath))
-                                    , title = meta "title" Json.string def.baseName def
+                                    { baseName = Maybe.withDefault def.path.filename (Array.last def.path.directory)
+                                    , title = meta "title" Json.string def.path.filename def
                                     }
                             , archived = meta "archived" Json.bool False def
                             , published = metaMaybe "published" Json.bool def
@@ -152,35 +141,25 @@ writePagesToDisk :
 writePagesToDisk fsPermission time toc =
     let
         makeDefinition page =
-            { baseName = "index"
-            , content = Just (htmlBytes (Layouts.Base.layout page time (Views.Pages.view toc page)))
-            , directoryPath = Path.directory page.route
-            , extensionName = Just "html"
+            { content =
+                Layouts.Base.layout page time (Views.Pages.view toc page)
+                    |> Transmutable.Html.arrayToString
+                    |> Bytes.fromString
+                    |> Just
+            , path =
+                page.route
+                    |> Array.pushLast "index.html"
+                    |> String.join "/"
+                    |> Path.fromPosixString
             , metadata = Dict.empty
             }
     in
     Pages.allPages
         |> Array.map makeDefinition
         |> Shikensu.bundle fsPermission
+        |> Task.succeed
         |> Task.andThen (Shikensu.write dist)
         |> Task.map (\_ -> [])
-
-
-
--- 🛠️ BYTES
-
-
-bytesToString : Bytes -> Maybe String
-bytesToString bytes =
-    bytes
-        |> Bytes.width
-        |> Bytes.Decode.string
-        |> (\decoder -> Bytes.Decode.decode decoder bytes)
-
-
-htmlBytes : Array (Html msg) -> Bytes
-htmlBytes =
-    Transmutable.Html.arrayToString >> Bytes.Encode.string >> Bytes.Encode.encode
 
 
 
@@ -190,10 +169,10 @@ htmlBytes =
 essayHandler : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
 essayHandler time compendium =
     compendium
-        |> Array.filterMap
+        |> Array.mapAndKeepJust
                 (\def ->
                     def.content
-                        |> Maybe.andThen bytesToString
+                        |> Maybe.andThen Bytes.toString
                         |> Maybe.andThen
                                 (\markdownString ->
                                     markdownString
@@ -224,7 +203,7 @@ essayHandler time compendium =
                                     let
                                         page =
                                             Pages.essay
-                                                { baseName = def.baseName
+                                                { baseName = def.path.filename
                                                 , title = metadata.title
                                                 }
 
@@ -233,12 +212,13 @@ essayHandler time compendium =
                                                 |> Array.map markdownToHtml
                                                 |> Layouts.Markdown.layout page "essays" (Just metadata.publishedOn)
                                                 |> Layouts.Base.layout page time
-                                                |> htmlBytes
+                                                |> Transmutable.Html.arrayToString
+                                                |> Bytes.fromString
                                     in
                                     { def
                                         | content = Just renderedMarkdown
                                         , metadata =
-                                            Dict.fromArray
+                                            metadataFromArray
                                                 [ { key = "archived"
                                                   , value = Json.Encode.bool metadata.archived
                                                   }
@@ -261,16 +241,16 @@ essayHandler time compendium =
                                     }
                                 )
                 )
-        |> Array.sortBy (\def -> meta "title" Json.string def.baseName def)
+        |> Array.sortBy (\def -> meta "title" Json.string def.path.filename def)
 
 
 notesHandler : Time.Posix -> Array Shikensu.Definition -> Array Shikensu.Definition
 notesHandler time compendium =
     compendium
-        |> Array.filterMap
+        |> Array.mapAndKeepJust
                 (\def ->
                     def.content
-                        |> Maybe.andThen bytesToString
+                        |> Maybe.andThen Bytes.toString
                         |> Maybe.map
                                 (\markdownString ->
                                     markdownString
@@ -288,8 +268,8 @@ notesHandler time compendium =
                                     let
                                         page =
                                             Pages.note
-                                                { baseName = def.baseName
-                                                , title = def.baseName
+                                                { baseName = def.path.filename
+                                                , title = def.path.filename
                                                 }
 
                                         renderedMarkdown =
@@ -297,12 +277,13 @@ notesHandler time compendium =
                                                 |> Array.map markdownToHtml
                                                 |> Layouts.Markdown.layout page "notes" Nothing
                                                 |> Layouts.Base.layout page time
-                                                |> htmlBytes
+                                                |> Transmutable.Html.arrayToString
+                                                |> Bytes.fromString
                                     in
                                     { def
                                         | content = Just renderedMarkdown
                                         , metadata =
-                                            Dict.fromArray
+                                            metadataFromArray
                                                 [ { key = "blocks"
                                                   , value = Json.Encode.array Markdown.Transmutationist.toJson blocks
                                                   }
@@ -310,20 +291,20 @@ notesHandler time compendium =
                                                   , value = Json.Encode.string markdown
                                                   }
                                                 , { key = "title"
-                                                  , value = Json.Encode.string def.baseName
+                                                  , value = Json.Encode.string def.path.filename
                                                   }
                                                 ]
                                     }
                                 )
                 )
-        |> Array.sortBy (\def -> meta "title" Json.string def.baseName def)
+        |> Array.sortBy (\def -> meta "title" Json.string def.path.filename def)
 
 
 postProcessNotesMarkdown : Array Markdown.Block -> Array Markdown.Block
 postProcessNotesMarkdown =
     let
         inlineHandler inline =
-            case inline of
+            when inline is
                 -- Fix path to embedded images
                 Image { alt, url } ->
                     Image
@@ -341,7 +322,7 @@ postProcessNotesMarkdown =
                         { text = text
                         , url =
                             if String.endsWith ".md" url && String.startsWith "http" url == False then
-                                "../" ++ String.dropRight 3 url
+                                "../" ++ String.dropLast 3 url
                             else
                                 url
                         }
@@ -351,24 +332,37 @@ postProcessNotesMarkdown =
     in
     Array.map
         (\block ->
-            case block of
+            when block is
                 BlockQuote blocks ->
                     BlockQuote (postProcessNotesMarkdown blocks)
 
-                Heading opts inlines ->
-                    Heading opts (Array.map inlineHandler inlines)
+                Heading { level, inlines } ->
+                    Heading
+                        { level = level
+                        , inlines = Array.map inlineHandler inlines
+                        }
 
-                HtmlBlockNode opts blocks ->
-                    HtmlBlockNode opts (postProcessNotesMarkdown blocks)
+                HtmlBlockNode { tagName, attributes, blocks } ->
+                    HtmlBlockNode
+                        { tagName = tagName
+                        , attributes = attributes
+                        , blocks = postProcessNotesMarkdown blocks
+                        }
 
                 Inline inline ->
                     Inline (inlineHandler inline)
 
-                OrderedLooseList opts itemsWithBlocks ->
-                    OrderedLooseList opts (Array.map postProcessNotesMarkdown itemsWithBlocks)
+                OrderedLooseList { start, blocks } ->
+                    OrderedLooseList
+                        { start = start
+                        , blocks = Array.map postProcessNotesMarkdown blocks
+                        }
 
-                OrderedTightList opts itemsWithInlines ->
-                    OrderedTightList opts (Array.map (Array.map inlineHandler) itemsWithInlines)
+                OrderedTightList { start, inlines } ->
+                    OrderedTightList
+                        { start = start
+                        , inlines = Array.map (Array.map inlineHandler) inlines
+                        }
 
                 Paragraph inlines ->
                     Paragraph (Array.map inlineHandler inlines)
@@ -387,7 +381,7 @@ postProcessNotesMarkdown =
 createMarkdownJsonRepo : String -> Array Shikensu.Definition -> Shikensu.Definition
 createMarkdownJsonRepo name compendium =
     compendium
-        |> Array.filterMap
+        |> Array.mapAndKeepJust
                 (\def ->
                     Maybe.map3
                         (\blocks title baseName ->
@@ -423,17 +417,14 @@ createMarkdownJsonRepo name compendium =
                         )
                         (Dict.get "blocks" def.metadata)
                         (Dict.get "title" def.metadata)
-                        (Array.last (Path.unwrap def.directoryPath))
+                        (Array.last def.path.directory)
                 )
         |> Json.Encode.array identity
         |> Json.Encode.encode 0
-        |> Bytes.Encode.string
-        |> Bytes.Encode.encode
-        |> (\json ->
-                { baseName = name
-                , content = Just json
-                , directoryPath = Path.directory []
-                , extensionName = Just "json"
+        |> Bytes.fromString
+        |> (\bytes ->
+                { content = Just bytes
+                , path = Path.fromPosixString (name ++ ".json")
                 , metadata = Dict.empty
                 }
             )
@@ -451,6 +442,11 @@ metaMaybe key decoder definition =
     definition.metadata
         |> Dict.get key
         |> Maybe.andThen (Json.decodeValue decoder >> Result.toMaybe)
+
+
+metadataFromArray : Array { key : String, value : Json.Value } -> Dict String Json.Value
+metadataFromArray =
+    Array.foldl (\{ key, value } dict -> Dict.set key value dict) Dict.empty
 
 
 markdownToHtml =

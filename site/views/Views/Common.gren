@@ -26,7 +26,7 @@ pathFromRoot :
 pathFromRoot { root } route =
     root
         |> Array.map (\_ -> "..")
-        |> Array.postfix route
+        |> Array.append route
         |> String.join "/"
 
 

@@ -24,21 +24,18 @@ build-css:
 
 
 build-static-gren:
-  cd build && npx gren make Build.gren
+  cd build && npx gren make Build
   cd build && node app
   rm build/app
 
 
 build-dynamic-gren:
-  cd dynamic && npx gren make Main.gren --output=../dist/site.js
+  cd dynamic && npx gren make Main --output=../dist/site.js
 
 
 build-dynamic-gren-optimised:
-  cd dynamic && npx gren make Main.gren --output=../dist/site.js
+  cd dynamic && npx gren make Main --output=../dist/site.js
 
-
-format-gren:
-  cd build && npx gren format ../ --yes
 
 
 publish: build-optimised

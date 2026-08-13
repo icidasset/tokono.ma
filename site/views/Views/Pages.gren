@@ -22,7 +22,7 @@ view :
     -> Page
     -> Array (Html Msg)
 view { essayTableOfContents, notesTableOfContents } page =
-    case page.id of
+    when page.id is
         About ->
             Views.Pages.About.view
 

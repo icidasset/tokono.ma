@@ -18,12 +18,12 @@ view : Model -> Document Msg
 view model =
     let
         pageRoute =
-            case
+            when
                 model.url.path
                     |> String.removePrefix "/"
                     |> String.removeSuffix "/"
                     |> String.split "/"
-            of
+            is
                 [ "" ] ->
                     []
 
@@ -36,7 +36,7 @@ view model =
             }
 
         maybe =
-            case pageRoute of
+            when pageRoute is
                 [ "essays", baseName ] ->
                     model.essays.collection
                         |> Dict.get baseName
@@ -52,7 +52,7 @@ view model =
                                     { page = p
                                     , view =
                                         blocks
-                                            |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
+                                            |> Array.mapAndKeepJust (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
                                             |> Array.map Markdown.toHtml
                                             |> Layouts.Markdown.layout p "essays" publishedOn
                                     }
@@ -73,7 +73,7 @@ view model =
                                     { page = p
                                     , view =
                                         blocks
-                                            |> Array.filterMap (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
+                                            |> Array.mapAndKeepJust (Json.Decode.decodeValue Markdown.jsonDecoder >> Result.toMaybe)
                                             |> Array.map Markdown.toHtml
                                             |> Layouts.Markdown.layout p "notes" publishedOn
                                     }
@@ -82,6 +82,7 @@ view model =
                 _ ->
                     Pages.allPages
                         |> Array.findFirst (\{ route } -> route == pageRoute)
+                        |> Maybe.map .value
                         |> Maybe.map
                                 (\p ->
                                     { page = p
@@ -90,7 +91,7 @@ view model =
                                 )
 
         result =
-            case maybe of
+            when maybe is
                 Just a ->
                     { page = a.page
                     , view = a.view

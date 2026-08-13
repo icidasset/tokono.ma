@@ -61,15 +61,17 @@ groupByYear essays =
                         arr =
                             Maybe.withDefault [] (Dict.get year acc)
                     in
-                    Dict.insert year (Array.pushLast essay arr) acc
+                    Dict.set year (Array.pushLast essay arr) acc
                 )
                 Dict.empty
-        |> Dict.toArray
+        |> Dict.foldl
+                (\key value acc -> Array.pushLast { key = key, value = value } acc)
+                []
         |> Array.sortBy (.key >> String.toInt >> Maybe.withDefault 0)
         |> Array.reverse
         |> Array.map
                 (\{ key, value } ->
-                    case key of
+                    when key is
                         "default" ->
                             []
 

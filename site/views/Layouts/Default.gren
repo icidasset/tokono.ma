@@ -25,7 +25,7 @@ layout page attributes contents =
                 [ Html.a
                     [ A.class "block mb-8 w-[98px]"
                     , A.attribute "aria-label" "Index"
-                    , case page.route of
+                    , when page.route is
                         [ "404" ] ->
                             A.href "/"
 
@@ -95,7 +95,7 @@ layout page attributes contents =
           -- MAIN
           -- -------------------------------------
           Html.main_
-            (Array.prefix
+            (Array.prepend
                 [ class "flex-1 max-w-2xl"
                 ]
                 attributes

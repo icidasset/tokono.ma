@@ -60,7 +60,7 @@ view =
                             , value
                                 |> Array.map
                                         (\{ title, url, emoji } ->
-                                            case emoji of
+                                            when emoji is
                                                 Just e ->
                                                     linkWithEmoji e url title
 

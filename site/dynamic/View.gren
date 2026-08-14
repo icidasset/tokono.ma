@@ -6,6 +6,7 @@ import Json.Decode
 import Layouts.Markdown
 import Markdown
 import Pages
+import Resume
 import String.Extra as String
 import Transmutable.Html
 import Transmutable.Html.VirtualDom
@@ -33,6 +34,7 @@ view model =
         viewOpts =
             { essayTableOfContents = model.essays.tableOfContents
             , notesTableOfContents = model.notes.tableOfContents
+            , resume = Resume.empty
             }
 
         maybe =

@@ -3,6 +3,7 @@ module Views.Pages exposing ( view )
 import Layouts.Default
 import Messages exposing ( Msg )
 import Pages exposing ( Page, PageId(..), TableOfContents )
+import Resume
 import Transmutable.Html exposing ( Html )
 import Views.Pages.About
 import Views.Pages.Contact
@@ -18,10 +19,11 @@ import Views.Pages.Work
 view :
     { essayTableOfContents : TableOfContents
     , notesTableOfContents : TableOfContents
+    , resume : Resume.Profile
     }
     -> Page
     -> Array (Html Msg)
-view { essayTableOfContents, notesTableOfContents } page =
+view { essayTableOfContents, notesTableOfContents, resume } page =
     when page.id is
         About ->
             Views.Pages.About.view
@@ -51,7 +53,7 @@ view { essayTableOfContents, notesTableOfContents } page =
             []
 
         Resume ->
-            Views.Pages.Resume.view
+            Views.Pages.Resume.view resume
 
         Work ->
             Views.Pages.Work.view

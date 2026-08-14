@@ -54,6 +54,7 @@ pages =
     , contact
     , essays
     , about
+    , resume
     ]
 
 
@@ -193,8 +194,8 @@ notes =
 resume : Page
 resume =
     { id = Resume
-    , name = "Resume"
-    , title = Views.Common.titleWithSuffix "Resume"
+    , name = "Résumé"
+    , title = Views.Common.titleWithSuffix "Résumé"
     , route =
         [ "resume"
         ]

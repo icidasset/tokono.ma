@@ -5,6 +5,8 @@ import Dict exposing ( Dict )
 import Essays
 import FileSystem
 import FileSystem.Path as Path
+import HttpClient
+import Init
 import Json.Decode as Json
 import Json.Encode
 import Layouts.Base
@@ -13,7 +15,10 @@ import Markdown
 import Markdown.Block as Markdown exposing (..)
 import Markdown.Inline as Markdown exposing (..)
 import Markdown.Transmutationist
+import Node
 import Pages exposing ( Page, TableOfContents )
+import Resume
+import ResumeBuilder
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
@@ -38,37 +43,53 @@ dist =
 -- 🚀
 
 
-main : Shikensu.Program
+main : Node.SimpleProgram {}
 main =
-    Shikensu.perform
-        { onSuccess = \env _ -> Task.succeed {}
-        , onError = \env err -> Task.succeed {}
-        }
-        sequence
+    Node.defineSimpleProgram
+        (\env ->
+            Init.await
+                HttpClient.initialize
+                (\httpPermission ->
+                    Init.await
+                        FileSystem.initialize
+                        (\fsPermission ->
+                            sequence httpPermission fsPermission
+                                |> Task.andThen (\result -> Task.succeed {})
+                                |> Task.onError (\err -> Task.succeed {})
+                                |> Task.onError (\_ -> Task.succeed {})
+                                |> Node.endSimpleProgram
+                        )
+                )
+        )
 
 
-sequence : FileSystem.Permission -> Task Error {}
-sequence fsPermission =
+sequence : HttpClient.Permission -> FileSystem.Permission -> Task Error {}
+sequence httpPermission fsPermission =
     Task.andThen
         (\time ->
-            [ processMarkdown "essays" essayHandler Pages.essay fsPermission time
-            , processMarkdown "notes" notesHandler Pages.note fsPermission time
-            ]
-                |> Task.sequence
+            ResumeBuilder.build httpPermission
+                |> Task.onError (\_ -> Task.succeed Resume.empty)
                 |> Task.andThen
-                        (\results ->
-                            when results is
-                                [ essays, notes ] ->
-                                    Task.succeed
-                                        { essayTableOfContents = essays
-                                        , notesTableOfContents = notes
-                                        }
+                        (\resume ->
+                            [ processMarkdown "essays" essayHandler Pages.essay fsPermission time
+                            , processMarkdown "notes" notesHandler Pages.note fsPermission time
+                            ]
+                                |> Task.sequence
+                                |> Task.andThen
+                                        (\results ->
+                                            when results is
+                                                [ essays, notes ] ->
+                                                    Task.succeed
+                                                        { essayTableOfContents = essays
+                                                        , notesTableOfContents = notes
+                                                        }
 
-                                _ ->
-                                    Task.fail (ErrorMessage "Faulty markdown processing result")
+                                                _ ->
+                                                    Task.fail (ErrorMessage "Faulty markdown processing result")
+                                        )
+                                |> Task.andThen (writePagesToDisk fsPermission time resume)
+                                |> Task.map (\_ -> {})
                         )
-                |> Task.andThen (writePagesToDisk fsPermission time)
-                |> Task.map (\_ -> {})
         )
         Time.now
 
@@ -134,15 +155,22 @@ processMarkdown dir handler pageCreator fsPermission time =
 writePagesToDisk :
     FileSystem.Permission
     -> Time.Posix
+    -> Resume.Profile
     -> { essayTableOfContents : TableOfContents
        , notesTableOfContents : TableOfContents
        }
     -> Task Error TableOfContents
-writePagesToDisk fsPermission time toc =
+writePagesToDisk fsPermission time resume toc =
     let
+        viewOptions =
+            { essayTableOfContents = toc.essayTableOfContents
+            , notesTableOfContents = toc.notesTableOfContents
+            , resume = resume
+            }
+
         makeDefinition page =
             { content =
-                Layouts.Base.layout page time (Views.Pages.view toc page)
+                Layouts.Base.layout page time (Views.Pages.view viewOptions page)
                     |> Transmutable.Html.arrayToString
                     |> Bytes.fromString
                     |> Just

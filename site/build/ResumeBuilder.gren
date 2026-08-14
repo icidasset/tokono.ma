@@ -1,0 +1,935 @@
+module ResumeBuilder exposing ( build )
+
+{-| Fetch the résumé data from the AT Protocol during the static build and turn
+it into a [`Resume.Profile`](#) that the résumé page can render statically.
+
+Replaces what used to run as `static/resume.js` in the browser. Everything here
+runs on Node at build time, so the resulting HTML contains a baked copy of the
+CV which no longer needs JavaScript at page-load.
+
+@docs build
+
+-}
+
+import Array as Array
+import Char as Char
+import HttpClient
+import Json.Decode as Json
+import Resume exposing ( Profile )
+import String as String
+import Task exposing ( Task )
+
+
+
+-- 🚀
+
+
+type Error
+    = NoPds
+    | HttpError HttpClient.Error
+
+
+build : HttpClient.Permission -> Task Error Profile
+build httpPermission =
+    resolvePds httpPermission
+        |> Task.andThen (\{ pds, did } -> loadAll httpPermission pds did)
+
+
+
+-- 🔎  AT PROTOCOL
+
+
+handle : String
+handle =
+    "tokono.ma"
+
+
+resolvePds : HttpClient.Permission -> Task Error { pds : String, did : String }
+resolvePds httpPermission =
+    resolveHandleUrl
+        |> HttpClient.get
+        |> HttpClient.expectJson didDecoder
+        |> HttpClient.send httpPermission
+        |> Task.map (\res -> res.data)
+        |> Task.andThen
+                (\did ->
+                    "https://plc.directory/" ++ did
+                        |> HttpClient.get
+                        |> HttpClient.expectJson pdsDecoder
+                        |> HttpClient.send httpPermission
+                        |> Task.map (\res -> res.data)
+                        |> Task.map (\pds -> { pds = pds, did = did })
+                )
+        |> Task.mapError HttpError
+
+
+resolveHandleUrl : String
+resolveHandleUrl =
+    "https://api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle="
+        ++ handle
+
+
+didDecoder : Json.Decoder String
+didDecoder =
+    Json.field "did" Json.string
+
+
+pdsDecoder : Json.Decoder String
+pdsDecoder =
+    Json.field "service"
+        (Json.array pdsServiceDecoder)
+        |> Json.andThen pickPds
+
+
+pickPds : Array { type_ : String, serviceEndpoint : Maybe String } -> Json.Decoder String
+pickPds services =
+    let
+        endpoint =
+            Array.foldl
+                (\svc acc ->
+                    if acc /= "" then
+                        acc
+
+                    else
+                        when svc.serviceEndpoint is
+                            Just e ->
+                                if svc.type_ == "AtprotoPersonalDataServer" then
+                                    trimLastSlash e
+
+                                else
+                                    acc
+
+                            Nothing ->
+                                acc
+                )
+                ""
+                services
+    in
+    if endpoint == "" then
+        Json.fail "No PDS found"
+
+    else
+        Json.succeed endpoint
+
+
+pdsServiceDecoder : Json.Decoder { type_ : String, serviceEndpoint : Maybe String }
+pdsServiceDecoder =
+    Json.map2
+        (\type_ serviceEndpoint ->
+            { type_ = type_
+            , serviceEndpoint = serviceEndpoint
+            }
+        )
+        (Json.field "type" Json.string)
+        (Json.maybe (Json.field "serviceEndpoint" Json.string))
+
+
+trimLastSlash : String -> String
+trimLastSlash s =
+    if String.endsWith "/" s then
+        String.dropLast 1 s
+
+    else
+        s
+
+
+loadAll :
+    HttpClient.Permission
+    -> String
+    -> String
+    -> Task Error Profile
+loadAll httpPermission pds did =
+    let
+        profileTask =
+            fetchProfile httpPermission
+
+        selfTask =
+            listAll httpPermission pds did "id.sifa.profile.self" selfValueDecoder
+
+        positionsTask =
+            listAll httpPermission pds did "id.sifa.profile.position" positionDecoder
+
+        skillsTask =
+            listAll httpPermission pds did "id.sifa.profile.skill" skillDecoder
+
+        languagesTask =
+            listAll httpPermission pds did "id.sifa.profile.language" languageRecordDecoder
+
+        projectsTask =
+            listAll httpPermission pds did "id.sifa.profile.project" projectDecoder
+
+        externalsTask =
+            listAll httpPermission pds did "id.sifa.profile.externalAccount" externalDecoder
+
+        locationsTask =
+            listAll httpPermission pds did "id.sifa.profile.location" locationDecoder
+
+        keytraceTask =
+            listAll httpPermission pds did "dev.keytrace.claim" keytraceDecoder
+    in
+    Task.succeed
+        (\p s ps sk la pr ext lo kt ->
+            mapAllToProfile p s ps sk la pr ext lo kt
+        )
+        |> Task.andMap profileTask
+        |> Task.andMap selfTask
+        |> Task.andMap positionsTask
+        |> Task.andMap skillsTask
+        |> Task.andMap languagesTask
+        |> Task.andMap projectsTask
+        |> Task.andMap externalsTask
+        |> Task.andMap locationsTask
+        |> Task.andMap keytraceTask
+
+
+fetchProfile :
+    HttpClient.Permission
+    -> Task Error
+        { displayName : Maybe String
+        , description : Maybe String
+        }
+fetchProfile httpPermission =
+    "https://api.bsky.app/xrpc/app.bsky.actor.getProfile?actor="
+        ++ handle
+        |> HttpClient.get
+        |> HttpClient.expectJson profileDecoder
+        |> HttpClient.send httpPermission
+        |> Task.map (\res -> res.data)
+        |> Task.mapError HttpError
+
+
+profileDecoder : Json.Decoder { displayName : Maybe String, description : Maybe String }
+profileDecoder =
+    Json.map2
+        (\displayName description -> { displayName = displayName, description = description })
+        (Json.maybe (Json.field "displayName" Json.string))
+        (Json.maybe (Json.field "description" Json.string))
+
+
+listAll :
+    HttpClient.Permission
+    -> String
+    -> String
+    -> String
+    -> Json.Decoder a
+    -> Task Error (Array a)
+listAll httpPermission pds did collection decoder =
+    fetchPages httpPermission pds did "" collection decoder []
+
+
+fetchPages :
+    HttpClient.Permission
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Json.Decoder a
+    -> Array a
+    -> Task Error (Array a)
+fetchPages httpPermission pds did cursor collection decoder acc =
+    let
+        url =
+            pds
+                ++ "/xrpc/com.atproto.repo.listRecords?repo="
+                ++ did
+                ++ "&collection="
+                ++ collection
+                ++ (if cursor == "" then "" else "&cursor=" ++ cursor)
+    in
+    HttpClient.get url
+        |> HttpClient.expectJson (recordsPageDecoder decoder)
+        |> HttpClient.send httpPermission
+        |> Task.map (\res -> res.data)
+        |> Task.mapError HttpError
+        |> Task.andThen
+                (\page ->
+                    let
+                        newAcc =
+                            Array.append acc page.records
+                    in
+                    when page.cursor is
+                        Just nextCursor ->
+                            fetchPages httpPermission pds did nextCursor collection decoder newAcc
+
+                        Nothing ->
+                            Task.succeed newAcc
+                )
+
+
+recordsPageDecoder : Json.Decoder a -> Json.Decoder { records : Array a, cursor : Maybe String }
+recordsPageDecoder decoder =
+    Json.map2
+        (\records cursor -> { records = records, cursor = cursor })
+        (Json.field "records" (Json.array (Json.field "value" decoder)))
+        (Json.maybe (Json.field "cursor" Json.string))
+
+
+
+-- 📦  RECORD DECODERS
+
+
+type alias Position =
+    { title : Maybe String
+    , company : Maybe String
+    , employmentType : Maybe String
+    , workplaceType : Maybe String
+    , startedAt : Maybe String
+    , endedAt : Maybe String
+    , isHidden : Bool
+    }
+
+
+positionDecoder : Json.Decoder Position
+positionDecoder =
+    Json.map7
+        (\title company employmentType workplaceType startedAt endedAt isHidden ->
+            { title = title
+            , company = company
+            , employmentType = employmentType
+            , workplaceType = workplaceType
+            , startedAt = startedAt
+            , endedAt = endedAt
+            , isHidden = isHidden
+            }
+        )
+        (Json.maybe (Json.field "title" Json.string))
+        (Json.maybe (Json.field "company" Json.string))
+        (Json.maybe (Json.field "employmentType" Json.string))
+        (Json.maybe (Json.field "workplaceType" Json.string))
+        (Json.maybe (Json.field "startedAt" Json.string))
+        (Json.maybe (Json.field "endedAt" Json.string))
+        (Json.field "isHidden" Json.bool |> Json.maybe |> Json.map (Maybe.withDefault False))
+
+
+type alias Skill =
+    { name : Maybe String }
+
+
+skillDecoder : Json.Decoder Skill
+skillDecoder =
+    Json.map
+        (\name -> { name = name })
+        (Json.maybe (Json.field "name" Json.string))
+
+
+type alias Language =
+    { name : Maybe String
+    , proficiency : Maybe String
+    }
+
+
+languageRecordDecoder : Json.Decoder Language
+languageRecordDecoder =
+    Json.map2
+        (\name proficiency -> { name = name, proficiency = proficiency })
+        (Json.maybe (Json.field "name" Json.string))
+        (Json.maybe (Json.field "proficiency" Json.string))
+
+
+type alias ProjectRecord =
+    { name : Maybe String
+    , url : Maybe String
+    , description : Maybe String
+    , startedAt : Maybe String
+    , endedAt : Maybe String
+    }
+
+
+projectDecoder : Json.Decoder ProjectRecord
+projectDecoder =
+    Json.map5
+        (\name url description startedAt endedAt ->
+            { name = name
+            , url = url
+            , description = description
+            , startedAt = startedAt
+            , endedAt = endedAt
+            }
+        )
+        (Json.maybe (Json.field "name" Json.string))
+        (Json.maybe (Json.field "url" Json.string))
+        (Json.maybe (Json.field "description" Json.string))
+        (Json.maybe (Json.field "startedAt" Json.string))
+        (Json.maybe (Json.field "endedAt" Json.string))
+
+
+type alias External =
+    { url : Maybe String
+    , label : Maybe String
+    }
+
+
+externalDecoder : Json.Decoder External
+externalDecoder =
+    Json.map2
+        (\url lbl -> { url = url, label = lbl })
+        (Json.maybe (Json.field "url" Json.string))
+        (Json.maybe (Json.field "label" Json.string))
+
+
+type alias Location =
+    { isPrimary : Maybe Bool
+    , address : Maybe Address
+    }
+
+
+type alias Address =
+    { locality : Maybe String
+    , region : Maybe String
+    , country : Maybe String
+    }
+
+
+locationDecoder : Json.Decoder Location
+locationDecoder =
+    Json.map2
+        (\isPrimary address -> { isPrimary = isPrimary, address = address })
+        (Json.maybe (Json.field "isPrimary" Json.bool))
+        (Json.maybe (Json.field "address" addressDecoder))
+
+
+addressDecoder : Json.Decoder Address
+addressDecoder =
+    Json.map3
+        (\locality region country -> { locality = locality, region = region, country = country })
+        (Json.maybe (Json.field "locality" Json.string))
+        (Json.maybe (Json.field "region" Json.string))
+        (Json.maybe (Json.field "country" Json.string))
+
+
+type alias Keytrace =
+    { type_ : Maybe String
+    , status : Maybe String
+    , identity : Maybe { profileUrl : Maybe String }
+    , claimUri : Maybe String
+    }
+
+
+keytraceDecoder : Json.Decoder Keytrace
+keytraceDecoder =
+    Json.map4
+        (\type_ status identity claimUri ->
+            { type_ = type_
+            , status = status
+            , identity = identity
+            , claimUri = claimUri
+            }
+        )
+        (Json.maybe (Json.field "type" Json.string))
+        (Json.maybe (Json.field "status" Json.string))
+        (Json.maybe (Json.field "identity" keytraceIdentityDecoder))
+        (Json.maybe (Json.field "claimUri" Json.string))
+
+
+keytraceIdentityDecoder : Json.Decoder { profileUrl : Maybe String }
+keytraceIdentityDecoder =
+    Json.map
+        (\profileUrl -> { profileUrl = profileUrl })
+        (Json.maybe (Json.field "profileUrl" Json.string))
+
+
+selfValueDecoder : Json.Decoder { about : Maybe String }
+selfValueDecoder =
+    Json.map
+        (\about -> { about = about })
+        (Json.maybe (Json.field "about" Json.string))
+
+
+
+-- 🧹  TRANSFORM
+
+
+mapAllToProfile :
+    { displayName : Maybe String, description : Maybe String }
+    -> Array { about : Maybe String }
+    -> Array Position
+    -> Array Skill
+    -> Array Language
+    -> Array ProjectRecord
+    -> Array External
+    -> Array Location
+    -> Array Keytrace
+    -> Profile
+mapAllToProfile profile self positions skills languages projects externals locations keytrace =
+    { name =
+        profile.displayName
+            |> Maybe.withDefault ("@" ++ handle)
+    , about = aboutText self profile.description
+    , location = formatLocation locations
+    , career = careerItems positions
+    , skills = skillNames skills
+    , languages = renderedLanguages languages
+    , projects = renderedProjects projects
+    , externals = mergeExternals externals keytrace
+    }
+
+
+aboutText : Array { about : Maybe String } -> Maybe String -> String
+aboutText self description =
+    when Array.get 0 self is
+        Just { about } ->
+            about
+                |> Maybe.map String.trim
+                |> Maybe.withDefault (Maybe.withDefault "" description)
+
+        Nothing ->
+            Maybe.withDefault "" description
+
+
+skillNames : Array Skill -> Array String
+skillNames skills =
+    skills
+        |> Array.map .name
+        |> Array.mapAndKeepJust identity
+        |> uniqueStrings
+        |> Array.sort
+
+
+uniqueStrings : Array String -> Array String
+uniqueStrings strings =
+    Array.foldl
+        (\s acc ->
+            if Array.member (String.toLower s) (Array.map String.toLower acc) then
+                acc
+
+            else
+                Array.pushLast s acc
+        )
+        []
+        strings
+
+
+
+-- 🧾  CAREER
+
+
+careerItems : Array Position -> Array Resume.CareerItem
+careerItems positions =
+    positions
+        |> Array.keepIf (\p -> not p.isHidden)
+        |> Array.sortWith (\a b -> compareStartDesc a.startedAt b.startedAt)
+        |> Array.map toCareerItem
+
+
+toCareerItem : Position -> Resume.CareerItem
+toCareerItem p =
+    { title = positionTitle p
+    , dates = dateRange p.startedAt p.endedAt
+    , meta = positionMeta p
+    }
+
+
+positionTitle : Position -> String
+positionTitle p =
+    let
+        title =
+            p.title |> Maybe.withDefault "Role"
+    in
+    when p.company is
+        Just company ->
+            title ++ " at " ++ company
+
+        Nothing ->
+            when p.employmentType is
+                Just employmentType ->
+                    label employmentType ++ " " ++ title
+
+                Nothing ->
+                    title
+
+
+positionMeta : Position -> Maybe String
+positionMeta p =
+    p.workplaceType
+        |> Maybe.map label
+
+
+compareStartDesc : Maybe String -> Maybe String -> Order
+compareStartDesc a b =
+    compare
+        (b |> Maybe.withDefault "0000-00")
+        (a |> Maybe.withDefault "0000-00")
+
+
+
+-- 🗣️  LANGUAGES
+
+
+renderedLanguages : Array Language -> Array Resume.Language
+renderedLanguages languages =
+    languages
+        |> Array.sortWith byProficiency
+        |> Array.map
+                (\lang ->
+                    { name = lang.name |> Maybe.withDefault ""
+                    , proficiency =
+                        lang.proficiency
+                            |> Maybe.andThen (\pf -> proficiencyLabel pf)
+                    }
+                )
+
+
+byProficiency : Language -> Language -> Order
+byProficiency a b =
+    let
+        ra =
+            a.proficiency |> Maybe.andThen proficiencyRank |> Maybe.withDefault 99
+
+        rb =
+            b.proficiency |> Maybe.andThen proficiencyRank |> Maybe.withDefault 99
+    in
+    if ra /= rb then
+        compare ra rb
+
+    else
+        compare
+            (String.toLower (a.name |> Maybe.withDefault ""))
+            (String.toLower (b.name |> Maybe.withDefault ""))
+
+
+proficiencyRank : String -> Maybe Int
+proficiencyRank pf =
+    when pf is
+        "native" -> Just 0
+        "full_professional" -> Just 1
+        "professional" -> Just 2
+        "elementary" -> Just 3
+        _ -> Nothing
+
+
+proficiencyLabel : String -> Maybe String
+proficiencyLabel pf =
+    when pf is
+        "native" -> Just "Native"
+        "full_professional" -> Just "Full professional"
+        "professional" -> Just "Professional"
+        "elementary" -> Just "Elementary"
+        _ -> Nothing
+
+
+
+-- 🗂️  PROJECTS
+
+
+renderedProjects : Array ProjectRecord -> Array Resume.Project
+renderedProjects projects =
+    projects
+        |> Array.sortWith byProjectOrder
+        |> Array.map
+                (\p ->
+                    let
+                        name =
+                            p.name |> Maybe.withDefault ""
+                    in
+                    { title = name
+                    , url = projectUrl p
+                    , dates = projectDates p
+                    , description = p.description
+                    }
+                )
+
+
+projectUrl : ProjectRecord -> Maybe String
+projectUrl p =
+    when p.url is
+        Just url ->
+            if url == "#" then
+                Nothing
+
+            else
+                Just url
+
+        Nothing ->
+            Nothing
+
+
+projectDates : ProjectRecord -> Maybe String
+projectDates p =
+    when p.startedAt is
+        Just startedAt ->
+            let
+                startYear =
+                    String.slice 0 4 startedAt
+            in
+            when p.endedAt is
+                Just endedAt ->
+                    Just (startYear ++ " — " ++ String.slice 0 4 endedAt)
+
+                Nothing ->
+                    Just ("Since " ++ startYear)
+
+        Nothing ->
+            Nothing
+
+
+byProjectOrder : ProjectRecord -> ProjectRecord -> Order
+byProjectOrder a b =
+    let
+        aOngoing =
+            a.endedAt == Nothing
+
+        bOngoing =
+            b.endedAt == Nothing
+    in
+    if aOngoing /= bOngoing then
+        if aOngoing then
+            LT
+
+        else
+            GT
+
+    else if aOngoing then
+        compareStartDesc a.startedAt b.startedAt
+
+    else
+        compare
+            (b.endedAt |> Maybe.withDefault "0000-00")
+            (a.endedAt |> Maybe.withDefault "0000-00")
+
+
+
+-- 🔗  EXTERNALS
+
+
+mergeExternals : Array External -> Array Keytrace -> Array Resume.ExternalLink
+mergeExternals accounts keytrace =
+    let
+        fromAccounts =
+            accounts
+                |> Array.map
+                        (\acc ->
+                            { label = acc.label |> Maybe.withDefault (acc.url |> Maybe.withDefault "")
+                            , url = acc.url |> Maybe.withDefault ""
+                            }
+                        )
+
+        fromKeytrace =
+            keytrace
+                |> Array.mapAndKeepJust keytraceLink
+    in
+    Array.append fromAccounts fromKeytrace
+        |> Array.keepIf (\l -> l.url /= "")
+        |> Array.sortBy (\l -> String.toLower l.label)
+
+
+keytraceLink : Keytrace -> Maybe Resume.ExternalLink
+keytraceLink claim =
+    if claim.type_ == Just "bsky" then
+        Nothing
+
+    else if claim.status /= Nothing && claim.status /= Just "verified" then
+        Nothing
+
+    else
+        let
+            url =
+                claim.identity
+                    |> Maybe.andThen .profileUrl
+                    |> Maybe.withDefault ""
+
+            linkLabel =
+                keytraceLabel claim.type_
+        in
+        if url /= "" then
+            Just { label = linkLabel, url = url }
+
+        else
+            when claim.claimUri is
+                Just cu ->
+                    Just { label = linkLabel, url = cu }
+
+                Nothing ->
+                    Nothing
+
+
+keytraceLabel : Maybe String -> String
+keytraceLabel type_ =
+    when type_ is
+        Just "github" ->
+            "GitHub"
+
+        _ ->
+            type_ |> Maybe.withDefault "" |> prettyId
+
+
+
+-- 🏷️  LABELS
+
+
+label : String -> String
+label id =
+    when id is
+        "id.sifa.defs#fullTime" -> "Full-time"
+        "id.sifa.defs#partTime" -> "Part-time"
+        "id.sifa.defs#contract" -> "Contract"
+        "id.sifa.defs#temporary" -> "Temporary"
+        "id.sifa.defs#apprenticeship" -> "Apprenticeship"
+        "id.sifa.defs#internship" -> "Internship"
+        "id.sifa.defs#trainee" -> "Trainee"
+        "id.sifa.defs#seasonal" -> "Seasonal"
+        "id.sifa.defs#volunteer" -> "Volunteer"
+        "id.sifa.defs#freelance" -> "Freelance"
+        "id.sifa.defs#selfEmployed" -> "Self-employed"
+        "id.sifa.defs#contractRoles" -> "Contract roles"
+        "id.sifa.defs#fullTimeRoles" -> "Full-time roles"
+        "id.sifa.defs#partTimeRoles" -> "Part-time roles"
+        "id.sifa.defs#collaborations" -> "Collaborations"
+        "id.sifa.defs#remote" -> "Remote"
+        "id.sifa.defs#onSite" -> "On-site"
+        "id.sifa.defs#hybrid" -> "Hybrid"
+        "id.sifa.defs#remoteGlobal" -> "Remote (worldwide)"
+        "id.sifa.defs#remoteLocal" -> "Remote (local)"
+        "id.sifa.defs#remoteRegion" -> "Remote (regional)"
+        "id.sifa.defs#industryTechnology" -> "Technology"
+        "id.sifa.defs#industrySoftware" -> "Software"
+        "id.sifa.defs#domainSoftwareEngineering" -> "Software Engineering"
+        "id.sifa.defs#domainOpenSource" -> "Open Source"
+        _ -> prettyId id
+
+
+prettyId : String -> String
+prettyId id =
+    let
+        fragment =
+            when String.split "#" id is
+                parts ->
+                    when Array.get 1 parts is
+                        Just f ->
+                            f
+
+                        Nothing ->
+                            id
+    in
+    fragment
+        |> String.toArray
+        |> Array.foldl
+                (\c acc ->
+                    if Char.isUpper c && acc.word /= "" then
+                        { word = String.fromChar c
+                        , words = Array.pushLast acc.word acc.words
+                        }
+
+                    else
+                        { acc | word = acc.word ++ String.fromChar c }
+                )
+                { word = "", words = [] }
+        |> (\acc -> Array.pushLast acc.word acc.words)
+        |> Array.map capitalize
+        |> String.join " "
+
+
+capitalize : String -> String
+capitalize word =
+    when Array.get 0 (String.toArray word) is
+        Just first ->
+            String.toUpper (String.fromChar first) ++ String.dropFirst 1 word
+
+        Nothing ->
+            ""
+
+
+formatLocation : Array Location -> Maybe String
+formatLocation locations =
+    let
+        primary =
+            locations
+                |> Array.findFirst (\l -> l.isPrimary == Just True)
+                |> Maybe.map .value
+
+        chosen =
+            when primary is
+                Just loc ->
+                    Just loc
+
+                Nothing ->
+                    Array.last locations
+    in
+    when chosen is
+        Just loc ->
+            let
+                addr =
+                    loc.address |> Maybe.withDefault { locality = Nothing, region = Nothing, country = Nothing }
+
+                parts =
+                    [ addr.locality |> Maybe.withDefault ""
+                    , addr.region |> Maybe.withDefault ""
+                    , countryName addr.country
+                    ]
+                        |> Array.keepIf (\s -> s /= "")
+            in
+            if Array.isEmpty parts then
+                Nothing
+
+            else
+                Just (String.join ", " parts)
+
+        Nothing ->
+            Nothing
+
+
+countryName : Maybe String -> String
+countryName code =
+    when code is
+        Just "BE" -> "Belgium"
+        Just "NL" -> "Netherlands"
+        Just "DE" -> "Germany"
+        Just "FR" -> "France"
+        Just "GB" -> "United Kingdom"
+        Just "US" -> "United States"
+        Just c -> c
+        Nothing -> ""
+
+
+
+-- 📅  DATES
+
+
+dateRange : Maybe String -> Maybe String -> String
+dateRange startedAt endedAt =
+    let
+        start =
+            formatYearMonth startedAt
+    in
+    when endedAt is
+        Just e ->
+            start ++ " — " ++ formatYearMonth (Just e)
+
+        Nothing ->
+            start ++ " — Present"
+
+
+formatYearMonth : Maybe String -> String
+formatYearMonth value =
+    when value is
+        Just v ->
+            when String.split "-" (String.slice 0 7 v) is
+                [ year, month ] ->
+                    if String.count year == 4 && String.count month == 2 then
+                        monthName month ++ " " ++ year
+
+                    else
+                        v
+
+                _ ->
+                    v
+
+        Nothing ->
+            ""
+
+
+monthName : String -> String
+monthName month =
+    when month is
+        "01" -> "Jan"
+        "02" -> "Feb"
+        "03" -> "Mar"
+        "04" -> "Apr"
+        "05" -> "May"
+        "06" -> "Jun"
+        "07" -> "Jul"
+        "08" -> "Aug"
+        "09" -> "Sep"
+        "10" -> "Oct"
+        "11" -> "Nov"
+        "12" -> "Dec"
+        _ -> month

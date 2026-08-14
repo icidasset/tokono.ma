@@ -1,13 +1,16 @@
 module Views.Pages.Resume exposing ( view )
 
 import Layouts.Default
+import Messages exposing ( Msg )
 import Pages
-import Transmutable.Html as Html
+import Resume exposing ( Profile )
+import Transmutable.Html as Html exposing ( Html )
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
 
 
-view =
+view : Profile -> Array (Html Msg)
+view profile =
     Layouts.Default.layout
         Pages.resume
         [ class "decoration-accent-resume"
@@ -15,28 +18,277 @@ view =
         [ Html.h1
             [ class "text-accent-resume"
             ]
-            [ Html.text "Resume"
+            [ Html.text "Résumé"
             ]
+        , resume profile
+        ]
 
-        , Html.div
-            [ A.id "sifa-resume"
-            , A.class "mt-12"
-            ]
-            [ Html.p
-                [ class "text-sm"
-                ]
-                [ Html.text "Loading AT Protocol data, just a moment ..."
-                ]
-            ]
 
-        , Html.node
-            "script"
-            [ Common.pathFromRoot
-                { root = Pages.resume.route
-                }
-                [ "resume.js"
-                ]
-                |> A.src
+
+-- 🪪
+
+
+resume : Profile -> Html Msg
+resume profile =
+    Html.div
+        [ A.id "sifa-resume"
+        , class "mt-12"
+        ]
+        (Array.flatten
+            [ [ head profile ]
+            , aboutSection profile
+            , careerSection profile
+            , skillsSection profile
+            , languagesSection profile
+            , projectsSection profile
+            , linksSection profile
             ]
-            []
+        )
+
+
+head : Profile -> Html Msg
+head profile =
+    Html.div
+        [ class "resume__head"
+        ]
+        [ Html.p
+            [ class "resume__name"
+            ]
+            [ Html.text profile.name
+            ]
+        , when profile.location is
+            Just location ->
+                Html.p
+                    [ class "resume__location"
+                    ]
+                    [ Html.text location
+                    ]
+
+            Nothing ->
+                Html.text ""
+        ]
+
+
+sectionTitle : String -> Html Msg
+sectionTitle title =
+    Html.h2
+        [ class "resume__section"
+        ]
+        [ Html.text title
+        ]
+
+
+listSection : String -> Array (Html Msg) -> Array (Html Msg)
+listSection title items =
+    [ sectionTitle title
+    , Html.ul
+        [ class "resume__list"
+        ]
+        items
+    ]
+
+
+aboutSection : Profile -> Array (Html Msg)
+aboutSection profile =
+    [ sectionTitle "About"
+    , Html.p
+        [ class "resume__about"
+        ]
+        [ Html.text profile.about
+        ]
+    ]
+
+
+careerSection : Profile -> Array (Html Msg)
+careerSection profile =
+    if Array.isEmpty profile.career then
+        []
+
+    else
+        profile.career
+            |> Array.map careerItem
+            |> listSection "Career"
+
+
+careerItem item =
+    Html.li
+        [ class "resume__item"
+        ]
+        [ Html.div
+            [ class "resume__item-main"
+            ]
+            [ Html.span
+                [ class "resume__item-title"
+                ]
+                [ Html.text item.title
+                ]
+            ]
+        , when item.meta is
+            Just meta ->
+                Html.span
+                    [ class "resume__item-meta"
+                    ]
+                    [ Html.text meta
+                    ]
+
+            Nothing ->
+                Html.text ""
+        , Html.time
+            [ class "resume__item-dates"
+            ]
+            [ Html.text item.dates
+            ]
+        ]
+
+
+skillsSection : Profile -> Array (Html Msg)
+skillsSection profile =
+    if Array.isEmpty profile.skills then
+        []
+
+    else
+        [ sectionTitle "Skills"
+        , Html.ul
+            [ class "resume__skills"
+            ]
+            (profile.skills |> Array.map skill)
+        ]
+
+
+skill name =
+    Html.li
+        [ class "resume__skill"
+        ]
+        [ Html.text name
+        ]
+
+
+languagesSection : Profile -> Array (Html Msg)
+languagesSection profile =
+    if Array.isEmpty profile.languages then
+        []
+
+    else
+        profile.languages
+            |> Array.map languageItem
+            |> listSection "Languages"
+
+
+languageItem lang =
+    Html.li
+        [ class "resume__item"
+        ]
+        [ Html.div
+            [ class "resume__item-inline"
+            ]
+            [ Html.span
+                [ class "resume__item-title"
+                ]
+                [ Html.text lang.name
+                ]
+            , when lang.proficiency is
+                Just prof ->
+                    Html.span
+                        [ class "resume__item-meta"
+                        ]
+                        [ Html.text (" · " ++ prof)
+                        ]
+
+                Nothing ->
+                    Html.text ""
+            ]
+        ]
+
+
+projectsSection : Profile -> Array (Html Msg)
+projectsSection profile =
+    if Array.isEmpty profile.projects then
+        []
+
+    else
+        profile.projects
+            |> Array.map projectItem
+            |> listSection "Projects"
+
+
+projectItem p =
+    Html.li
+        [ class "resume__item"
+        ]
+        [ Html.div
+            [ class "resume__item-main"
+            ]
+            [ Html.span
+                [ class "resume__item-title"
+                ]
+                [ projectTitle p
+                ]
+            , when p.dates is
+                Just dates ->
+                    Html.time
+                        [ class "resume__item-dates"
+                        ]
+                        [ Html.text dates
+                        ]
+
+                Nothing ->
+                    Html.text ""
+            ]
+        , when p.description is
+            Just description ->
+                Html.p
+                    [ class "resume__item-desc"
+                    ]
+                    [ Html.text description
+                    ]
+
+            Nothing ->
+                Html.text ""
+        ]
+
+
+projectTitle p =
+    when p.url is
+        Just url ->
+            link url p.title
+
+        Nothing ->
+            Html.text p.title
+
+
+linksSection : Profile -> Array (Html Msg)
+linksSection profile =
+    if Array.isEmpty profile.externals then
+        []
+
+    else
+        profile.externals
+            |> Array.map externalItem
+            |> listSection "Links"
+
+
+externalItem externalLink =
+    Html.li
+        [ class "resume__item"
+        ]
+        [ Html.span
+            [ class "resume__item-title"
+            ]
+            [ link externalLink.url externalLink.label
+            ]
+        ]
+
+
+
+-- 🛠️
+
+
+link href text =
+    Html.a
+        [ class "resume__link"
+        , A.href href
+        , A.target "_blank"
+        , A.rel "noopener noreferrer"
+        ]
+        [ Html.text text
         ]

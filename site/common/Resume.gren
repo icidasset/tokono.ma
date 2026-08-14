@@ -1,0 +1,64 @@
+module Resume exposing ( CareerItem, ExternalLink, Language, Profile, Project, empty )
+
+{-| The shape of the résumé as it's rendered on the `/resume` page.
+
+This is the display-ready data model — everything the AT Protocol needs in
+order to be shown (label mapping, sorting, date formatting, …) has already been
+resolved by [`ResumeBuilder`](#) during the static build. The views only read this
+type.
+
+@docs Profile, CareerItem, Language, Project, ExternalLink, empty
+
+-}
+
+
+type alias Profile =
+    { name : String
+    , about : String
+    , location : Maybe String
+    , career : Array CareerItem
+    , skills : Array String
+    , languages : Array Language
+    , projects : Array Project
+    , externals : Array ExternalLink
+    }
+
+
+type alias CareerItem =
+    { title : String
+    , dates : String
+    , meta : Maybe String
+    }
+
+
+type alias Language =
+    { name : String
+    , proficiency : Maybe String
+    }
+
+
+type alias Project =
+    { title : String
+    , url : Maybe String
+    , dates : Maybe String
+    , description : Maybe String
+    }
+
+
+type alias ExternalLink =
+    { label : String
+    , url : String
+    }
+
+
+empty : Profile
+empty =
+    { name = "@tokono.ma"
+    , about = ""
+    , location = Nothing
+    , career = []
+    , skills = []
+    , languages = []
+    , projects = []
+    , externals = []
+    }

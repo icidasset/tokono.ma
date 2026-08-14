@@ -49,6 +49,15 @@
   @apply opacity-80;
 }
 
+.resume__section {
+  @apply flex items-center;
+
+  .font-emoji {
+    font-size: 72%;
+    line-height: 1;
+  }
+}
+
 .resume__skills {
   @apply list-none flex flex-wrap gap-3 mb-6 max-w-xl;
 }

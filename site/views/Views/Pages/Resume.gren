@@ -74,8 +74,26 @@ sectionTitle title =
     Html.h2
         [ class "resume__section"
         ]
-        [ Html.text title
+        [ Html.span
+            [ class "font-emoji inline-block mr-3"
+            , A.attribute "aria-hidden" "true"
+            ]
+            [ Html.text (sectionEmoji title)
+            ]
+        , Html.text title
         ]
+
+
+sectionEmoji : String -> String
+sectionEmoji title =
+    when title is
+        "About" -> "🪴"
+        "Career" -> "💼"
+        "Skills" -> "🛠️"
+        "Languages" -> "🌍"
+        "Projects" -> "🚀"
+        "Links" -> "🔗"
+        _ -> ""
 
 
 listSection : String -> Array (Html Msg) -> Array (Html Msg)

@@ -29,6 +29,7 @@
 
 /* A bit more breathing room than the base `li` margin (mb-3). */
 #sifa-resume .resume__item {
+  break-inside: avoid;
   @apply mb-6;
 }
 

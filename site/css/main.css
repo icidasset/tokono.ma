@@ -241,6 +241,8 @@ a em:before {
   position: absolute;
   right: -1px;
   z-index: -1;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
 }
 
 article p:not(.truncate) a:not(.inline-block) {

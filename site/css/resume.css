@@ -51,11 +51,11 @@
 
 .resume__section {
   @apply flex items-center;
+}
 
-  .font-emoji {
-    font-size: 72%;
-    line-height: 1;
-  }
+.resume__section .font-emoji {
+  font-size: 72%;
+  line-height: 1;
 }
 
 .resume__skills {

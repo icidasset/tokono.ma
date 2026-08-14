@@ -40,6 +40,12 @@ layout page attributes contents =
                     [ Common.ikebana
                     ]
                 , Common.tokonoma
+                , Html.div
+                    [ A.class "italic text-sm max-w-36 mt-5 text-right" ]
+                    [ Html.text "Freelance web engineer, "
+                    , Html.strong [] [ Html.text "available" ]
+                    , Html.text " for contracts and part-time work."
+                    ]
                 ]
 
             , -- ----

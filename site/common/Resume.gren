@@ -28,6 +28,8 @@ type alias CareerItem =
     { title : String
     , dates : String
     , meta : Maybe String
+    , description : Maybe String
+    , skills : Array String
     }
 
 

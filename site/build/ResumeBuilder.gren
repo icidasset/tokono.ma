@@ -150,7 +150,7 @@ loadAll httpPermission pds did =
             listAll httpPermission pds did "id.sifa.profile.position" positionDecoder
 
         skillsTask =
-            listAll httpPermission pds did "id.sifa.profile.skill" skillDecoder
+            listAnnotated httpPermission pds did "id.sifa.profile.skill" skillDecoder
 
         languagesTask =
             listAll httpPermission pds did "id.sifa.profile.language" languageRecordDecoder
@@ -214,6 +214,18 @@ listAll :
     -> Json.Decoder a
     -> Task Error (Array a)
 listAll httpPermission pds did collection decoder =
+    listAnnotated httpPermission pds did collection decoder
+        |> Task.map (Array.map .value)
+
+
+listAnnotated :
+    HttpClient.Permission
+    -> String
+    -> String
+    -> String
+    -> Json.Decoder a
+    -> Task Error (Array { uri : String, value : a })
+listAnnotated httpPermission pds did collection decoder =
     fetchPages httpPermission pds did "" collection decoder []
 
 
@@ -224,8 +236,8 @@ fetchPages :
     -> String
     -> String
     -> Json.Decoder a
-    -> Array a
-    -> Task Error (Array a)
+    -> Array { uri : String, value : a }
+    -> Task Error (Array { uri : String, value : a })
 fetchPages httpPermission pds did cursor collection decoder acc =
     let
         url =
@@ -256,11 +268,19 @@ fetchPages httpPermission pds did cursor collection decoder acc =
                 )
 
 
-recordsPageDecoder : Json.Decoder a -> Json.Decoder { records : Array a, cursor : Maybe String }
+recordsPageDecoder : Json.Decoder a -> Json.Decoder { records : Array { uri : String, value : a }, cursor : Maybe String }
 recordsPageDecoder decoder =
     Json.map2
         (\records cursor -> { records = records, cursor = cursor })
-        (Json.field "records" (Json.array (Json.field "value" decoder)))
+        (Json.field "records"
+            (Json.array
+                (Json.map2
+                    (\uri value -> { uri = uri, value = value })
+                    (Json.field "uri" Json.string)
+                    (Json.field "value" decoder)
+                )
+            )
+        )
         (Json.maybe (Json.field "cursor" Json.string))
 
 
@@ -273,29 +293,42 @@ type alias Position =
     , company : Maybe String
     , employmentType : Maybe String
     , workplaceType : Maybe String
+    , description : Maybe String
     , startedAt : Maybe String
     , endedAt : Maybe String
     , isHidden : Bool
+    , skills : Maybe (Array String)
     }
 
 
 positionDecoder : Json.Decoder Position
 positionDecoder =
-    Json.map7
-        (\title company employmentType workplaceType startedAt endedAt isHidden ->
+    Json.map2
+        (\p skills -> { p | skills = skills })
+        basePositionDecoder
+        (Json.maybe (Json.field "skills" (Json.array (Json.field "uri" Json.string))))
+
+
+basePositionDecoder : Json.Decoder Position
+basePositionDecoder =
+    Json.map8
+        (\title company employmentType workplaceType description startedAt endedAt isHidden ->
             { title = title
             , company = company
             , employmentType = employmentType
             , workplaceType = workplaceType
+            , description = description
             , startedAt = startedAt
             , endedAt = endedAt
             , isHidden = isHidden
+            , skills = Nothing
             }
         )
         (Json.maybe (Json.field "title" Json.string))
         (Json.maybe (Json.field "company" Json.string))
         (Json.maybe (Json.field "employmentType" Json.string))
         (Json.maybe (Json.field "workplaceType" Json.string))
+        (Json.maybe (Json.field "description" Json.string))
         (Json.maybe (Json.field "startedAt" Json.string))
         (Json.maybe (Json.field "endedAt" Json.string))
         (Json.field "isHidden" Json.bool |> Json.maybe |> Json.map (Maybe.withDefault False))
@@ -443,7 +476,7 @@ mapAllToProfile :
     { displayName : Maybe String, description : Maybe String }
     -> Array { about : Maybe String }
     -> Array Position
-    -> Array Skill
+    -> Array { uri : String, value : Skill }
     -> Array Language
     -> Array ProjectRecord
     -> Array External
@@ -456,7 +489,7 @@ mapAllToProfile profile self positions skills languages projects externals locat
             |> Maybe.withDefault ("@" ++ handle)
     , about = aboutText self profile.description
     , location = formatLocation locations
-    , career = careerItems positions
+    , career = careerItems skills positions
     , skills = skillNames skills
     , languages = renderedLanguages languages
     , projects = renderedProjects projects
@@ -476,10 +509,10 @@ aboutText self description =
             Maybe.withDefault "" description
 
 
-skillNames : Array Skill -> Array String
+skillNames : Array { uri : String, value : Skill } -> Array String
 skillNames skills =
     skills
-        |> Array.map .name
+        |> Array.map (.value >> .name)
         |> Array.mapAndKeepJust identity
         |> uniqueStrings
         |> Array.sort
@@ -503,20 +536,58 @@ uniqueStrings strings =
 -- 🧾  CAREER
 
 
-careerItems : Array Position -> Array Resume.CareerItem
-careerItems positions =
+careerItems : Array { uri : String, value : Skill } -> Array Position -> Array Resume.CareerItem
+careerItems skills positions =
     positions
         |> Array.keepIf (\p -> not p.isHidden)
         |> Array.sortWith (\a b -> compareStartDesc a.startedAt b.startedAt)
-        |> Array.map toCareerItem
+        |> Array.map (toCareerItem skills)
 
 
-toCareerItem : Position -> Resume.CareerItem
-toCareerItem p =
+toCareerItem : Array { uri : String, value : Skill } -> Position -> Resume.CareerItem
+toCareerItem skills p =
     { title = positionTitle p
     , dates = dateRange p.startedAt p.endedAt
     , meta = positionMeta p
+    , description = positionDescription p
+    , skills = positionSkills skills p
     }
+
+
+positionDescription : Position -> Maybe String
+positionDescription p =
+    p.description
+        |> Maybe.map String.trim
+        |> Maybe.andThen (\d -> if d == "" then Nothing else Just d)
+
+
+positionSkills : Array { uri : String, value : Skill } -> Position -> Array String
+positionSkills skills p =
+    p.skills
+        |> Maybe.withDefault []
+        |> Array.mapAndKeepJust (nameForUri skills)
+        |> uniqueStrings
+
+
+nameForUri : Array { uri : String, value : Skill } -> String -> Maybe String
+nameForUri skills uri =
+    Array.foldl
+        (\s acc ->
+            when acc is
+                Just _ ->
+                    acc
+
+                Nothing ->
+                    if s.uri == uri then
+                        s.value.name
+                            |> Maybe.map String.trim
+                            |> Maybe.andThen (\n -> if n == "" then Nothing else Just n)
+
+                    else
+                        Nothing
+        )
+        Nothing
+        skills
 
 
 positionTitle : Position -> String

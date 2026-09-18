@@ -156,6 +156,32 @@ careerItem item =
             ]
             [ Html.text item.dates
             ]
+        , when item.description is
+            Just description ->
+                Html.p
+                    [ class "resume__item-desc"
+                    ]
+                    [ Html.text description
+                    ]
+
+            Nothing ->
+                Html.text ""
+        , if Array.isEmpty item.skills then
+            Html.text ""
+
+        else
+            Html.ul
+                [ class "resume__tags"
+                ]
+                (item.skills |> Array.map skillTag)
+        ]
+
+
+skillTag tag =
+    Html.li
+        [ class "resume__tag"
+        ]
+        [ Html.text tag
         ]
 
 

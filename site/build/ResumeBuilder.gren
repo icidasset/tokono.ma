@@ -567,6 +567,7 @@ positionSkills skills p =
         |> Maybe.withDefault []
         |> Array.mapAndKeepJust (nameForUri skills)
         |> uniqueStrings
+        |> Array.sort
 
 
 nameForUri : Array { uri : String, value : Skill } -> String -> Maybe String

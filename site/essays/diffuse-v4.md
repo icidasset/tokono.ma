@@ -40,9 +40,68 @@ On the one hand I feel like this platform could be something more abstract, much
 
 What Patchwork does have is a better concept of security. In Diffuse, we just rely on the web security model and that's it. There's no permission model, no warning that a facet (that's what we call interfaces or features) could delete all your data; nothing like that. Maybe there should be, maybe not, I haven't decided.
 
-You can rebuild a large part of the Diffuse interfaces in Patchwork-26 I'm sure, I made a [Javascript package](https://jsr.io/@toko/diffuse) for the Diffuse components. I'll see if I can make a demo for that at some point.
+You can rebuild a large part of the Diffuse interfaces in Patchwork-26 I'm sure. I made a [Javascript package](https://jsr.io/@toko/diffuse) for the Diffuse components so you can use them in other places. I might make a demo at some point.
 
 
-## Show, don't tell
+## Default set
 
-...
+Here's which interfaces and features are included by default so far.
+
+**Base**:
+_These are a bunch of features that are considered essential. Enabled by default, hidden from the default dashboard, but can be disabled._
+
+- Artwork bundle, artwork retrieval from various locations.
+- Input bundle, audio sourcing from various protocols.
+- Metadata bundle, audio metadata retrieval through various means.
+- Output bundle, userdata storage using various protocols and services.
+- Upload bundle, audio file syncing using various protocols and services.
+- Audio preloading, loads the next track in the queue automatically in the background.
+
+**Features**:
+_Non-essential features, some enabled by default._
+
+- Add audio automatically to the queue.
+- Store a local copy of audio after it's been playing for a while.
+- Hide duplicate audio items (same artist and same title).
+- Automatic processing of audio sources.
+- Remember audio playback progress for items longer than 30 minutes.
+- Audio scrobbling.
+- On the fly audio file analysis, gather spectogram data.
+
+**Interfaces / Themes**:
+_These are somewhat similar to typical audio players, besides the fact that you can use them all at the same time._
+
+- Blur, Blur Classic, Blur Pocket. A set of themes similar to the Diffuse v3 interface.
+- Winamp v2.x in a Windows 98 desktop.
+- Catalogue One
+- iPod
+
+Various UI components from themes are available as separate interfaces as well. This allows you to mix and match.
+
+**Interfaces / Management**:
+_A few standard interfaces to manage data and state._
+
+- File Manager, upload audio files and optionally sync them to the cloud.
+- Playlists
+- Queue
+- Sources, manage audio input.
+- Your data, manage userdata, indicates where userdata is stored and synced to.
+
+**Interfaces / Other**:
+
+- Automatic queue
+- Command menu
+- Connect *
+- Export & Import
+- Process tracks
+- Scrobble *
+- Setup
+- Split view
+- V3 import
+
+
+## Tools
+
+Besides these, there's a bunch of interfaces I made just for myself:
+
+- ...

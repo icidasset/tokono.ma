@@ -4,7 +4,7 @@
   "published": false
 }
 
-This piece of software has been around for a bit, 15 years to be precise! It started under a different name though, also Japanese (like my handle), glad that didn't stick. There are a few ideas that did stick around, but with this fourth version I'm making the biggest change since we've started; we're moving from the traditional app model to a malleable one, from interface-first to data-first.
+This piece of software has been around for a bit, 15 years to be precise! It started under a different name though, also Japanese (like my handle), glad that didn't stick. There are a few ideas that did stick around, but with this fourth version, I'm making the biggest change since we've started; we're moving from the traditional app model to a malleable one, from interface-first to data-first.
 
 Before we get into what that means exactly, what does this software actually do? Well, first and foremost, it's an audio player. I know, it's not as easy to use as streaming services, but I prefer buying music, even digitally, what can I say. In any case, Diffuse always revolved around playing audio files from the cloud or your machine, and making playlists based on the extracted metadata from those files. Here's what that looked like in version three:
 
@@ -24,9 +24,25 @@ With this reasoning, what is Diffuse exactly? To be honest, I'm not quite sure y
 1. A [set](https://diffuse.sh/latest/elements/#definitions) of data schemas in the form of AT Protocol lexicons.
 2. A [set](https://diffuse.sh/latest/elements/) of framework-agnostic web components. These make up multiple layers of logic, building blocks to create our software.
 3. Web bundles in the form of [Web Tile](https://dasl.ing/tiles.html) CAR files. Basically just HTML snippets with Javascript and/or CSS in a small package.
-4. A manifest that points at a web bundle, a simple HTML file, another manifest or contents in the manifest itself. This represents an interface or a "feature".
+4. A manifest that points at a web bundle, a simple HTML file, another manifest (eg. on atproto), or contents in the manifest itself. This represents an interface or a "feature".
 5. A default extendable configuration of the included web components that are used throughout the included web bundles. This sets up the components in such a way that they communicate with each other even if they live in different browser tabs.
 6. A dashboard that lists all the manifests in your collection. Here you can toggle features, bookmark + open interfaces, and edit them.
-7. A loader that takes an interface manifest and renders it. Feature manifest contents are injected before the contents of the interface. This usually means, a script tag is rendered before the interface HTML is.
+7. A loader that takes an interface manifest and renders it. Feature manifest contents are injected before the contents of the interface. This usually means that a script tag is rendered before the interface HTML.
 
-This gives us a platform to build our personal software on.
+This gives us a platform to build our personal audio player software on, consisting of many interfaces and features (logic loaded for every interface). It gives the ability to add & remove behaviour, to pick an interface that suits our current needs, build uncoupled interfaces on the fly, perform one-off actions (on our data for example), etc.
+
+Yes, you can technically use this thing to build other software too, it's not restricted to Diffuse's components. That's why ...
+
+
+## Patchwork
+
+On the one hand I feel like this platform could be something more abstract, much like [Patchwork-26](https://www.youtube.com/watch?v=4UxGijnuXEs) is. On the other hand, there is a large collection of default interfaces and features; Patchwork doesn't have that (yet).
+
+What Patchwork does have is a better concept of security. In Diffuse, we just rely on the web security model and that's it. There's no permission model, no warning that a facet (that's what we call interfaces or features) could delete all your data; nothing like that. Maybe there should be, maybe not, I haven't decided.
+
+You can rebuild a large part of the Diffuse interfaces in Patchwork-26 I'm sure, I made a [Javascript package](https://jsr.io/@toko/diffuse) for the Diffuse components. I'll see if I can make a demo for that at some point.
+
+
+## Show, don't tell
+
+...

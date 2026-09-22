@@ -1,0 +1,81 @@
+module Sync exposing ( main )
+
+{-| Sync the résumé data from the AT Protocol (Sifa.id) into `data/resume.json`,
+on demand.
+
+The static build reads that JSON file instead of contacting the network, so
+day-to-day builds are offline-friendly and the PDS is only queried when you
+run `just sync-resume`.
+
+@docs main
+
+-}
+
+import Bytes
+import Debug
+import FileSystem
+import FileSystem.Path as Path
+import HttpClient
+import Init
+import Json.Encode
+import Node
+import Resume
+import ResumeBuilder
+import Task exposing ( Task )
+
+
+
+-- 🚀
+
+
+dataFile : Path.Path
+dataFile =
+    Path.fromPosixString "../data/resume.json"
+
+
+main : Node.SimpleProgram {}
+main =
+    Node.defineSimpleProgram
+        (\env ->
+            Init.await
+                HttpClient.initialize
+                (\httpPermission ->
+                    Init.await
+                        FileSystem.initialize
+                        (\fsPermission ->
+                            sync httpPermission fsPermission
+                                |> Task.onError (\_ -> Node.setExitCode 1)
+                                |> Node.endSimpleProgram
+                        )
+                )
+        )
+
+
+sync : HttpClient.Permission -> FileSystem.Permission -> Task Error {}
+sync httpPermission fsPermission =
+    ResumeBuilder.build httpPermission
+        |> Task.mapError (\e -> Debug.log "SYNC FETCH ERROR" e |> \_ -> FetchFailed)
+        |> Task.andThen (writeDataFile fsPermission)
+
+
+writeDataFile : FileSystem.Permission -> Resume.Profile -> Task Error {}
+writeDataFile fsPermission profile =
+    let
+        json =
+            profile
+                |> Resume.encode
+                |> Json.Encode.encode 2
+                |> Bytes.fromString
+    in
+    FileSystem.writeFile fsPermission json dataFile
+        |> Task.map (\_ -> {})
+        |> Task.mapError (\e -> Debug.log "SYNC WRITE ERROR" (FileSystem.errorToString e) |> \_ -> WriteFailed)
+
+
+-- The node package has no stdout API, so `Debug.log` is the only way to
+-- surface why a sync failed (combined with the non-zero exit code above).
+
+
+type Error
+    = FetchFailed
+    | WriteFailed

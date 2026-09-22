@@ -1,11 +1,11 @@
 module ResumeBuilder exposing ( build )
 
-{-| Fetch the résumé data from the AT Protocol during the static build and turn
-it into a [`Resume.Profile`](#) that the résumé page can render statically.
+{-| Fetch the résumé data from the AT Protocol (Sifa.id) and turn it into a
+[`Resume.Profile`](#) that can be stored as JSON in `data/resume.json`.
 
-Replaces what used to run as `static/resume.js` in the browser. Everything here
-runs on Node at build time, so the resulting HTML contains a baked copy of the
-CV which no longer needs JavaScript at page-load.
+Only used by the sync task (`just sync-resume`): the static build reads the
+synced JSON file instead of contacting the network, so it no longer needs
+JavaScript or a connection at page-load, nor at build time.
 
 @docs build
 

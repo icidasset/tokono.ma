@@ -5,7 +5,6 @@ import Dict exposing ( Dict )
 import Essays
 import FileSystem
 import FileSystem.Path as Path
-import HttpClient
 import Init
 import Json.Decode as Json
 import Json.Encode
@@ -18,7 +17,6 @@ import Markdown.Transmutationist
 import Node
 import Pages exposing ( Page, TableOfContents )
 import Resume
-import ResumeBuilder
 import Shikensu
 import Shikensu.Bundle as Shikensu
 import Shikensu.Contrib as Shikensu
@@ -39,6 +37,11 @@ dist =
     Path.fromPosixString "../dist"
 
 
+resumeData : Path.Path
+resumeData =
+    Path.fromPosixString "../data/resume.json"
+
+
 
 -- 🚀
 
@@ -48,27 +51,22 @@ main =
     Node.defineSimpleProgram
         (\env ->
             Init.await
-                HttpClient.initialize
-                (\httpPermission ->
-                    Init.await
-                        FileSystem.initialize
-                        (\fsPermission ->
-                            sequence httpPermission fsPermission
-                                |> Task.andThen (\result -> Task.succeed {})
-                                |> Task.onError (\err -> Task.succeed {})
-                                |> Task.onError (\_ -> Task.succeed {})
-                                |> Node.endSimpleProgram
-                        )
+                FileSystem.initialize
+                (\fsPermission ->
+                    sequence fsPermission
+                        |> Task.andThen (\result -> Task.succeed {})
+                        |> Task.onError (\err -> Task.succeed {})
+                        |> Task.onError (\_ -> Task.succeed {})
+                        |> Node.endSimpleProgram
                 )
         )
 
 
-sequence : HttpClient.Permission -> FileSystem.Permission -> Task Error {}
-sequence httpPermission fsPermission =
+sequence : FileSystem.Permission -> Task Error {}
+sequence fsPermission =
     Task.andThen
         (\time ->
-            ResumeBuilder.build httpPermission
-                |> Task.onError (\_ -> Task.succeed Resume.empty)
+            readResume fsPermission
                 |> Task.andThen
                         (\resume ->
                             [ processMarkdown "essays" essayHandler Pages.essay fsPermission time
@@ -150,6 +148,20 @@ processMarkdown dir handler pageCreator fsPermission time =
                         )
                         bundle.compendium
                 )
+
+
+readResume : FileSystem.Permission -> Task x Resume.Profile
+readResume fsPermission =
+    FileSystem.readFile fsPermission resumeData
+        |> Task.map (Bytes.toString >> decodeResumeData)
+        |> Task.map (Maybe.withDefault Resume.empty)
+        |> Task.onError (\_ -> Task.succeed Resume.empty)
+
+
+decodeResumeData : Maybe String -> Maybe Resume.Profile
+decodeResumeData contents =
+    contents
+        |> Maybe.andThen (Json.decodeString Resume.decoder >> Result.toMaybe)
 
 
 writePagesToDisk :

@@ -1,6 +1,6 @@
 {
   "name": "Steven Vandevelde",
-  "about": "A web engineer who specialises in distributed tech where user agency takes precedence.",
+  "about": "A fullstack web engineer with experience with lots of different programming languages and frameworks, who specialises in distributed tech where user agency takes precedence.",
   "location": "Aalter, Flanders, Belgium",
   "career": [
     {
@@ -14,6 +14,7 @@
         "Distributed Computing",
         "HTML",
         "JavaScript",
+        "Lit",
         "React",
         "Rust",
         "Software Engineering",
@@ -101,6 +102,7 @@
     "Haskell",
     "IPFS",
     "JavaScript",
+    "Lit",
     "Node.js",
     "PHP",
     "Phoenix Framework",

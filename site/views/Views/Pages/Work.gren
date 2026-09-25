@@ -229,8 +229,8 @@ diffuse =
         "diffuse"
         "Diffuse"
         [ { name = "Software"
-          , text = "elements.diffuse.sh"
-          , url = "https://elements.diffuse.sh"
+          , text = "diffuse.sh"
+          , url = "https://diffuse.sh"
           }
         , { name = "Code"
           , text = "github.com/icidasset/diffuse"

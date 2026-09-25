@@ -14,7 +14,7 @@ links =
     , -- 
       cat
         "(My) Software"
-        [ z "🎵" "Diffuse" "https://elements.diffuse.sh"
+        [ z "🎵" "Diffuse" "https://diffuse.sh"
         , z "✔︎" "Checklists" "https://checklists.tokono.ma"
         ]
 

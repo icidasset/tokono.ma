@@ -29,14 +29,6 @@ build-static-gren:
   rm build/app
 
 
-# Fetch the latest résumé data from Sifa.id (AT Protocol)
-# and store it in `data/resume.json` for the static build to pick up.
-sync-resume:
-  cd build && npx gren make Sync
-  cd build && node app
-  rm build/app
-
-
 build-dynamic-gren:
   cd dynamic && npx gren make Main --output=../dist/site.js
 

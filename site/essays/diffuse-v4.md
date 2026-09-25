@@ -117,7 +117,7 @@ _A few standard interfaces to manage data and state._
 
 ## Personal tools
 
-Besides all that, there's a few use cases that I consider more personal, so I generated these tools with the provided Diffuse LLM skill (see [Create page](https://elements.diffuse.sh/latest/create/) on the dashboard) and saved them into my “account”:
+Besides all that, there's a few use cases that I consider more personal, so I generated these tools with the provided Diffuse LLM skill (see [Create page](https://diffuse.sh/latest/create/) on the dashboard) and saved them into my “account”:
 
 - Some of the default themes have this functionality where you can add audio to a playlist called 'Favourites'. Other than reserving the name, it's just a regular playlist. This is something I heavily use and I then copy favourite tracks into other playlists per genre or vibe. **I made an interface that shows which favourited tracks aren't yet in any other playlists.**
 - Sometimes I add tracks to playlists multiple times, so I have an interface that shows what the duplicates are.

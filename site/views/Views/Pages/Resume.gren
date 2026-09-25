@@ -1,338 +1,193 @@
 module Views.Pages.Resume exposing ( view )
 
 import Layouts.Default
-import Messages exposing ( Msg )
+import Markdown
 import Pages
-import Resume exposing ( Profile )
-import Transmutable.Html as Html exposing ( Html )
+import Transmutable.Html as Html
 import Transmutable.Html.Attributes as A exposing ( class )
 import Views.Common as Common
 
 
-view : Profile -> Array (Html Msg)
-view profile =
+view =
     Layouts.Default.layout
         Pages.resume
         [ class "decoration-accent-resume"
         ]
         [ Html.h1
-            [ class "text-accent-resume"
+            []
+            [ Html.span [ A.class "text-accent-resume" ] [ Html.text "Résumé" ]
+            , Html.text " Steven Vandevelde"
             ]
-            [ Html.text "Résumé"
-            ]
-        , resume profile
-        ]
 
+        , markdown
+            """
+            I'm a full-stack web engineer who's worked on a large number of web sites and web applications for over 15 years. I've been full-time at a small web design bureau ([Mr. Henry](https://mrhenry.be)), a larger one ([Metalab](https://metalab.co)), and a startup ([Fission](https://github.com/fission-codes)) that worked on distributed computing problems. After that I started freelancing.
+            """
 
+        --
+        , Html.h2
+            []
+            [ Html.text "Skills" ]
 
--- 🪪
+        , markdown
+            """
+            This is what I'm good at:
 
+            - Building performant and component-based web applications.
+            - Creating accessible and responsive interfaces + web pages.
+            - Architecting secure, well-tested REST APIs with various kinds of databases.
 
-resume : Profile -> Html Msg
-resume profile =
-    Html.div
-        [ A.id "sifa-resume"
-        , class "mt-12"
-        ]
-        (Array.flatten
-            [ [ head profile ]
-            , aboutSection profile
-            , careerSection profile
-            , skillsSection profile
-            , languagesSection profile
-            , projectsSection profile
-            , linksSection profile
-            ]
-        )
+            Besides that, these are some of the more specific things I've done:
 
+            - Researching and utilizing several cryptographic methods and algorithms to build web applications that operate in a distributed fashion. This includes things such as PRF passkey encryption, establishing secure tunnels between devices, and synchronizing encrypted data between users using P2P tech.
+            - Implementing libraries & SDKs for content-addressed protocols such as [UCAN](https://ucan.xyz/)s and [WNFS](https://github.com/wnfs-wg), and then using them in web applications; including others such as the [DASL](https://dasl.ing/) protocols.
 
-head : Profile -> Html Msg
-head profile =
-    Html.div
-        [ class "resume__head"
-        ]
-        [ Html.p
-            [ class "resume__name"
-            ]
-            [ Html.text profile.name
-            ]
-        , when profile.location is
-            Just location ->
-                Html.p
-                    [ class "resume__location"
-                    ]
-                    [ Html.text location
-                    ]
+            I'm comfortable and experienced in many different programming languages, frameworks and protocols. Happy to pick up new ones:
 
-            Nothing ->
-                Html.text ""
-        ]
+            - **Programming languages**: HTML, CSS, TypeScript (JavaScript), Elm / Gren, Elixir, Haskell, Ruby, Rust, Golang, PHP, Python.
+            - **Frameworks & Libraries**: Node.js, Deno, Lit, React, Tailwind CSS, Phoenix, Ruby on Rails, Electron, Tauri, Laravel, WordPress, Svelte, Vue.js, Angular, React Native.
+            - **Additional skills**: Database design, automated testing, CI/CD, web security & performance, browser media APIs, developer tooling, containers, linux.
 
+            You can find a lot of my code on [GitHub](https://github.com/icidasset/).
+            """
 
-sectionTitle : String -> Html Msg
-sectionTitle title =
-    Html.h2
-        [ class "resume__section"
-        ]
-        [ Html.span
-            [ class "font-emoji inline-block mr-3"
-            , A.attribute "aria-hidden" "true"
-            ]
-            [ Html.text (sectionEmoji title)
-            ]
-        , Html.text title
-        ]
+        , --
+          Html.h2
+            []
+            [ Html.text "Career" ]
 
-
-sectionEmoji : String -> String
-sectionEmoji title =
-    when title is
-        "About" -> "🪴"
-        "Career" -> "💼"
-        "Skills" -> "🛠️"
-        "Languages" -> "🌍"
-        "Projects" -> "🚀"
-        "Links" -> "🔗"
-        _ -> ""
-
-
-listSection : String -> Array (Html Msg) -> Array (Html Msg)
-listSection title items =
-    [ sectionTitle title
-    , Html.ul
-        [ class "resume__list"
-        ]
-        items
-    ]
-
-
-aboutSection : Profile -> Array (Html Msg)
-aboutSection profile =
-    [ sectionTitle "About"
-    , Html.p
-        [ class "resume__about"
-        ]
-        [ Html.text profile.about
-        ]
-    ]
-
-
-careerSection : Profile -> Array (Html Msg)
-careerSection profile =
-    if Array.isEmpty profile.career then
-        []
-
-    else
-        profile.career
-            |> Array.map careerItem
-            |> listSection "Career"
-
-
-careerItem item =
-    Html.li
-        [ class "resume__item"
-        ]
-        [ Html.div
-            [ class "resume__item-main"
-            ]
-            [ Html.span
-                [ class "resume__item-title"
-                ]
-                [ Html.text item.title
-                ]
-            ]
-        , when item.meta is
-            Just meta ->
-                Html.span
-                    [ class "resume__item-meta"
-                    ]
-                    [ Html.text meta
-                    ]
-
-            Nothing ->
-                Html.text ""
-        , Html.time
-            [ class "resume__item-dates"
-            ]
-            [ Html.text item.dates
-            ]
-        , when item.description is
-            Just description ->
-                Html.p
-                    [ class "resume__item-desc"
-                    ]
-                    [ Html.text description
-                    ]
-
-            Nothing ->
-                Html.text ""
-        , if Array.isEmpty item.skills then
-            Html.text ""
-
-        else
-            Html.ul
-                [ class "resume__tags"
-                ]
-                (item.skills |> Array.map skillTag)
-        ]
-
-
-skillTag tag =
-    Html.li
-        [ class "resume__tag"
-        ]
-        [ Html.text tag
-        ]
-
-
-skillsSection : Profile -> Array (Html Msg)
-skillsSection profile =
-    if Array.isEmpty profile.skills then
-        []
-
-    else
-        [ sectionTitle "Skills"
-        , Html.ul
-            [ class "resume__skills"
-            ]
-            (profile.skills |> Array.map skill)
-        ]
-
-
-skill name =
-    Html.li
-        [ class "resume__skill"
-        ]
-        [ Html.text name
-        ]
-
-
-languagesSection : Profile -> Array (Html Msg)
-languagesSection profile =
-    if Array.isEmpty profile.languages then
-        []
-
-    else
-        profile.languages
-            |> Array.map languageItem
-            |> listSection "Languages"
-
-
-languageItem lang =
-    Html.li
-        [ class "resume__item"
-        ]
-        [ Html.div
-            [ class "resume__item-inline"
-            ]
-            [ Html.span
-                [ class "resume__item-title"
-                ]
-                [ Html.text lang.name
-                ]
-            , when lang.proficiency is
-                Just prof ->
-                    Html.span
-                        [ class "resume__item-meta"
+        , career
+            |> Array.map
+                (\c ->
+                  Html.div
+                    []
+                    [ Html.h3
+                        []
+                        [ Html.text c.title ]
+                    , Html.p
+                        []
+                        [ Html.text c.description ]
+                    , Html.p
+                        [ A.class "opacity-60" ]
+                        [ Html.span [] [ Html.text c.time ]
+                        , Html.br [] []
+                        , Html.small [] [ Html.text c.location ]
                         ]
-                        [ Html.text (" · " ++ prof)
-                        ]
-
-                Nothing ->
-                    Html.text ""
-            ]
-        ]
-
-
-projectsSection : Profile -> Array (Html Msg)
-projectsSection profile =
-    if Array.isEmpty profile.projects then
-        []
-
-    else
-        profile.projects
-            |> Array.map projectItem
-            |> listSection "Projects"
-
-
-projectItem p =
-    Html.li
-        [ class "resume__item"
-        ]
-        [ Html.div
-            [ class "resume__item-main"
-            ]
-            [ Html.span
-                [ class "resume__item-title"
-                ]
-                [ projectTitle p
-                ]
-            , when p.dates is
-                Just dates ->
-                    Html.time
-                        [ class "resume__item-dates"
-                        ]
-                        [ Html.text dates
-                        ]
-
-                Nothing ->
-                    Html.text ""
-            ]
-        , when p.description is
-            Just description ->
-                Html.p
-                    [ class "resume__item-desc"
                     ]
-                    [ Html.text description
+                )
+            |> Html.div []
+
+        , --
+          Html.h2
+            []
+            [ Html.text "Projects" ]
+
+        , projects
+            |> Array.map
+                (\c ->
+                  Html.div
+                    []
+                    [ Html.h3
+                        []
+                        [ Html.a
+                            [ A.href c.link ]
+                            [ Html.em [] [ Html.text c.title ] ]
+                        ]
+                    , Html.p
+                        []
+                        [ Html.text c.description ]
+                    , Html.p
+                        [ A.class "opacity-60" ]
+                        [ Html.span [] [ Html.text c.time ]
+                        ]
                     ]
+                )
+            |> Html.div []
 
-            Nothing ->
-                Html.text ""
-        ]
+        , --
+          Html.h2
+            []
+            [ Html.text "Languages" ]
 
+        , paragraph
+            [ Html.text "Fluent in Dutch and English." ]
 
-projectTitle p =
-    when p.url is
-        Just url ->
-            link url p.title
-
-        Nothing ->
-            Html.text p.title
-
-
-linksSection : Profile -> Array (Html Msg)
-linksSection profile =
-    if Array.isEmpty profile.externals then
-        []
-
-    else
-        profile.externals
-            |> Array.map externalItem
-            |> listSection "Links"
-
-
-externalItem externalLink =
-    Html.li
-        [ class "resume__item"
-        ]
-        [ Html.span
-            [ class "resume__item-title"
-            ]
-            [ link externalLink.url externalLink.label
-            ]
+        , --
+          Common.closingEmoji "🦚"
         ]
 
 
 
--- 🛠️
+--
 
 
-link href text =
-    Html.a
-        [ class "resume__link"
-        , A.href href
-        , A.target "_blank"
-        , A.rel "noopener noreferrer"
-        ]
-        [ Html.text text
-        ]
+career :
+    Array
+        { title : String
+        , location : String
+        , time : String
+        , description : String
+        }
+career =
+  [ { title = "Freelance Software Engineer"
+    , location = "Remote"
+    , time = "Sep 2023 — Present"
+    , description = "During this time I've been doing freelance work for various people and companies. I focused on distributed computing work initially, but now doing all kinds of web and software development work."
+    }
+  , { title = "Software Engineer at Fission (Codes)"
+    , location = "Remote"
+    , time = "Dec 2019 — Aug 2023"
+    , description = "At this startup I was responsible for building out the SDK with examples, implementing a protocol called UCAN, adding features to the API, and building web applications that consumed the SDK. This is where my distributed computing and cryptography journey began."
+    }
+  , { title = "Web Engineer at MetaLab"
+    , location = "Remote"
+    , time = "Aug 2015 — Nov 2019"
+    , description = "Here I made websites and web applications of various sizes, both frontend and backend. This included things such as creating an entirely custom CMS from scratch, writing complex database queries, making beautiful websites, and the occasional React Native."
+    }
+  , { title = "Web Engineer at Mr. Henry"
+    , location = "On site"
+    , time = "May 2011 — May 2015"
+    , description = "At my first job I built accessible design-heavy websites along with some playful canvas animations, backed with the in-house Ruby CMS system, along with other backends written in Golang and PHP."
+    }
+  ]
+
+projects :
+    Array
+        { title : String
+        , time : String
+        , link : String
+        , description : String
+        }
+projects =
+  [ { title = "Diffuse"
+    , time = "Since 2011"
+    , link = "https://diffuse.sh"
+    , description = "A project I've been working on since before the beginning of my career. It's taken a lot of different shapes, but still revolves around the same core idea: listen to your audio files from the cloud or your machine. The latest iteration is local-first, cooperative and malleable software."
+    }
+  , { title = "Shikensu"
+    , time = "2016 — 2025"
+    , link = "https://github.com/icidasset/shikensu-gren"
+    , description = "A library I wrote in several languages. It allows you to build static websites, among other things, without conforming to a specific directory structure."
+    }
+  , { title = "Open Distributed Data"
+    , time = "2019 — 2023"
+    , link = "https://github.com/oddsdk"
+    , description = "This is the SDK I was responsible for back when I worked for a startup called Fission. It allowed for fully distributed web applications without requiring a custom backend."
+    }
+  ]
+
+
+
+--
+
+
+markdown string =
+  string
+    |> Markdown.parse { frontmatter = Nothing }
+    |> .blocks
+    |> Array.map Markdown.toHtml
+    |> Html.article []
+
+
+paragraph =
+    Html.p []

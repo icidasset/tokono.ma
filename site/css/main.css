@@ -2,7 +2,6 @@
 
 @import "./fonts.css";
 @import "./accents.css";
-@import "./resume.css";
 
 @tailwind base;
 @tailwind components;

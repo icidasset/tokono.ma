@@ -4,7 +4,8 @@ import Layouts.Default
 import Pages
 import Transmutable.Html as Html
 import Transmutable.Html.Attributes as A exposing ( class )
-import Views.Common as Common
+import Views.Common as Common exposing ( markdown )
+import Views.Common.Work as Work
 
 
 view =
@@ -30,11 +31,24 @@ view =
             , Html.text " tech."
             ]
 
+        , --
+          Common.intro Work.intro
+        , markdown Work.occupation
+
+
+          --
+          -- , Html.h2
+          --       []
+          --       [ Html.text "Who am I?"
+          --       ]
+
+
         , -- WORK HISTORY
           Html.h2
             []
             [ Html.text "Work history"
             ]
+
         , paragraph
             [ Html.text "I started out in 2011 as a full-stack web dev at a company called "
             , Html.a
@@ -85,7 +99,7 @@ view =
             [ Html.text "Sadly Fission ran out of funding. Since then I\'ve been working freelance on various projects in the same scene, helping the web and software become more distributed, malleable and better for the people."
             ]
 
-        , -- 
+        , --
           Common.closingEmoji "🌷"
         ]
 

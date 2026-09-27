@@ -4,7 +4,7 @@ import Layouts.Default
 import Pages
 import Transmutable.Html as Html
 import Transmutable.Html.Attributes as A exposing ( class )
-import Views.Common as Common
+import Views.Common as Common exposing ( markdown, markdownWithinNode )
 
 
 view =
@@ -17,57 +17,15 @@ view =
             ]
             [ Html.text "Open-source work & personal projects."
             ]
-        , paragraph
-            [ Html.span
-                [ class "font-medium"
-                ]
-                [ Html.text "Web software + computer code."
-                ]
-            ]
-        , paragraph
-            [ Html.text "I\'ve written about some of my public work here, in order of how I important I find the project or how much I worked on it. First one is an audio workspace named "
-            , Html.span
-                [ A.class "whitespace-nowrap" ]
-                [ Html.a
-                  [ A.href "#diffuse"
-                  ]
-                  [ Html.text "Diffuse"
-                  ]
-                , Html.text ","
-                ]
-            , Html.text " and following are: a local-first toolkit "
-            , Html.span
-                [ A.class "whitespace-nowrap" ]
-                [ Html.a
-                  [ A.href "#oddsdk"
-                  ]
-                  [ Html.text "ODD SDK"
-                  ]
-                , Html.text ","
-                ]
-            , Html.text " a “static-site-generator” library "
-            , Html.span
-                [ A.class "whitespace-nowrap" ]
-                [ Html.a
-                  [ A.href "#shikensu"
-                  ]
-                  [ Html.text "Shikensu"
-                  ]
-                , Html.text ","
-                ]
-            , Html.text " an electrical-wave analyser "
-            , Html.span
-                [ A.class "whitespace-nowrap" ]
-                [ Html.a
-                  [ A.href "#waves"
-                  ]
-                  [ Html.text "Waves"
-                  ]
-                , Html.text ","
-                ]
-            , Html.text " and more …"
-            ]
-            --
+
+          --
+        , markdown
+            """
+            I've written about some of my public work here, in order of how I important I find the project or how much I worked on it. Some of it was done while working for startups or clients, others are side projects.
+            """
+
+
+          --
         , diffuse
         , oddsdk
         , shikensu

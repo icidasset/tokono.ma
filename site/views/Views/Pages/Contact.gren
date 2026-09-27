@@ -18,7 +18,7 @@ view =
             [ Html.text "Get in touch"
             ]
 
-        , -- 
+        , --
           Html.p
             []
             [ Html.text "Reach me using "
@@ -42,29 +42,41 @@ view =
             , Html.text " profile."
             ]
 
-        , -- 
-          Html.node
-            "picture"
-            [ A.class "block max-w-lg w-full"
-            ]
-            [ Html.source
-                [ A.attribute "srcset" "../images/contact-2.png"
-                , A.media "(prefers-color-scheme: light)"
-                ]
-                []
-            , Html.source
-                [ A.attribute "srcset" "../images/contact-dark-2.png"
-                , A.media "(prefers-color-scheme: dark)"
-                ]
-                []
-            , Html.img
-                [ A.src "../images/contact-2.png"
-                , A.alt "Photo of tokono.ma"
-                , A.attribute "loading" "lazy"
-                ]
-                []
+        , --
+          Html.p
+            [ A.class "opacity-60 text-sm" ]
+            [ Html.text "VAT number: "
+            , Html.span
+                [ A.class "font-medium" ]
+                [ Html.text "BE 0738.617.881" ]
             ]
 
-        , -- 
+        , --
+          Html.p
+            []
+            [ Html.node
+                "picture"
+                [ A.class "block max-w-lg w-full"
+                ]
+                [ Html.source
+                    [ A.attribute "srcset" "../images/contact-2.png"
+                    , A.media "(prefers-color-scheme: light)"
+                    ]
+                    []
+                , Html.source
+                    [ A.attribute "srcset" "../images/contact-dark-2.png"
+                    , A.media "(prefers-color-scheme: dark)"
+                    ]
+                    []
+                , Html.img
+                    [ A.src "../images/contact-2.png"
+                    , A.alt "Photo of tokono.ma"
+                    , A.attribute "loading" "lazy"
+                    ]
+                    []
+                ]
+            ]
+
+        , --
           Common.closingEmoji "🪻"
         ]

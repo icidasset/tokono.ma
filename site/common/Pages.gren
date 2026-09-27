@@ -54,14 +54,13 @@ pages =
     , contact
     , essays
     , about
-    , resume
     ]
 
 
 allPages : Array Page
 allPages =
     pages
-        |> Array.pushLast resume
+        |> Array.pushFirst resume
         |> Array.pushFirst index
         |> Array.pushFirst notFound
 

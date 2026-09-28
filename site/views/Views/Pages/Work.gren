@@ -229,7 +229,7 @@ diffuse =
                 ]
                 [ Html.text "custom elements"
                 ]
-            , Html.text " as the foundation."
+            , Html.text " as the foundation which represent the logical components."
             ]
         , paragraph
             [ Html.text "Everyone has different requirements when it comes to software. Instead of building a monolithic app which has all the possible features and configuration options, we flip this picture upside down and let the user pick the features they want according to their needs. Diffuse also lets you choose the interface. Basically the only things that are mostly consistent are the data structures and web components it\'s built on. It\'s also cooperative because you can change the code of any feature or interface in the software itself, and you can share that with other people."

@@ -9,7 +9,7 @@ import Views.Common as Common exposing ( markdown, markdownWithinNode )
 
 view =
     Layouts.Default.layout
-        Pages.work
+      Pages.work
         [ class "decoration-accent-work"
         ]
         [ Html.h1
@@ -29,6 +29,8 @@ view =
         , diffuse
         , oddsdk
         , shikensu
+        , witchcraft
+        , unternet
         , waves
         , circuits
             -- , quotes
@@ -307,7 +309,7 @@ oddsdk =
                 ]
                 [ Html.text "packages"
                 ]
-            , Html.text "."
+            , Html.text ". The original UCAN implementation lived in this SDK, but has since gotten its own set of libraries (some of which I worked on too). I've also helped some freelance clients implement UCAN authorization and WNFS for distributed storage."
             ]
         ]
 
@@ -389,6 +391,47 @@ shikensuCode =
     """
 
 
+unternet =
+    item
+        "unternet"
+        "Unternet"
+        [ { name = "Website"
+          , text = "unternet.co"
+          , url = "https://unternet.co"
+          }
+        , { name = "Client"
+          , text = "github.com/unternet-co/client"
+          , url = "https://github.com/unternet-co/client"
+          }
+        , { name = "Web Applets"
+          , text = "github.com/unternet-co/web-applets"
+          , url = "https://github.com/unternet-co/web-applets"
+          }
+        ]
+        [ imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "unternet.svg"
+                        ]
+                    )
+                , A.width 220
+                , A.attribute "loading" "lazy"
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "Unternet is building a new kind of workspace for the web. They created 'Web Applets' as a sort of precursor to Web MCP. I helped this client for a little while with building the client and a bit with the applets."
+            ]
+        ]
+
+
 waves =
     item
         "waves"
@@ -417,5 +460,50 @@ waves =
             ]
         , paragraph
             [ Html.text "Electrical-wave analyser."
+            ]
+        ]
+
+
+witchcraft =
+    item
+        "witchcraft"
+        "Witchcraft"
+        [ { name = "Website"
+          , text = "witchcrafters.github.io"
+          , url = "https://witchcrafters.github.io"
+          }
+        , { name = "Witchcraft"
+          , text = "github.com/witchcrafters/witchcraft"
+          , url = "https://github.com/witchcrafters/witchcraft"
+          }
+        , { name = "Algae"
+          , text = "github.com/witchcrafters/algae"
+          , url = "https://github.com/witchcrafters/algae"
+          }
+        , { name = "TypeClass"
+          , text = "github.com/witchcrafters/type_class"
+          , url = "https://github.com/witchcrafters/type_class"
+          }
+        ]
+        [ imageHolder
+            { padding = True
+            }
+            [ Html.img
+                [ A.src
+                    (Common.pathFromRoot
+                        { root = Pages.work.route
+                        }
+                        [ "images"
+                        , "work"
+                        , "witchcraft.svg"
+                        ]
+                    )
+                , A.width 120
+                , A.attribute "loading" "lazy"
+                ]
+                []
+            ]
+        , paragraph
+            [ Html.text "I helped my friend Brooklyn a little bit with these libraries that bring algebraic and categorical abstractions to Elixir. If you're not familiar, that's things like monads."
             ]
         ]

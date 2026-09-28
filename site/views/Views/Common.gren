@@ -95,7 +95,7 @@ ikebana =
 
 intro text =
     Html.p
-        [ class "font-medium leading-relaxed mb-8 text-xl" ]
+        [ class "font-medium leading-relaxed mb-8 text-balance text-xl" ]
         [ Html.text text
         ]
 

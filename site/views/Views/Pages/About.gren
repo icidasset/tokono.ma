@@ -36,12 +36,18 @@ view =
         , markdown Work.occupation
 
 
-          --
-          -- , Html.h2
-          --       []
-          --       [ Html.text "Who am I?"
-          --       ]
+        , --
+          Html.h2
+              []
+              [ Html.text "Who am I?"
+              ]
 
+        , paragraph
+            [ Html.text "I'm a 37 year old currently living in Aalter, Belgium with my partner. Besides messing around with distributed tech, in my spare time I like discovering new music, gaming with friends, some light hiking, and if health allows, the occasional weightlifting session."
+            ]
+
+        , markdown
+            "I'm also interested in cooperatives and alternative money systems (pyramid schemes not included). Whatever gets us out this capitalistic system that's burning our world."
 
         , -- WORK HISTORY
           Html.h2

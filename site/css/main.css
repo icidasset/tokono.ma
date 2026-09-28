@@ -188,6 +188,8 @@ article strong {
 }
 
 .font-emoji {
+  @apply hover:grayscale-0 transition duration-500;
+
   /* font-variant-emoji: text; */
   filter: grayscale(90%);
 }
@@ -247,6 +249,14 @@ a em:before {
 article p:not(.truncate) a:not(.inline-block) {
   display: inline;
   vertical-align: baseline;
+}
+
+article b {
+  font-weight: normal;
+}
+
+mark {
+  @apply text-french-porcelain dark:text-carbon-fiber;
 }
 
 /**

@@ -11,10 +11,10 @@ import Views.Common.Work as Work
 view =
     Layouts.Default.layout
         Pages.resume
-        [ class "decoration-accent-about"
+        [ class "decoration-accent-resume"
         ]
         [ Html.h1
-            [ class "text-accent-about"
+            [ class "text-accent-resume"
             ]
             [ Html.text "A web engineer with a passion for "
             , Html.a

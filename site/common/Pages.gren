@@ -31,6 +31,7 @@ type PageId
         }
     | Notes
     | Resume
+    | Services
     | Work
 
 
@@ -51,9 +52,10 @@ pages : Array Page
 pages =
     [ work
     , links
-    , contact
-    , essays
     , about
+    , essays
+    , contact
+    , services
     ]
 
 
@@ -197,6 +199,17 @@ resume =
     , title = Views.Common.titleWithSuffix "Résumé"
     , route =
         [ "resume"
+        ]
+    }
+
+
+services : Page
+services =
+    { id = Services
+    , name = "Services"
+    , title = Views.Common.titleWithSuffix "Services"
+    , route =
+        [ "services"
         ]
     }
 

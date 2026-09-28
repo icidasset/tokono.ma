@@ -15,7 +15,7 @@ view =
         [ Html.h1
             [ class "text-accent-contact"
             ]
-            [ Html.text "Get in touch"
+            [ Html.text "Get in touch."
             ]
 
         , --

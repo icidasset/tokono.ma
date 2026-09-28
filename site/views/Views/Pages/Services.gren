@@ -1,0 +1,25 @@
+module Views.Pages.Services exposing ( view )
+
+import Layouts.Default
+import Pages
+import Transmutable.Html as Html
+import Transmutable.Html.Attributes as A exposing ( class )
+import Views.Common as Common exposing ( markdown )
+import Views.Common.Work as Work
+
+
+view =
+    Layouts.Default.layout
+        Pages.services
+        [ class "decoration-accent-services"
+        ]
+        [ Html.h1
+            [ class "text-accent-services text-balance"
+            ]
+            [ Html.text "Architecting the software of tomorrow."
+            ]
+
+        , --
+          Common.intro Work.intro
+        , markdown Work.occupation
+        ]

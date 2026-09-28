@@ -1,34 +1,48 @@
+/* Accent base colors, sourced from the palette in tailwind.config.js */
+:root {
+  --accent-about: theme("colors.lichen");
+  --accent-contact: theme("colors.enchanted-lavender");
+  --accent-error: theme("colors.chewing-gum");
+  --accent-essays: theme("colors.wondrous-wisteria");
+  --accent-links: theme("colors.honey-bee");
+  --accent-resume: theme("colors.song-of-the-sea");
+  --accent-services: theme("colors.girl-power");
+  --accent-work: theme("colors.chai-latte");
+}
+
 /**
  * About
  */
 
 .bg-accent-about {
-  @apply bg-lichen;
+  background-color: var(--accent-about);
 }
 
 .decoration-accent-about {
-  @apply decoration-lichen;
+  text-decoration-color: var(--accent-about);
 }
 
 .decoration-accent-about p a:not(.inline-block):before,
 .decoration-accent-about ul a:not(.inline-block):before,
 .decoration-accent-about ol a:not(.inline-block):before,
-.decoration-accent-about a em:before {
-  @apply bg-lichen;
+.decoration-accent-about a em:before,
+.decoration-accent-about mark {
+  background-color: var(--accent-about);
 }
 
+.decoration-accent-about b,
 .text-accent-about {
-  @apply text-lichen;
+  color: var(--accent-about);
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-about {
-    background-color: #2e4e38;
+    background-color: hsl(from var(--accent-about) h s calc(l - 45%));
   }
 
   .text-accent-about {
-    color: #2e4e38;
+    color: hsl(from var(--accent-about) h s calc(l - 45%));
   }
 }
 
@@ -37,32 +51,34 @@
  */
 
 .bg-accent-contact {
-  @apply bg-enchanted-lavender;
+  background-color: var(--accent-contact);
 }
 
 .decoration-accent-contact {
-  @apply decoration-enchanted-lavender;
+  text-decoration-color: var(--accent-contact);
 }
 
 .decoration-accent-contact p a:not(.inline-block):before,
 .decoration-accent-contact ul a:not(.inline-block):before,
 .decoration-accent-contact ol a:not(.inline-block):before,
-.decoration-accent-contact a em:before {
-  @apply bg-enchanted-lavender;
+.decoration-accent-contact a em:before,
+.decoration-accent-contact mark {
+  background-color: var(--accent-contact);
 }
 
+.decoration-accent-contact b,
 .text-accent-contact {
-  @apply text-enchanted-lavender;
+  color: var(--accent-contact);
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-contact {
-    background-color: #4f248a;
+    background-color: hsl(from var(--accent-contact) h s calc(l - 45%));
   }
 
   .text-accent-contact {
-    color: #4f248a;
+    color: hsl(from var(--accent-contact) h s calc(l - 45%));
   }
 }
 
@@ -71,32 +87,34 @@
  */
 
 .bg-accent-error {
-  @apply bg-chewing-gum;
+  background-color: var(--accent-error);
 }
 
 .decoration-accent-error {
-  @apply decoration-chewing-gum;
+  text-decoration-color: var(--accent-error);
 }
 
 .decoration-accent-error p a:not(.inline-block):before,
 .decoration-accent-error ul a:not(.inline-block):before,
 .decoration-accent-error ol a:not(.inline-block):before,
-.decoration-accent-error a em:before {
-  @apply bg-chewing-gum;
+.decoration-accent-error a em:before,
+.decoration-accent-error mark {
+  background-color: var(--accent-error);
 }
 
+.decoration-accent-error b,
 .text-accent-error {
-  @apply text-chewing-gum;
+  color: var(--accent-error);
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-error {
-    background-color: #902520;
+    background-color: hsl(from var(--accent-error) h s calc(l - 45%));
   }
 
   .text-accent-error {
-    color: #902520;
+    color: hsl(from var(--accent-error) h s calc(l - 45%));
   }
 }
 
@@ -105,32 +123,34 @@
  */
 
 .bg-accent-essays {
-  @apply bg-wondrous-wisteria;
+  background-color: var(--accent-essays);
 }
 
 .decoration-accent-essays {
-  @apply decoration-wondrous-wisteria;
+  text-decoration-color: var(--accent-essays);
 }
 
 .decoration-accent-essays p a:not(.inline-block):before,
 .decoration-accent-essays ul a:not(.inline-block):before,
 .decoration-accent-essays ol a:not(.inline-block):before,
-.decoration-accent-essays a em:before {
-  @apply bg-wondrous-wisteria;
+.decoration-accent-essays a em:before,
+.decoration-accent-essays mark {
+  background-color: var(--accent-essays);
 }
 
+.decoration-accent-essays b,
 .text-accent-essays {
-  @apply text-wondrous-wisteria;
+  color: var(--accent-essays);
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-essays {
-    background-color: #141f9c;
+    background-color: hsl(from var(--accent-essays) h s calc(l - 45%));
   }
 
   .text-accent-essays {
-    color: #141f9c;
+    color: hsl(from var(--accent-essays) h s calc(l - 45%));
   }
 }
 
@@ -139,66 +159,34 @@
  */
 
 .bg-accent-links {
-  @apply bg-honey-bee;
+  background-color: var(--accent-links);
 }
 
 .decoration-accent-links {
-  @apply decoration-honey-bee;
+  text-decoration-color: var(--accent-links);
 }
 
 .decoration-accent-links p a:not(.inline-block):before,
 .decoration-accent-links ul a:not(.inline-block):before,
 .decoration-accent-links ol a:not(.inline-block):before,
-.decoration-accent-links a em:before {
-  @apply bg-honey-bee;
+.decoration-accent-links a em:before,
+.decoration-accent-links mark {
+  background-color: var(--accent-links);
 }
 
+.decoration-accent-links b,
 .text-accent-links {
-  @apply text-honey-bee;
+  color: var(--accent-links);
 }
 
 /* High contrast */
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-links {
-    background-color: #b37706;
+    background-color: hsl(from var(--accent-links) h s calc(l - 45%));
   }
 
   .text-accent-links {
-    color: #b37706;
-  }
-}
-
-/**
- * Work
- */
-
-.bg-accent-work {
-  @apply bg-chai-latte;
-}
-
-.decoration-accent-work {
-  @apply decoration-chai-latte;
-}
-
-.decoration-accent-work p a:not(.inline-block):before,
-.decoration-accent-work ul a:not(.inline-block):before,
-.decoration-accent-work ol a:not(.inline-block):before,
-.decoration-accent-work a em:before {
-  @apply bg-chai-latte;
-}
-
-.text-accent-work {
-  @apply text-chai-latte;
-}
-
-/* High contrast */
-@media (prefers-contrast: more) and (prefers-color-scheme: light) {
-  .bg-accent-work {
-    background-color: #b44d02;
-  }
-
-  .text-accent-work {
-    color: #b44d02;
+    color: hsl(from var(--accent-links) h s calc(l - 45%));
   }
 }
 
@@ -207,32 +195,105 @@
  */
 
 .bg-accent-resume {
-  @apply bg-paradise-island;
+  background-color: var(--accent-resume);
 }
 
 .decoration-accent-resume {
-  @apply decoration-paradise-island;
+  text-decoration-color: var(--accent-resume);
 }
 
 .decoration-accent-resume p a:not(.inline-block):before,
 .decoration-accent-resume ul a:not(.inline-block):before,
 .decoration-accent-resume ol a:not(.inline-block):before,
-.decoration-accent-resume a em:before {
-  @apply bg-paradise-island;
+.decoration-accent-resume a em:before,
+.decoration-accent-resume mark {
+  background-color: var(--accent-resume);
 }
 
+.decoration-accent-resume b,
 .text-accent-resume {
-  @apply text-paradise-island;
+  color: var(--accent-resume);
 }
 
 /* High contrast */
-
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   .bg-accent-resume {
-    background-color: #0b6f57;
+    background-color: hsl(from var(--accent-resume) h s calc(l - 45%));
   }
 
   .text-accent-resume {
-    color: #0b6f57;
+    color: hsl(from var(--accent-resume) h s calc(l - 45%));
+  }
+}
+
+/**
+ * Services
+ */
+
+.bg-accent-services {
+  background-color: var(--accent-services);
+}
+
+.decoration-accent-services {
+  text-decoration-color: var(--accent-services);
+}
+
+.decoration-accent-services p a:not(.inline-block):before,
+.decoration-accent-services ul a:not(.inline-block):before,
+.decoration-accent-services ol a:not(.inline-block):before,
+.decoration-accent-services a em:before,
+.decoration-accent-services mark {
+  background-color: var(--accent-services);
+}
+
+.decoration-accent-services b,
+.text-accent-services {
+  color: var(--accent-services);
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-services {
+    background-color: hsl(from var(--accent-services) h s calc(l - 45%));
+  }
+
+  .text-accent-services {
+    color: hsl(from var(--accent-services) h s calc(l - 45%));
+  }
+}
+
+/**
+ * Work
+ */
+
+.bg-accent-work {
+  background-color: var(--accent-work);
+}
+
+.decoration-accent-work {
+  text-decoration-color: var(--accent-work);
+}
+
+.decoration-accent-work p a:not(.inline-block):before,
+.decoration-accent-work ul a:not(.inline-block):before,
+.decoration-accent-work ol a:not(.inline-block):before,
+.decoration-accent-work a em:before,
+.decoration-accent-work mark {
+  background-color: var(--accent-work);
+}
+
+.decoration-accent-work b,
+.text-accent-work {
+  color: var(--accent-work);
+}
+
+/* High contrast */
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  .bg-accent-work {
+    background-color: hsl(from var(--accent-work) h s calc(l - 45%));
+  }
+
+  .text-accent-work {
+    color: hsl(from var(--accent-work) h s calc(l - 45%));
   }
 }

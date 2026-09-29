@@ -50,12 +50,12 @@ type alias TableOfContents =
 
 pages : Array Page
 pages =
-    [ work
-    , links
-    , about
-    , essays
-    , contact
+    [ about
+    , work
     , services
+    , essays
+    , links
+    , contact
     ]
 
 

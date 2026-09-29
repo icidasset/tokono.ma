@@ -16,19 +16,7 @@ view =
         [ Html.h1
             [ class "text-accent-resume"
             ]
-            [ Html.text "A web engineer with a passion for "
-            , Html.a
-                [ A.href "https://en.wikipedia.org/wiki/Distributed_computing"
-                ]
-                [ Html.text "distributed"
-                ]
-            , Html.text " & "
-            , Html.a
-                [ A.href "https://www.inkandswitch.com/local-first/"
-                ]
-                [ Html.text "local-first"
-                ]
-            , Html.text " tech."
+            [ Html.text "A senior fullstack web engineer that's keen on user agency."
             ]
 
         , Common.intro Work.intro

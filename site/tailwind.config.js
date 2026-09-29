@@ -45,7 +45,6 @@ export default {
         saturn: "#fbe5bc",
         "silver-bird": "#fbf5f0",
         "song-of-the-sea": "#4f74ad",
-        "tadorna-teal": "#74dfb8",
         "trail-dust": "#cec6aa",
         tuxedo: "#403f42",
         vitality: "#919f62",

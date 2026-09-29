@@ -99,6 +99,16 @@ layout page time pageHtml =
                     |> A.src
                 ]
                 []
+          , Html.node
+                "script"
+                [ "dither.js?v=" ++ cacheId
+                    |> Array.singleton
+                    |> Views.Common.pathFromRoot
+                            { root = page.route
+                            }
+                    |> A.src
+                ]
+                []
           ]
             |> Array.prepend pageHtml
             |> Html.body []
@@ -129,18 +139,18 @@ dynamicGrenInit page =
         , Html.text (Json.Encode.encode 0 (Json.Encode.array Json.Encode.string page.route))
         , Html.text ";"
 
-        , -- 
+        , --
           Html.text
             """
             const pathToRoot = pageRoute.length ? pageRoute.map(() => \'..\').join(\'/\') + \'/\': \'\';
-            
+
             async function init() {
               // const essays = await fetch(`${pathToRoot}essays.json`).then(r => r.json())
               // const notes = await fetch(`${pathToRoot}notes.json`).then(r => r.json())
-            
+
               Gren.Main.init({ flags: { essays, notes, pageRoute }})
             }
-            
+
             init()
             """
         ]

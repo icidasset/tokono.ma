@@ -52,7 +52,23 @@ view =
             ]
 
         , --
-          Html.p
+          Html.node
+            "canvas"
+            [ A.class "block max-w-lg w-full"
+            , A.attribute "role" "img"
+            , A.attribute "aria-label" "Photo of tokono.ma"
+            , A.attribute "data-dither-src" "../images/me.jpeg"
+            , A.attribute "data-dither-accent" "--accent-contact"
+            , A.attribute "data-dither-level" "0.6"
+            , A.attribute "data-dither-scale" "2.5"
+            , A.attribute "width" "989"
+            , A.attribute "height" "1188"
+            ]
+            []
+
+        , --
+          Html.node
+            "noscript"
             []
             [ Html.node
                 "picture"
@@ -71,7 +87,6 @@ view =
                 , Html.img
                     [ A.src "../images/contact-2.png"
                     , A.alt "Photo of tokono.ma"
-                    , A.attribute "loading" "lazy"
                     ]
                     []
                 ]

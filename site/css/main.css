@@ -252,7 +252,7 @@ article p:not(.truncate) a:not(.inline-block) {
 }
 
 article b {
-  font-weight: normal;
+  font-weight: 500;
 }
 
 mark {

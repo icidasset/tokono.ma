@@ -16,13 +16,21 @@ view =
         [ Html.h1
             [ class "text-accent-resume"
             ]
-            [ Html.text "A senior fullstack web engineer that's keen on user agency."
+            [ Html.text "A senior fullstack web engineer who's keen on user agency."
             ]
 
         , Common.intro Work.intro
         , markdown Work.occupation
 
-        , Html.h2
+        , --
+          Html.h2
+            []
+            [ Html.text "Who am I?" ]
+
+        , identityCard
+
+        , --
+          Html.h2
             []
             [ Html.text "Technicalities" ]
 
@@ -95,14 +103,6 @@ view =
             |> Html.div []
 
         , --
-          Html.h2
-            []
-            [ Html.text "Languages" ]
-
-        , paragraph
-            [ Html.text "Fluent in Dutch and English." ]
-
-        , --
           Common.closingEmoji "🦚"
         ]
 
@@ -164,3 +164,98 @@ projects =
 
 paragraph =
     Html.p []
+
+
+
+--
+
+
+identityCard =
+    Html.div
+        [ class "bg-black bg-opacity-5 dark:bg-white dark:bg-opacity-5 mt-6 overflow-hidden rounded-xl"
+        ]
+        [ Html.div
+            [ class "border-b border-black border-opacity-10 dark:border-white dark:border-opacity-10 flex items-center justify-between gap-4 px-5 py-3 sm:px-6"
+            , A.style "text-box" "trim-both cap alphabetic"
+            ]
+            [ Html.span
+                [ class "font-bold font-headings opacity-40 text-xs uppercase tracking-widest contrast-more:opacity-80"
+                ]
+                [ Html.text "Identity card" ]
+            , Html.span
+                [ class "font-mono opacity-40 text-xs uppercase tracking-widest contrast-more:opacity-80"
+                ]
+                [ Html.text "BE" ]
+            ]
+        , Html.div
+            [ class "flex flex-col gap-6 p-5 sm:flex-row sm:gap-8 sm:p-6"
+            ]
+            [ portrait
+            , Html.div
+                [ class "flex-1"
+                ]
+                [ Html.div
+                    [ class "font-display mb-6 text-2xl sm:text-3xl"
+                    ]
+                    [ Html.text "Steven Vandevelde" ]
+                , Html.dl
+                    [ class "grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2"
+                    ]
+                    (identity |> Array.map (\f -> field f.label f.value))
+                ]
+            ]
+        ]
+
+
+portrait =
+    Html.div
+        [ class "max-w-[9rem] shrink-0 w-36"
+        ]
+        [ Html.node
+            "canvas"
+            [ A.class "block rounded-lg w-full"
+            , A.attribute "role" "img"
+            , A.attribute "aria-label" "Dithered portrait of Steven Vandevelde"
+            , A.attribute "data-dither-src" "../images/me.jpeg"
+            , A.attribute "data-dither-accent" "--accent-resume"
+            , A.attribute "data-dither-level" "0.6"
+            , A.attribute "data-dither-scale" "2.5"
+            , A.attribute "width" "989"
+            , A.attribute "height" "1188"
+            ]
+            []
+        , Html.node
+            "noscript"
+            []
+            [ Html.img
+                [ A.class "block grayscale rounded-lg w-full"
+                , A.src "../images/me.jpeg"
+                , A.alt "Portrait of Steven Vandevelde"
+                ]
+                []
+            ]
+        ]
+
+
+field label value =
+    Html.div
+        []
+        [ Html.dt
+            [ class "opacity-50 text-xs uppercase tracking-wide"
+            ]
+            [ Html.text label ]
+        , Html.dd
+            [ class "font-medium leading-snug text-lg"
+            ]
+            [ Html.text value ]
+        ]
+
+
+identity =
+    [ { label = "Born", value = "July 1989" }
+    , { label = "Based in", value = "Aalter, Belgium" }
+    , { label = "Nationality", value = "Belgian" }
+    , { label = "Role", value = "Fullstack web engineer" }
+    , { label = "Experience", value = "Since 2011" }
+    , { label = "Languages", value = "Dutch & English" }
+    ]

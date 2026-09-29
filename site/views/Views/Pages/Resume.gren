@@ -55,9 +55,14 @@ view =
                     []
                     [ Html.h3
                         []
-                        [ Html.a
-                            [ A.href c.link ]
-                            [ Html.em [] [ Html.text c.title ] ]
+                        [ when c.link is
+                            Just link ->
+                              Html.a
+                                [ A.href link ]
+                                [ Html.em [] [ Html.text c.title ] ]
+
+                            Nothing ->
+                              Html.text c.title
                         ]
                     , Html.p
                         []
@@ -110,25 +115,25 @@ view =
 
 career =
   [ { title = "Freelance Web Engineer"
-    , link = "https://tokono.ma"
+    , link = Nothing
     , location = "Remote"
     , time = "Sep 2023 — Present"
     , description = "During this time I've been doing freelance work for various people and companies. I focused on distributed computing work initially, but now doing all kinds of web and software development work."
     }
   , { title = "Fission (Codes)"
-    , link = "https://github.com/fission-codes"
+    , link = Just "https://github.com/fission-codes"
     , location = "Remote"
     , time = "Dec 2019 — Aug 2023"
     , description = "At this startup I was responsible for building out the SDK with examples, implementing a protocol called UCAN, adding features to the API, and building web applications that consumed the SDK. This is where my distributed computing and cryptography journey began."
     }
   , { title = "MetaLab"
-    , link = "https://metalab.co"
+    , link = Just "https://metalab.co"
     , location = "Remote"
     , time = "Aug 2015 — Nov 2019"
     , description = "Here I made websites and web applications of various sizes, both frontend and backend. This included things such as creating an entirely custom CMS from scratch, writing complex database queries, making beautiful websites, and the occasional React Native."
     }
   , { title = "Mr. Henry"
-    , link = "https://mrhenry.be"
+    , link = Just "https://mrhenry.be"
     , location = "On site"
     , time = "May 2011 — May 2015"
     , description = "At my first job I built accessible design-heavy websites along with some playful canvas animations, backed with the in-house Ruby CMS system, along with other backends written in Golang and PHP."

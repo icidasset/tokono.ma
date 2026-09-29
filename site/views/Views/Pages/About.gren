@@ -32,7 +32,7 @@ view =
             ]
 
         , paragraph
-            [ Html.text "I'm a 37 year old currently living in Aalter, Belgium with my partner. Besides messing around with distributed tech, in my spare time I like discovering new music, gaming with friends, some light hiking, and if health allows, the occasional weightlifting session."
+            [ Html.text "Born in Belgium shortly after the World Wide Web proposal was written and just before the Berlin Wall fell. Currently living in Aalter with my partner. Besides messing around with distributed tech, in my spare time I like discovering new music, gaming with friends, some light hiking, and if health allows, the occasional weightlifting session."
             ]
 
         , markdown

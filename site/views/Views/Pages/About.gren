@@ -41,7 +41,7 @@ view =
         , -- WORK HISTORY
           Html.h2
             []
-            [ Html.text "Work history"
+            [ Html.text "Career"
             ]
 
         , paragraph

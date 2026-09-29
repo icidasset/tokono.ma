@@ -1,11 +1,11 @@
 /* Accent base colors, sourced from the palette in tailwind.config.js */
 :root {
-  --accent-about: theme("colors.lichen");
+  --accent-about: theme("colors.jade-sea");
   --accent-contact: theme("colors.enchanted-lavender");
   --accent-error: theme("colors.chewing-gum");
   --accent-essays: theme("colors.wondrous-wisteria");
   --accent-links: theme("colors.honey-bee");
-  --accent-resume: theme("colors.song-of-the-sea");
+  --accent-resume: theme("colors.lichen");
   --accent-services: theme("colors.girl-power");
   --accent-work: theme("colors.chai-latte");
 }

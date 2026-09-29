@@ -22,4 +22,7 @@ view =
         , --
           Common.intro Work.intro
         , markdown Work.occupation
+
+        , --
+          Common.closingEmoji "🔮"
         ]

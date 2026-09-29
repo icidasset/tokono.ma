@@ -23,11 +23,7 @@ view =
         , markdown Work.occupation
 
         , --
-          Html.h2
-            []
-            [ Html.text "Who am I?" ]
-
-        , identityCard
+          identityCard
 
         , --
           Html.h2
@@ -36,14 +32,15 @@ view =
 
         , markdown
             """
-            I have experience with many different programming languages, frameworks and protocols. Happy to pick up new ones:
+            I have experience with several programming languages, frameworks and protocols. Happy to pick up new ones:
 
             - **Programming languages**: HTML, CSS, TypeScript (JavaScript), Elm / Gren, Elixir, Haskell, Ruby, Rust, Golang, PHP, Python.
             - **Frameworks & Libraries**: Node.js, Deno, Lit, React, Tailwind CSS, Phoenix, Ruby on Rails, Electron, Tauri, Laravel, WordPress, Svelte, Vue.js, Angular, React Native.
-            - **Additional skills**: Database design, automated testing, CI/CD, web security & performance, browser media APIs, developer tooling, containers, linux.
-            - LLM-assisted workflow using multiple models.
 
-            You can find a lot of my code on [GitHub](https://github.com/icidasset/).
+            You can find some of my code on [GitHub](https://github.com/icidasset/). Couple more things:
+
+            - **Additional skills**: Database design, automated testing, CI/CD, web security & performance, browser media APIs, developer tooling, containers, linux.
+            - I use a LLM-assisted spec-driven workflow using multiple models.
             """
 
         , --
@@ -167,12 +164,12 @@ paragraph =
 
 
 
---
+-- IDENTITY CARD
 
 
 identityCard =
     Html.div
-        [ class "bg-black bg-opacity-5 dark:bg-white dark:bg-opacity-5 mt-6 overflow-hidden rounded-xl"
+        [ class "bg-black bg-opacity-5 dark:bg-white dark:bg-opacity-5 mt-12 md:mt-16 overflow-hidden rounded-xl"
         ]
         [ Html.div
             [ class "border-b border-black border-opacity-10 dark:border-white dark:border-opacity-10 flex items-center justify-between gap-4 px-5 py-3 sm:px-6"
@@ -185,7 +182,7 @@ identityCard =
             , Html.span
                 [ class "font-mono opacity-40 text-xs uppercase tracking-widest contrast-more:opacity-80"
                 ]
-                [ Html.text "BE" ]
+                [ Html.text "tokono.ma" ]
             ]
         , Html.div
             [ class "flex flex-col gap-6 p-5 sm:flex-row sm:gap-8 sm:p-6"
